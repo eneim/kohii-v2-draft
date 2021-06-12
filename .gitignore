@@ -13,3 +13,10 @@
 .externalNativeBuild
 .cxx
 local.properties
+/.idea/
+/kohii-demo/src/androidTest/
+/kohii-demo/src/test/
+/kohii-demo/.gitignore
+/kohii-draft/src/androidTest/
+/kohii-draft/src/test/
+/kohii-draft/.gitignore
