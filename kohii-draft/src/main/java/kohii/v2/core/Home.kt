@@ -32,20 +32,21 @@ import kohii.v2.internal.BindRequest
 import kohii.v2.internal.HomeDispatcher
 import kohii.v2.internal.ManagerViewModel
 import kohii.v2.internal.PlayerViewPlayableCreator
+import kohii.v2.internal.RequestHandleImpl
 import kohii.v2.internal.asString
 import kohii.v2.internal.awaitStarted
 import kohii.v2.internal.hexCode
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
+import kotlinx.coroutines.cancel
 
 class Home private constructor(context: Context) {
 
   internal val playables = mutableMapOf<Playable, Any>()
-  private val requests = mutableMapOf<Any, BindRequest>()
+  internal val requests = mutableMapOf<Any, RequestHandle>()
 
   private val dispatcher = HomeDispatcher(this, Looper.getMainLooper())
   private val groups = mutableSetOf<Group>()
@@ -123,23 +124,18 @@ class Home private constructor(context: Context) {
   internal fun enqueueRequest(container: Any, request: BindRequest): RequestHandle {
     "Home[${hexCode()}]_ENQUEUE_Request [R=$request] [C=${container.asString()}]".logInfo()
     keepPlayable(request.playable)
-    requests.put(container, request)?.cancel()
-    val deferredBindResult: Deferred<Result<Playback>> = scope.async {
-      bindRequestOnMain(container)
-    }
-
-    deferredBindResult.invokeOnCompletion { error ->
-      error?.printStackTrace()
-    }
-
-    return BaseRequestHandle(deferredBindResult)
-  }
-
-  private suspend fun bindRequestOnMain(container: Any): Result<Playback> {
-    val request = requests.remove(container)
-      ?: return Result.failure(IllegalStateException("Request not found."))
-    request.manager.lifecycleOwner.lifecycle.awaitStarted()
-    return request.onBind()
+    requests.remove(container)?.cancel()
+    val requestHandle: RequestHandle = RequestHandleImpl(
+      home = this,
+      container = container,
+      lifecycle = request.lifecycle,
+      deferred = scope.async {
+        request.lifecycle.awaitStarted()
+        request.onBind()
+      }
+    )
+    requests[container] = requestHandle
+    return requestHandle
   }
 
   internal fun requirePlayableCreator(data: Any): PlayableCreator {
@@ -154,6 +150,11 @@ class Home private constructor(context: Context) {
   }
 
   internal fun shutdown() {
+    requests.entries
+      .onEach { (_, handle) -> handle.cancel() }
+      .clear()
+
+    scope.cancel()
     playableCreators
       .onEach { (creator, _) -> creator.cleanUp() }
       .clear()

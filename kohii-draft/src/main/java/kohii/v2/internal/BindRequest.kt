@@ -17,6 +17,7 @@
 package kohii.v2.internal
 
 import android.view.View
+import androidx.lifecycle.Lifecycle
 import kohii.v2.common.logDebug
 import kohii.v2.common.logError
 import kohii.v2.core.Bucket
@@ -24,17 +25,19 @@ import kohii.v2.core.Home
 import kohii.v2.core.Manager
 import kohii.v2.core.Playable
 import kohii.v2.core.Playback
+import kohii.v2.core.Playback.Config
 
 internal class BindRequest(
   val home: Home,
   val manager: Manager,
   val bucket: Bucket,
-  val data: Any,
-  val tag: Any, // Tag used by Home to store the Playable.
-  val container: Any,
+  val tag: Any,
+  val container: Any, // Tag used by Home to store the Playable.
   val playable: Playable,
-  val config: Playback.Config
+  val config: Config
 ) {
+
+  internal val lifecycle: Lifecycle = manager.lifecycleOwner.lifecycle
 
   // TODO(eneim): Handle request cancelling when multiple binding is queued for the same container.
   internal suspend fun onBind(): Result<Playback> {
@@ -120,9 +123,5 @@ internal class BindRequest(
     return bindResult
   }
 
-  internal fun cancel() = Unit
-
-  override fun toString(): String {
-    return "R@${hexCode()}"
-  }
+  override fun toString(): String = "R@${hexCode()}"
 }

@@ -55,7 +55,6 @@ class Request(
       home = bucket.manager.home,
       manager = bucket.manager,
       bucket = bucket,
-      data = data,
       tag = playableTag ?: Home.NO_TAG,
       container = container,
       playable = fetchPlayable(),

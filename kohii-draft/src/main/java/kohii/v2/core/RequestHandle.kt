@@ -16,21 +16,19 @@
 
 package kohii.v2.core
 
-import kotlinx.coroutines.Deferred
-
 /**
- * TODO(eneim): document.
+ * An object returned by [Request.bind] that can be used by the client to cancel the request, or
+ * wait for the result.
  */
 interface RequestHandle {
 
+  /**
+   * Cancel the on-going request. This method only takes effect if the request is not completed.
+   */
   fun cancel()
 
+  /**
+   * Await for the result of the on-going request.
+   */
   suspend fun result(): Result<Playback>
-}
-
-internal class BaseRequestHandle(
-  private val deferredResult: Deferred<Result<Playback>>
-) : RequestHandle {
-  override fun cancel() = deferredResult.cancel()
-  override suspend fun result(): Result<Playback> = deferredResult.await()
 }

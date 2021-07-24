@@ -106,7 +106,9 @@ abstract class Bucket(
     builder: Request.Builder,
     container: Any,
     config: Playback.Config.() -> Unit = { /* no-op */ }
-  ): RequestHandle = builder.requestIn(this).bind(container, config)
+  ): RequestHandle = builder
+    .requestIn(this)
+    .bind(container, config)
 
   //endregion
 
