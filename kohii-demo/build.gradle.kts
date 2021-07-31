@@ -55,8 +55,8 @@ dependencies {
   implementation("androidx.lifecycle:lifecycle-service:$lifecycleVersion")
   implementation("androidx.lifecycle:lifecycle-process:$lifecycleVersion")
 
-  implementation("com.google.android.exoplayer:exoplayer:2.14.1")
-  implementation("io.coil-kt:coil:1.2.2")
+  // implementation("com.google.android.exoplayer:exoplayer:2.14.2")
+  // implementation("io.coil-kt:coil:1.2.2")
 
   debugImplementation("com.squareup.leakcanary:leakcanary-android:2.7")
 

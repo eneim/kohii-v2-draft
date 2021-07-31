@@ -24,15 +24,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle.State.DESTROYED
 import androidx.lifecycle.LifecycleOwner
-import com.google.android.exoplayer2.MediaItem
 import kohii.v2.common.Capsule
 import kohii.v2.common.debugOnly
 import kohii.v2.common.logInfo
 import kohii.v2.internal.BindRequest
 import kohii.v2.internal.HomeDispatcher
 import kohii.v2.internal.ManagerViewModel
-import kohii.v2.internal.PlayerViewPlayableCreator
 import kohii.v2.internal.RequestHandleImpl
+import kohii.v2.internal.TextViewPlayableCreator
 import kohii.v2.internal.asString
 import kohii.v2.internal.awaitStarted
 import kohii.v2.internal.hexCode
@@ -48,9 +47,10 @@ class Home private constructor(context: Context) {
   internal val playables = mutableMapOf<Playable, Any>()
   internal val requests = mutableMapOf<Any, RequestHandle>()
 
-  private val dispatcher = HomeDispatcher(this, Looper.getMainLooper())
+  // The order of added pair matters.
+  private val playableCreators = linkedSetOf<Pair<PlayableCreator, Class<*>>>()
   private val groups = mutableSetOf<Group>()
-  private val playableCreators = mutableListOf<Pair<PlayableCreator, Class<*>>>()
+  private val dispatcher = HomeDispatcher(this, Looper.getMainLooper())
 
   private val scope = CoroutineScope(
     SupervisorJob() +
@@ -60,9 +60,7 @@ class Home private constructor(context: Context) {
 
   init {
     // Register default `PlayableCreator`s
-    val defaultPlayerViewPlaybackCreator = PlayerViewPlayableCreator()
-    playableCreators.add(Pair(defaultPlayerViewPlaybackCreator, MediaItem::class.java))
-    playableCreators.add(Pair(defaultPlayerViewPlaybackCreator, List::class.java))
+    playableCreators.add(TextViewPlayableCreator(this) to Any::class.java)
   }
 
   private fun registerManagerInternal(

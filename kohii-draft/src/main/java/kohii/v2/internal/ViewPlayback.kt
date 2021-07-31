@@ -77,7 +77,7 @@ internal abstract class ViewPlayback(
    * @property activePixelsRatio Ratio of the pixels visible by the end user. -1 means it is too
    * faraway from the visible area.
    */
-  private class ViewToken(
+  private data class ViewToken(
     @FloatRange(from = -1.0, to = 1.0)
     val activePixelsRatio: Float,
   ) : Token()

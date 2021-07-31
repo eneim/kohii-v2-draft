@@ -36,7 +36,7 @@ abstract class Bucket(
   val root: Any
 ) {
 
-  override fun toString(): String = "B[${hexCode()}, r=${root.asString()}]"
+  override fun toString(): String = "B[${hexCode()}, rt=${root.asString()}]"
 
   /**
    * Called when this class is added to a [Manager].

@@ -18,9 +18,9 @@ package kohii.v2.internal
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import kohii.v2.common.debugOnly
 import kohii.v2.common.logDebug
 import kohii.v2.common.logInfo
-import kohii.v2.core.Home
 import kohii.v2.core.Playable
 import kohii.v2.core.PlayableManager
 
@@ -28,22 +28,17 @@ internal class ManagerViewModel(
   application: Application
 ) : AndroidViewModel(application), PlayableManager {
 
-  private val home: Home = Home[application]
-
   /**
    * A [Set] of [Playable]s managed by this class.
    */
   private val playables = mutableSetOf<Playable>()
 
-  override fun toString(): String {
-    return "PM@${hexCode()}"
-  }
+  override fun toString(): String = "PM@${hexCode()}"
 
   override fun addPlayable(playable: Playable) {
     "PlayableManager_ADD_Playable [PB=$playable]".logInfo()
     if (playables.add(playable)) {
       "PlayableManager_ADDED_Playable [PB=$playable]".logDebug()
-      home.keepPlayable(playable)
     }
   }
 
@@ -51,8 +46,6 @@ internal class ManagerViewModel(
     "PlayableManager_REMOVE_Playable [PB=$playable]".logInfo()
     if (playables.remove(playable) && playable.manager === this) {
       "PlayableManager_REMOVED_Playable [PB=$playable]".logDebug()
-      home.releasePlayable(playable)
-      home.destroyPlayable(playable)
     }
   }
 
@@ -67,8 +60,8 @@ internal class ManagerViewModel(
   override fun onCleared() {
     super.onCleared()
     for (playable in playables) {
-      home.releasePlayable(playable)
-      home.destroyPlayable(playable)
+      debugOnly { check(playable.manager === this) }
+      playable.manager = null
     }
   }
 }

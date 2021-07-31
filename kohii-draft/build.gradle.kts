@@ -40,10 +40,10 @@ dependencies {
 
   implementation("androidx.viewpager2:viewpager2:1.0.0")
   implementation("androidx.recyclerview:recyclerview:1.2.1")
-  implementation("androidx.fragment:fragment-ktx:1.3.5")
-  implementation("androidx.activity:activity-ktx:1.3.0-rc02")
+  implementation("androidx.fragment:fragment-ktx:1.3.6")
+  implementation("androidx.activity:activity-ktx:1.3.0")
   implementation("androidx.media2:media2-widget:1.2.0-beta01")
-  implementation("com.google.android.exoplayer:exoplayer:2.14.1")
+  implementation("com.google.android.exoplayer:exoplayer:2.14.2")
 
   val lifecycleVersion = "2.3.1"
   val archVersion = "2.1.0"

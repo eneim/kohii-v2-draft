@@ -21,7 +21,7 @@ import androidx.annotation.MainThread
 interface RendererProviderManager {
 
   @MainThread
-  fun getRendererProvider(playable: Playable): RendererProvider
+  fun getRendererProvider(playback: Playback): RendererProvider
 
   @MainThread
   fun addRendererProvider(rendererProvider: RendererProvider)

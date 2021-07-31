@@ -23,6 +23,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Lifecycle.State.STARTED
 import kohii.v2.common.logInfo
+import kohii.v2.core.PlayableState.Inactive
 import kohii.v2.core.Playback.State.ACTIVATED
 import kohii.v2.core.Playback.State.ADDED
 import kohii.v2.core.Playback.State.ATTACHED
@@ -31,7 +32,20 @@ import kohii.v2.core.Playback.State.REMOVED
 import kohii.v2.internal.asString
 import kohii.v2.internal.checkMainThread
 import kohii.v2.internal.hexCode
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
 import java.util.ArrayDeque
+import java.util.Timer
+import java.util.TimerTask
+import kotlin.LazyThreadSafetyMode.NONE
+import kotlin.concurrent.scheduleAtFixedRate
 
 /**
  * An object that contains the information about the surface to play the media content.
@@ -60,6 +74,10 @@ abstract class Playback(
       field = value
     }
 
+  /**
+   * Only used when the Playback is being removed. In that time, the Playable may be switched to
+   * another Playback already.
+   */
   internal val activePlayable: Playable? get() = playable.takeIf { it.playback === this }
 
   /**
@@ -69,18 +87,51 @@ abstract class Playback(
     @VisibleForTesting internal set(value) {
       "Playback[${hexCode()}]_STATE [$field → $value]".logInfo()
       field = value
+      playbackStateFlow.value = value
     }
 
-  val isAdded: Boolean get() = state >= ADDED
-  val isAttached: Boolean get() = state >= ATTACHED
-  val isActive: Boolean get() = state >= ACTIVATED
+  abstract val token: Token
 
   /**
    * `true` if only the Lifecycle hosts this Playback is started.
    */
   open val isOnline: Boolean get() = lifecycleState.isAtLeast(STARTED)
 
-  abstract val token: Token
+  val isAdded: Boolean get() = state >= ADDED
+  val isAttached: Boolean get() = state >= ATTACHED
+  val isActive: Boolean get() = state >= ACTIVATED
+
+  private val playbackStateFlow = MutableStateFlow(CREATED)
+  private val playableActiveStateFlow = MutableStateFlow(false)
+  private val playableStateMutableStateFlow = MutableStateFlow<PlayableState>(Inactive)
+
+  private var playableStateJob: Job? = null
+  private var stateUpdateTask: TimerTask? = null
+
+  /**
+   * A [Flow] that allows the client to collect the [PlayableState] of the underline [Playable].
+   */
+  val playableStateFlow = playableStateMutableStateFlow
+    .onStart {
+      playableStateJob?.cancel()
+      playableStateJob = combine(playbackStateFlow, playableActiveStateFlow) { _, playableActive ->
+        if (playableActive && isOnline && isActive) {
+          stateUpdateTask?.cancel()
+          stateUpdateTask = timer.scheduleAtFixedRate(delay = 0, period = FETCH_STATE_PERIOD_MS) {
+            playableStateMutableStateFlow.value = activePlayable?.fetchPlayableState() ?: Inactive
+          }
+        } else {
+          stateUpdateTask?.cancel()
+        }
+      }
+        .launchIn(CoroutineScope(currentCoroutineContext()))
+    }
+    .onCompletion {
+      playableStateJob?.cancel()
+      stateUpdateTask?.cancel()
+      playableStateJob = null
+      stateUpdateTask = null
+    }
 
   init {
     @Suppress("LeakingThis")
@@ -273,6 +324,13 @@ abstract class Playback(
   }
 
   /**
+   * Called by the [playable] to notify this class that it is available for this class to use.
+   */
+  internal fun onPlayableActiveStateChanged(active: Boolean) {
+    playableActiveStateFlow.value = active
+  }
+
+  /**
    * Force this class to detach the current renderer.
    */
   protected abstract fun detachRenderer()
@@ -373,6 +431,8 @@ abstract class Playback(
   }
 
   companion object {
+    private const val FETCH_STATE_PERIOD_MS = 200L
+    private val timer: Timer by lazy(NONE, ::Timer)
 
     @Throws(IllegalStateException::class)
     private fun Playback.checkState(expected: State): Unit =

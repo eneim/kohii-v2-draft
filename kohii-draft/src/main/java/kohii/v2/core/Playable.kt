@@ -24,6 +24,7 @@ import kohii.v2.internal.hexCode
 import kotlin.LazyThreadSafetyMode.NONE
 
 abstract class Playable(
+  val home: Home,
   val tag: String,
   val data: Any,
   val rendererType: Class<*>
@@ -40,10 +41,12 @@ abstract class Playable(
   var manager: PlayableManager? = null
     internal set(value) {
       val prev = field
-      if (prev !== value) prev?.removePlayable(this)
+      if (prev !== value) {
+        prev?.removePlayable(this)
+        value?.addPlayable(this)
+      }
       field = value
       if (prev !== value) {
-        value?.addPlayable(this)
         onManagerChanged(previous = prev, next = value)
       }
     }
@@ -68,6 +71,8 @@ abstract class Playable(
     "Playable[${hexCode()}]_CREATED".logInfo()
   }
 
+  override fun toString(): String = "PB[${hexCode()}, ${rendererType.simpleName}, t=$tag, d=$data]"
+
   /**
    * Called by the [Playback] to attach a renderer to this [Playable].
    */
@@ -77,6 +82,8 @@ abstract class Playable(
    * Called by the [Playback] to detach the renderer from this [Playable].
    */
   abstract fun onRendererDetached(renderer: Any?)
+
+  abstract fun fetchPlayableState(): PlayableState
 
   @CallSuper
   open fun onStart() {
@@ -104,12 +111,18 @@ abstract class Playable(
   @CallSuper
   protected open fun onPlaybackChanged(previous: Playback?, next: Playback?) {
     "Playable[${hexCode()}]_CHANGE_Playback [$previous → $next]".logWarn()
+    previous?.onPlayableActiveStateChanged(active = false)
     previous?.removeCallback(playbackCallback)
     next?.addCallback(playbackCallback)
+    next?.onPlayableActiveStateChanged(active = true)
   }
 
   @CallSuper
   protected open fun onManagerChanged(previous: PlayableManager?, next: PlayableManager?) {
     "Playable[${hexCode()}]_CHANGE_Manager [$previous → $next]".logWarn()
+    if (next == null) {
+      home.releasePlayable(this)
+      home.destroyPlayable(this)
+    }
   }
 }

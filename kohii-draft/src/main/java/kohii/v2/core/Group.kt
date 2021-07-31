@@ -1,5 +1,6 @@
 package kohii.v2.core
 
+import android.app.Activity
 import android.os.Looper
 import androidx.collection.arraySetOf
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -8,6 +9,10 @@ import kohii.v2.common.logDebug
 import kohii.v2.internal.GroupDispatcher
 import kohii.v2.internal.hexCode
 
+/**
+ * A [Group] represents an [Activity] in the Application. It manages [Manager]s and ensure the
+ * [Playback]s are used correctly.
+ */
 class Group(
   val home: Home,
   val lifecycleOwner: LifecycleOwner

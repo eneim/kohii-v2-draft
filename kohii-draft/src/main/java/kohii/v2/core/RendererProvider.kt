@@ -20,15 +20,13 @@ import androidx.lifecycle.DefaultLifecycleObserver
 
 abstract class RendererProvider : DefaultLifecycleObserver {
 
-  abstract fun accepts(playable: Playable): Boolean
+  abstract fun accepts(playback: Playback): Boolean
 
   abstract fun provideRenderer(
-    playable: Playable,
     playback: Playback,
   ): Any?
 
   abstract fun releaseRenderer(
-    playable: Playable,
     playback: Playback,
     renderer: Any?
   )

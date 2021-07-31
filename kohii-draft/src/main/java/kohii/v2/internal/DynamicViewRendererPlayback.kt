@@ -47,7 +47,7 @@ internal class DynamicViewRendererPlayback(
   tag = tag
 ) {
 
-  private val rendererProvider = providerManager.getRendererProvider(playable)
+  private val rendererProvider = providerManager.getRendererProvider(this)
 
   override fun onStarted() {
     super.onStarted()
@@ -61,10 +61,7 @@ internal class DynamicViewRendererPlayback(
 
   private fun tryAttachRenderer() {
     if (playable.renderer == null) {
-      val renderer = rendererProvider.provideRenderer(
-        playable = playable,
-        playback = this,
-      )
+      val renderer = rendererProvider.provideRenderer(this)
       val attachRendererInfo = playbackAttachRenderer(renderer)
       if (attachRendererInfo == null) {
         playable.onRendererAttached(renderer)
@@ -81,7 +78,6 @@ internal class DynamicViewRendererPlayback(
       if (detachRenderInfo == null) {
         playable.onRendererDetached(renderer)
         rendererProvider.releaseRenderer(
-          playable = playable,
           playback = this,
           renderer = renderer
         )

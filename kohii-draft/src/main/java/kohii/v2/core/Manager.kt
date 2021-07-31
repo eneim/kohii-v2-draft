@@ -26,18 +26,18 @@ import androidx.lifecycle.Lifecycle.Event
 import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import kohii.v2.common.debugOnly
 import kohii.v2.common.logDebug
 import kohii.v2.common.logInfo
 import kohii.v2.common.partitionToMutableSets
 import kohii.v2.internal.BindRequest
 import kohii.v2.internal.DynamicViewPlaybackCreator
 import kohii.v2.internal.StaticViewPlaybackCreator
+import kohii.v2.internal.TextViewRendererProvider
 import kohii.v2.internal.checkMainThread
 import kohii.v2.internal.hexCode
 import kohii.v2.internal.onNotNull
 import java.util.ArrayDeque
-
-private typealias MutablePlaybackSet = MutableSet<Playback>
 
 /**
  * A class that represents a [Fragment] or an [Activity], and has the capability to manage multiple
@@ -58,11 +58,16 @@ class Manager(
 
   @VisibleForTesting
   internal val buckets = ArrayDeque<Bucket>(4 /* Skip size check */)
-  internal val playbacks = linkedMapOf<Any /* Container type */, Playback>()
+  internal val playbacks = linkedMapOf<Any /* Container */, Playback>()
+
+  @Suppress("RemoveExplicitTypeArguments")
+  private val playbackCreators = setOf<PlaybackCreator>(
+    StaticViewPlaybackCreator(),
+    DynamicViewPlaybackCreator(rendererProviderManager = this)
+  )
 
   // Last added item is the first to be checked in `getRendererProvider`.
   private val rendererProviders = ArrayDeque<RendererProvider>()
-  private val playbackCreators = mutableSetOf<PlaybackCreator>()
 
   private var internalLock: Boolean = false
 
@@ -71,12 +76,8 @@ class Manager(
   private val isStarted: Boolean get() = lifecycleOwner.lifecycle.currentState.isAtLeast(STARTED)
 
   init {
-    // Register default `PlaybackCreator`s
-    playbackCreators.add(StaticViewPlaybackCreator())
-    playbackCreators.add(DynamicViewPlaybackCreator(rendererProviderManager = this))
-
     // Register default `RendererProvider`s
-    rendererProviders.add(PlayerViewRendererProvider())
+    rendererProviders.add(TextViewRendererProvider())
   }
 
   override fun toString(): String = "M@${hexCode()}"
@@ -162,8 +163,10 @@ class Manager(
     checkMainThread()
     val container = playback.container
     val removedPlayback = playbacks.remove(container)
-    require(removedPlayback === playback) {
-      "Removing $playback for container $container, but got a different one $removedPlayback"
+    debugOnly {
+      require(removedPlayback === playback) {
+        "Removing $playback for container $container, but got a different one $removedPlayback"
+      }
     }
     if (playback.isAttached) {
       if (playback.isActive) playback.performDeactivate()
@@ -172,9 +175,7 @@ class Manager(
     playback.bucket.removeContainer(container)
     // Playback should not let the bucket touch its container at this point.
     playback.performRemove()
-    if (clearPlayable) {
-      playback.activePlayable?.internalPlayback = null
-    }
+    if (clearPlayable) playback.activePlayable?.internalPlayback = null
     refresh()
     "Manager[${hexCode()}]_REMOVE_Playback_End [PK=$playback]".logDebug()
   }
@@ -212,11 +213,10 @@ class Manager(
     }
   }
 
-  private fun refreshPlaybackStates(): Pair<MutablePlaybackSet /* Active */, MutablePlaybackSet /* InActive */> {
-    val toActive = playbacks.filterValues { !it.isActive && it.shouldActivate() }
-      .values
-    val toInActive = playbacks.filterValues { it.isActive && !it.shouldActivate() }
-      .values
+  // Returns a Pair of [a set of Activated playbacks] to [a set of Deactivated playbacks].
+  private fun refreshPlaybackStates(): Pair<MutableSet<Playback>, MutableSet<Playback>> {
+    val toActive = playbacks.filterValues { !it.isActive && it.shouldActivate() }.values
+    val toInActive = playbacks.filterValues { it.isActive && !it.shouldActivate() }.values
 
     toActive.forEach(Playback::performActivate)
     toInActive.forEach(Playback::performDeactivate)
@@ -261,9 +261,11 @@ class Manager(
   @MainThread
   internal fun onContainerUpdated(container: Any) {
     checkMainThread()
-    val playback = playbacks[container]
-    check(playback != null) {
-      "Container $container is managed, but no corresponding playback are found."
+    debugOnly {
+      val playback = playbacks[container]
+      check(playback != null) {
+        "Container $container is managed, but no corresponding playback are found."
+      }
     }
     refresh()
   }
@@ -328,10 +330,10 @@ class Manager(
     }
   }
 
-  override fun getRendererProvider(playable: Playable): RendererProvider {
-    return rendererProviders.firstOrNull { provider ->
-      provider.accepts(playable)
-    } ?: throw IllegalArgumentException("No RendererProvider found for $playable.")
+  override fun getRendererProvider(playback: Playback): RendererProvider {
+    return rendererProviders
+      .firstOrNull { provider -> provider.accepts(playback) }
+      ?: throw IllegalArgumentException("No RendererProvider found for $playback.")
   }
   //endregion
 

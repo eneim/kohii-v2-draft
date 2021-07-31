@@ -8,90 +8,23 @@
     tools:context=".MainActivity"
     >
 
-  <HorizontalScrollView
+  <androidx.fragment.app.FragmentContainerView
       android:id="@+id/videos"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintBottom_toTopOf="@id/buttons_barrier"
+      android:name="kohii.v2.demo.SimpleContentFragment"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:clipToPadding="false"
-      android:visibility="gone"
-      >
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        >
-
-      <com.google.android.material.card.MaterialCardView
-          android:layout_width="180dp"
-          android:layout_height="180dp"
-          app:cardBackgroundColor="?attr/colorControlNormal"
-          app:cardElevation="2dp"
-          android:layout_margin="4dp"
-          />
-
-      <com.google.android.material.card.MaterialCardView
-          android:layout_width="180dp"
-          android:layout_height="180dp"
-          app:cardBackgroundColor="?attr/colorControlNormal"
-          app:cardElevation="2dp"
-          android:layout_margin="4dp"
-          />
-
-      <com.google.android.material.card.MaterialCardView
-          android:layout_width="180dp"
-          android:layout_height="180dp"
-          app:cardBackgroundColor="?attr/colorControlNormal"
-          app:cardElevation="2dp"
-          android:layout_margin="4dp"
-          />
-
-      <com.google.android.material.card.MaterialCardView
-          android:layout_width="180dp"
-          android:layout_height="180dp"
-          app:cardBackgroundColor="?attr/colorControlNormal"
-          app:cardElevation="2dp"
-          android:layout_margin="4dp"
-          />
-
-      <com.google.android.material.card.MaterialCardView
-          android:id="@+id/container"
-          app:cardElevation="2dp"
-          app:cardBackgroundColor="?attr/colorPrimary"
-          android:layout_margin="4dp"
-          android:layout_width="320dp"
-          android:layout_height="180dp"
-          />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
-  </HorizontalScrollView>
-
-  <com.google.android.material.card.MaterialCardView
-      android:id="@+id/container_top"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/videos"
-      app:layout_constraintDimensionRatio="16:9"
-      app:cardElevation="2dp"
-      app:cardForegroundColor="?attr/colorControlHighlight"
-      android:layout_margin="4dp"
-      android:layout_width="0dp"
       android:layout_height="0dp"
+      android:clipToPadding="false"
+      android:layout_marginBottom="8dp"
       />
 
-  <com.google.android.material.card.MaterialCardView
-      android:id="@+id/container_bottom"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/container_top"
-      app:layout_constraintDimensionRatio="16:9"
-      app:cardElevation="2dp"
-      app:cardForegroundColor="?attr/colorControlHighlight"
-      android:layout_margin="4dp"
+  <androidx.constraintlayout.widget.Barrier
+      android:id="@+id/buttons_barrier"
+      app:barrierDirection="top"
+      app:constraint_referenced_ids="add_left_playback,add_right_playback,remove_top_container"
       android:layout_width="0dp"
       android:layout_height="0dp"
       />
