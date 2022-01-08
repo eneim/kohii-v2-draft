@@ -1,3 +1,19 @@
+<!--
+  ~ Copyright (c) 2021. Nam Nguyen, nam@ene.im
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~        http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
 <resources>
   <string name="app_name">Kohii v2 draft</string>
 
@@ -7,5 +23,7 @@
 Pulvinar etiam non quam lacus suspendisse faucibus interdum posuere lorem. Feugiat in fermentum posuere urna. Praesent elementum facilisis leo vel. Elit scelerisque mauris pellentesque pulvinar pellentesque habitant morbi. Ipsum dolor sit amet consectetur adipiscing elit. Scelerisque fermentum dui faucibus in ornare quam viverra. Dui faucibus in ornare quam viverra orci sagittis eu. Vel orci porta non pulvinar. Cras tincidunt lobortis feugiat vivamus at augue eget. Mattis nunc sed blandit libero volutpat sed cras ornare. Condimentum id venenatis a condimentum vitae sapien pellentesque. Purus faucibus ornare suspendisse sed nisi lacus sed viverra. Mauris sit amet massa vitae tortor condimentum lacinia. Molestie a iaculis at erat pellentesque adipiscing.
 
 Eget mi proin sed libero enim sed faucibus turpis. Id volutpat lacus laoreet non curabitur gravida arcu ac tortor. Viverra justo nec ultrices dui. Tincidunt augue interdum velit euismod in pellentesque massa. Cursus sit amet dictum sit amet justo donec enim. Gravida in fermentum et sollicitudin ac orci phasellus egestas tellus. Tristique senectus et netus et malesuada fames ac. Et molestie ac feugiat sed lectus vestibulum mattis ullamcorper. Mauris ultrices eros in cursus turpis massa. Orci eu lobortis elementum nibh. Amet volutpat consequat mauris nunc congue nisi vitae. Velit laoreet id donec ultrices tincidunt arcu non.
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Tortor posuere ac ut consequat semper. Lectus urna duis convallis convallis. Sapien et ligula ullamcorper malesuada proin libero nunc consequat interdum. Tincidunt id aliquet risus feugiat in ante metus. Montes nascetur ridiculus mus mauris. Porttitor eget dolor morbi non arcu risus quis varius. Pharetra et ultrices neque ornare aenean euismod. Quam adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus. Sed vulputate mi sit amet mauris commodo quis. Massa tincidunt nunc pulvinar sapien et ligula. Netus et malesuada fames ac. Vivamus at augue eget arcu dictum varius duis. Blandit libero volutpat sed cras ornare arcu dui vivamus. Dolor sed viverra ipsum nunc. Dictum non consectetur a erat nam at lectus urna duis. Lacus laoreet non curabitur gravida arcu ac tortor dignissim. Blandit volutpat maecenas volutpat blandit. Varius quam quisque id diam vel quam elementum. Fames ac turpis egestas integer eget.
   </string>
 </resources>
