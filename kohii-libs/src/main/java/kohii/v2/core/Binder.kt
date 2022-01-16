@@ -86,6 +86,7 @@ class Binder(
     val existingPlayable: Playable? = home.playables.entries
       .firstOrNull { (_, key) -> key !is Empty && key.tag == request.tag }
       ?.key
+    // The state that can be used to transfer to the new Playable for the same tag.
     val playableState = existingPlayable?.currentState() ?: Initialized
 
     if (existingPlayable != null) {
@@ -95,7 +96,7 @@ class Binder(
       }
 
       if (existingPlayable.rendererType === engine.rendererType) {
-        return lazyOf(Payload(existingPlayable, playableState))
+        return lazyOf(Payload(existingPlayable, null)) // Playable is reused.
       } else {
         // Same request is executed by a different Engine --> unbind the Playback.
         // `existingPlayable` will also be released.
@@ -138,6 +139,6 @@ class Binder(
 
   internal class Payload(
     val playable: Playable,
-    val state: PlayableState,
+    val state: PlayableState?,
   )
 }

@@ -130,7 +130,7 @@ internal class BindRequest(
 
   private fun Playback.bindPlayable(
     playable: Playable,
-    state: PlayableState
+    state: PlayableState?
   ) {
     playable.playback = this
     playable.onBind(playback = this, state = state)

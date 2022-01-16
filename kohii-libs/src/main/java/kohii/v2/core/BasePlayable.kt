@@ -47,10 +47,10 @@ abstract class BasePlayable<RENDERER : Any>(
 
   override fun onBind(
     playback: Playback,
-    state: PlayableState
+    state: PlayableState?
   ) {
     super.onBind(playback, state)
-    bridge.playableState = state
+    if (state != null) bridge.playableState = state
   }
 
   override fun onPrepare(preload: Boolean) {

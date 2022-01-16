@@ -49,20 +49,25 @@ internal class PlaybackEventListenerDelegate(val playable: Playable) : PlaybackE
 
   override fun onDeactivated(playback: Playback) {
     "CallbackDelegate[${hexCode()}]_DEACTIVATED [PK=$playback]".logInfo()
-    // TODO(eneim): there are 4 cases we need to consider:
-    //  - 1: The bucket detaches the container, which causes the Playback to be detached, but the
+    // TODO(eneim): this method is called when
+    //  - The Playback is scroll off-screen.
+    //  - The Playback is removed, which is caused by one of the following cases:
+    //  - 1. The bucket detaches the container -> the Playback is deactivated then detached, but the
     //  lifecycle of the bucket/manager is unchanged.
-    //  - 2: The bucket is detached, which causes the Playback to be detached, though the lifecycle
+    //  - 2. The bucket is detached -> the Playback is deactivated then detached, though the lifecycle
     //  of the manager is unchanged.
-    //  - 3: The manager is destroyed for recreation, which causes the Playback to be detached.
-    //  - 4: The manager is destroyed without recreation, which causes the Playback to be detached.
-    //  In case 3, we do not want to touch the Playable. In case 1 and 2, we need to save the
+    //  - 3. The manager is destroyed (with recreation) -> the Playback is deactivated then detached.
+    //  - 4. The manager is destroyed (without recreation) -> the Playback is deactivated then
+    //  detached.
+    //  - 5. The current Playable is rebound to another Playback, so this method is called on the
+    //  current one when it is removed.
+    //  In case 3 and 5, we do not want to touch the Playable. In case 1 and 2, we need to save the
     //  Playable state and restore it when the container is attached again. In case 4, we need to
     //  destroy the Playable and release its resources. We may need to think if there is a need to
     //  restore the Playable state after a client re-launch, in which case we will save the Playable
     //  state in case 4 before destroying it. Another scenario we need to save the state is when
     //  the Manager is for a Fragment in a ViewPager.
-    if (!playback.manager.isChangingConfigurations) {
+    if (!playback.manager.isChangingConfigurations && playable === playback.activePlayable) {
       playable.manager.trySavePlayableState(playable)
       // TODO: Allow the client to optionally release the playable on deactivated.
       playable.onRelease()

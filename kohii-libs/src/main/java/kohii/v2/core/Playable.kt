@@ -91,12 +91,13 @@ abstract class Playable(
    * exists), and right before the new [Playback] is added.
    *
    * @param playback The [Playback] that this [Playable] is bound to.
-   * @param state A [PlayableState] that can be used to initialize this [Playable].
+   * @param state A [PlayableState] that can be used to initialize this [Playable]. This value is
+   * `null` if the same [Playable] is reused.
    */
   @CallSuper
   open fun onBind(
     playback: Playback,
-    state: PlayableState
+    state: PlayableState?
   ) {
     "Playable[${hexCode()}]_BIND, state=$state".logInfo()
   }

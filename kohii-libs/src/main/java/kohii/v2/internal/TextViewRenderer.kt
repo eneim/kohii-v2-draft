@@ -106,7 +106,7 @@ class TextViewPlayable(
 
   override fun onBind(
     playback: Playback,
-    state: PlayableState
+    state: PlayableState?
   ) {
     super.onBind(playback, state)
     if (state is Progress) {
