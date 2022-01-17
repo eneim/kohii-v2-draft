@@ -51,8 +51,8 @@ abstract class Playable(
     internal set(value) {
       val prev = field
       if (prev !== value) {
-        prev.removePlayable(this)
-        value.addPlayable(this)
+        val state = prev.removePlayable(this)
+        value.addPlayable(playable = this, state = state)
       }
       field = value
       if (prev !== value) {
@@ -83,24 +83,6 @@ abstract class Playable(
   }
 
   override fun toString(): String = "PB[${hexCode()}, ${rendererType.simpleName}, t=$tag, d=$data]"
-
-  /**
-   * Called when this [Playable] is bound to a new [Playback].
-   *
-   * This method is called right after the old [Playback] bound to this [Playable] is removed (if it
-   * exists), and right before the new [Playback] is added.
-   *
-   * @param playback The [Playback] that this [Playable] is bound to.
-   * @param state A [PlayableState] that can be used to initialize this [Playable]. This value is
-   * `null` if the same [Playable] is reused.
-   */
-  @CallSuper
-  open fun onBind(
-    playback: Playback,
-    state: PlayableState?
-  ) {
-    "Playable[${hexCode()}]_BIND, state=$state".logInfo()
-  }
 
   /**
    * Returns the [Bundle] that contains the state of this [Playable]. This value will be used to

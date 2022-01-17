@@ -26,16 +26,16 @@ import androidx.lifecycle.Lifecycle.Event
 import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
-import kohii.v2.internal.debugOnly
-import kohii.v2.internal.logDebug
-import kohii.v2.internal.logError
-import kohii.v2.internal.logInfo
-import kohii.v2.internal.partitionToMutableSets
 import kohii.v2.internal.BindRequest
 import kohii.v2.internal.DynamicViewPlaybackCreator
 import kohii.v2.internal.StaticViewPlaybackCreator
 import kohii.v2.internal.checkMainThread
+import kohii.v2.internal.debugOnly
 import kohii.v2.internal.hexCode
+import kohii.v2.internal.logDebug
+import kohii.v2.internal.logError
+import kohii.v2.internal.logInfo
+import kohii.v2.internal.partitionToMutableSets
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -163,6 +163,9 @@ class Manager(
   }
 
   /**
+   * If this method is called during a binding in which a [Playable] is switched from a [Playback] to
+   * another, it will be called before the [Playable] is bound to the new [Playback].
+   *
    * @param clearPlayable If `true`, also clear the current [Playable.playback] value. This flag is
    * `false` only when there is an upcoming binding of the [Playable] from [playback] to another
    * [Playback].
@@ -176,6 +179,7 @@ class Manager(
   ) {
     "Manager[${hexCode()}]_REMOVE_Playback_Begin [PK=$playback]".logDebug()
     checkMainThread()
+    playback.isRemoving = true
     val container = playback.container
     val removedPlayback = playbacks.remove(container)
     debugOnly {
@@ -190,7 +194,9 @@ class Manager(
     playback.bucket.removeContainer(container)
     // Playback should not let the bucket touch its container at this point.
     playback.performRemove()
-    if (clearPlayable) playback.activePlayable?.playback = null
+    if (clearPlayable) {
+      playback.playable.playback = null
+    }
     refresh()
     "Manager[${hexCode()}]_REMOVE_Playback_End [PK=$playback]".logDebug()
   }
@@ -256,8 +262,12 @@ class Manager(
   private fun refreshPlaybackStates(): Pair<MutableSet<Playback>, MutableSet<Playback>> {
     return playbacks.values
       .onEach { playback ->
-        if (!playback.isActive && playback.shouldActivate()) playback.performActivate()
-        if (playback.isActive && !playback.shouldActivate()) playback.performDeactivate()
+        if (!playback.isActive && playback.shouldActivate()) {
+          if (!playback.isAttached) playback.performAttach()
+          playback.performActivate()
+        } else if (playback.isActive && !playback.shouldActivate()) {
+          playback.performDeactivate()
+        }
       }
       .filter(predicate = Playback::isAttached)
       .partitionToMutableSets(predicate = Playback::isActive)
@@ -355,6 +365,8 @@ class Manager(
       bucket.onRemove()
       true
     }
+
+    home.pendingRequests.values.removeAll { handle -> handle.lifecycle === lifecycle }
     group.removeManager(this)
   }
 

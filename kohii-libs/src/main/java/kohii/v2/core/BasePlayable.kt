@@ -17,10 +17,9 @@
 package kohii.v2.core
 
 import android.os.Bundle
-import android.os.Parcelable
-import androidx.core.os.bundleOf
 import com.google.android.exoplayer2.Player
 import kohii.v2.core.Playable.Command.PAUSED_BY_USER
+import kohii.v2.core.PlayableState.Companion.toPlayableState
 
 abstract class BasePlayable<RENDERER : Any>(
   home: Home,
@@ -37,21 +36,13 @@ abstract class BasePlayable<RENDERER : Any>(
   firstManager = firstManager
 ), Player.Listener {
 
-  override val isStarted: Boolean get() = bridge.isStarted
+  override val isStarted: Boolean get() = bridge.isStarted && command.get() != PAUSED_BY_USER
 
   override val isPlaying: Boolean get() = bridge.isPlaying
 
   override val renderer: Any? get() = bridge.renderer
 
   override fun currentState(): PlayableState = bridge.playableState
-
-  override fun onBind(
-    playback: Playback,
-    state: PlayableState?
-  ) {
-    super.onBind(playback, state)
-    if (state != null) bridge.playableState = state
-  }
 
   override fun onPrepare(preload: Boolean) {
     super.onPrepare(preload)
@@ -87,8 +78,9 @@ abstract class BasePlayable<RENDERER : Any>(
 
   override fun onRendererDetached(renderer: Any?) {
     super.onRendererDetached(renderer)
-    check(bridge.renderer === renderer)
-    bridge.renderer = null
+    if (bridge.renderer === renderer) {
+      bridge.renderer = null
+    }
   }
 
   override fun onPlaybackChanged(
@@ -108,14 +100,10 @@ abstract class BasePlayable<RENDERER : Any>(
     }
   }
 
-  override fun onSaveState(): Bundle = when (val playableState = currentState()) {
-    is Parcelable -> bundleOf(PlayableState.KEY_PLAYABLE_STATE to playableState)
-    else -> Bundle.EMPTY
-  }
+  override fun onSaveState(): Bundle = currentState().toBundle()
 
   override fun onRestoreState(state: Bundle) {
-    when (val savedState: Parcelable? = state.getParcelable(PlayableState.KEY_PLAYABLE_STATE)) {
-      is PlayableState -> bridge.playableState = savedState
-    }
+    val savedState: PlayableState? = state.toPlayableState()
+    if (savedState != null) bridge.playableState = savedState
   }
 }

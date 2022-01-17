@@ -93,6 +93,9 @@ abstract class Playback(
       }
     }
 
+  // This field is set to true once when this Playback is being removed.
+  internal var isRemoving: Boolean = false
+
   /**
    * A [Controller] that can be used to manually start or pause a [Playable].
    */
@@ -376,6 +379,7 @@ abstract class Playback(
     return config.binder.bind(container, config)
   }
 
+  @ExperimentalKohiiApi
   fun unbind(): Unit = manager.removePlayback(this)
 
   /**
@@ -462,7 +466,8 @@ abstract class Playback(
 
   companion object {
     @Throws(IllegalStateException::class)
-    private fun Playback.checkState(expected: State): Unit =
-      check(state == expected) { "Expected Playback state: $expected, Actual state: $state" }
+    private fun Playback.checkState(expected: State): Unit = check(state == expected) {
+      "Expected Playback($this) state: $expected, Actual state: $state"
+    }
   }
 }

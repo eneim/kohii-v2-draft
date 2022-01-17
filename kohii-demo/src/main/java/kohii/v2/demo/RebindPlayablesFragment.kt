@@ -19,17 +19,15 @@ package kohii.v2.demo
 import android.os.Bundle
 import android.view.View
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.google.android.exoplayer2.ui.StyledPlayerControlView.OnFullScreenModeChangedListener
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.Engine
 import kohii.v2.core.Manager
 import kohii.v2.core.Playback
-import kohii.v2.core.Request
 import kohii.v2.core.playbackManager
-import kohii.v2.demo.DummyBottomSheetDialog.Companion.ARGS_REQUEST
 import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.databinding.FragmentSwitchPlayablesBinding
 import kohii.v2.exoplayer.StyledPlayerViewPlayableCreator
@@ -41,13 +39,13 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlin.LazyThreadSafetyMode.NONE
 
 @ExperimentalKohiiApi
-class SwitchPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
-
-  private var playback: Playback? = null
+class RebindPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
 
   private val seed: String by lazy(NONE) { requireArguments().getString(KEY_SEED).orEmpty() }
   private val commonTag: String by lazy(NONE) { "$seed::${VideoUrls.LocalVP9}::Switch" }
   private val commonData: String = VideoUrls.LocalVP9
+
+  private var playback: Playback? = null
 
   @OptIn(FlowPreview::class, kotlinx.coroutines.ExperimentalCoroutinesApi::class)
   override fun onViewCreated(
@@ -57,6 +55,8 @@ class SwitchPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
     super.onViewCreated(view, savedInstanceState)
     val manager: Manager = playbackManager()
     val binding: FragmentSwitchPlayablesBinding = FragmentSwitchPlayablesBinding.bind(view)
+    binding.details.isVisible = false
+
     manager.bucket(binding.videos)
 
     val engine = Engine.get<StyledPlayerView>(
@@ -66,13 +66,6 @@ class SwitchPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
     )
 
     // Example: observing Playback flows of a specific tag.
-    manager.getPlaybackFlow(tag = commonTag)
-      .onEach { playback: Playback? ->
-        this.playback = playback
-        binding.details.text = "Playback: $playback"
-      }
-      .launchIn(viewLifecycleOwner.lifecycleScope)
-
     binding.removeAll.setOnClickListener {
       viewLifecycleOwner.lifecycleScope.launchWhenCreated {
         playback?.unbind()
@@ -88,40 +81,30 @@ class SwitchPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
       }
     }
 
-    val binder = engine.setUp(commonData, tag = commonTag)
+    var binders = listOf(
+      engine.setUp(VideoUrls.LocalVP9, tag = VideoUrls.LocalVP9),
+      engine.setUp(VideoUrls.HlsSample, tag = VideoUrls.HlsSample)
+    )
+
     val containers = listOf(binding.videoTop, binding.videoBottom)
 
-    val fullScreenListener = OnFullScreenModeChangedListener { isFullScreen ->
-      if (isFullScreen) {
-        DummyBottomSheetDialog.newInstance(binder.request, commonTag)
-          .show(childFragmentManager, commonTag)
-      }
+    val currentIndex = AtomicInteger(0)
+    containers.forEachIndexed { index, playerView ->
+      binders[index].bind(playerView)
     }
-
-    containers.forEach { playerView ->
-      playerView.setControllerOnFullScreenModeChangedListener(fullScreenListener)
-    }
-
-    val index = AtomicInteger(0)
 
     binding.switchPlayables.setOnClickListener {
-      binder.bind(containers[index.getAndIncrement() % containers.size])
-    }
-
-    binder.bind(containers[index.getAndIncrement() % containers.size])
-
-    childFragmentManager
-      .setFragmentResultListener(commonTag, viewLifecycleOwner) { resultKey, bundle ->
-        val request: Request = requireNotNull(bundle.getParcelable(ARGS_REQUEST))
-        engine.setUp(request).bind(containers[index.getAndIncrement() % containers.size])
-        childFragmentManager.clearFragmentResult(resultKey)
+      binders = binders.asReversed()
+      containers.forEachIndexed { index, playerView ->
+        binders[index].bind(playerView)
       }
+    }
   }
 
   companion object {
     private const val KEY_SEED = "KEY_SEED"
 
-    fun getInstance(position: Int): SwitchPlayablesFragment = SwitchPlayablesFragment().apply {
+    fun getInstance(position: Int): RebindPlayablesFragment = RebindPlayablesFragment().apply {
       arguments = bundleOf(KEY_SEED to "seed::$position")
     }
   }

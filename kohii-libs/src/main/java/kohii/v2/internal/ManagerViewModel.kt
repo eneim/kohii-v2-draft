@@ -38,19 +38,31 @@ internal class ManagerViewModel(
 
   override fun toString(): String = "PM@${hexCode()}"
 
-  override fun addPlayable(playable: Playable) {
+  override fun addPlayable(
+    playable: Playable,
+    state: Bundle?,
+  ) {
     "PlayableManager[${hexCode()}]_ADD_Playable [PB=$playable]".logInfo()
     if (playables.add(playable)) {
       "PlayableManager[${hexCode()}]_ADDED_Playable [PB=$playable]".logDebug()
+      if (state != null) {
+        stateHandle[playable.stateKey] = state
+      }
     }
   }
 
-  override fun removePlayable(playable: Playable) {
+  override fun removePlayable(playable: Playable): Bundle? {
     "PlayableManager[${hexCode()}]_REMOVE_Playable [PB=$playable]".logInfo()
-    if (playable.manager === this && playables.remove(playable)) {
+    return if (playable.manager === this && playables.remove(playable)) {
       "PlayableManager[${hexCode()}]_REMOVED_Playable [PB=$playable]".logDebug()
       stateHandle.remove<Bundle>(playable.stateKey)
+    } else {
+      null
     }
+  }
+
+  override fun fetchPlayableState(playable: Playable): Bundle? {
+    return stateHandle.get(playable.stateKey)
   }
 
   override fun trySavePlayableState(playable: Playable) {
@@ -63,7 +75,7 @@ internal class ManagerViewModel(
 
   override fun tryRestorePlayableState(playable: Playable) {
     "PlayableManager[${hexCode()}]_RESTORE_Playable [PB=$playable] [PK=${playable.playback}]".logInfo()
-    val savedState = stateHandle.remove<Bundle>(playable.stateKey)
+    val savedState: Bundle? = stateHandle.remove<Bundle>(playable.stateKey)
     savedState?.let(playable::onRestoreState)
     "PlayableManager[${hexCode()}]_RESTORED_Playable [PB=$playable] [state=$savedState]".logDebug()
   }

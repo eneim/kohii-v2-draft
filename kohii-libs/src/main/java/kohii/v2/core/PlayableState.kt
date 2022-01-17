@@ -16,7 +16,9 @@
 
 package kohii.v2.core
 
+import android.os.Bundle
 import android.os.Parcelable
+import androidx.core.os.bundleOf
 import com.google.android.exoplayer2.Player
 import kotlinx.parcelize.Parcelize
 
@@ -24,6 +26,8 @@ import kotlinx.parcelize.Parcelize
  * Represents an immediate state of a [Playable].
  */
 sealed interface PlayableState {
+
+  fun toBundle(): Bundle = bundleOf(KEY_PLAYABLE_STATE to toString())
 
   object Initialized : PlayableState {
     override fun toString(): String = "Initialized"
@@ -85,9 +89,24 @@ sealed interface PlayableState {
         "isStarted=$isStarted, " +
         "isPlaying=$isPlaying)"
     }
+
+    override fun toBundle(): Bundle = bundleOf(KEY_PLAYABLE_STATE to this as Parcelable)
   }
 
   companion object {
-    const val KEY_PLAYABLE_STATE = "KEY_PLAYABLE_STATE"
+    private const val KEY_PLAYABLE_STATE = "KEY_PLAYABLE_STATE"
+
+    fun Bundle.toPlayableState(): PlayableState? = with(get(KEY_PLAYABLE_STATE)) {
+      when (this) {
+        is Progress -> return@with this
+        is String -> return@with when (this) {
+          Initialized.toString() -> Initialized
+          Idle.toString() -> Idle
+          Ended.toString() -> Ended
+          else -> null
+        }
+        else -> return@with null
+      }
+    }
   }
 }

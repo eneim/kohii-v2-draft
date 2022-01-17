@@ -23,6 +23,7 @@ import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle.State.DESTROYED
+import androidx.lifecycle.Lifecycle.State.INITIALIZED
 import androidx.lifecycle.LifecycleOwner
 import kohii.v2.common.Capsule
 import kohii.v2.core.PlayableKey.Empty
@@ -49,10 +50,10 @@ class Home private constructor(context: Context) {
   val application = context.applicationContext as Application
 
   internal val playables = mutableMapOf<Playable, PlayableKey>()
-  internal val pendingRequests = mutableMapOf<Any /* Container & PlayableKey */, RequestHandle>()
+  internal val pendingRequests = mutableMapOf<Any /* Container, PlayableKey */, RequestHandleImpl>()
   internal val scope = CoroutineScope(
     context = SupervisorJob() +
-      Dispatchers.Main +
+      Dispatchers.Main.immediate +
       CoroutineExceptionHandler { _, throwable ->
         // TODO: Proper error handling. Allow client to provide custom handler.
         debugOnly(throwable::printStackTrace)
@@ -150,11 +151,10 @@ class Home private constructor(context: Context) {
     container: Any,
     request: BindRequest
   ): RequestHandle {
-    "Home[${hexCode()}]_ENQUEUE_Request [R=$request] [C=${container.asString()}]".logInfo()
     // Cancel any existing Request for the same container and playable (by its key).
     pendingRequests.remove(container)?.cancel()
     pendingRequests.remove(request.playableKey)?.cancel()
-    val requestHandle: RequestHandle = RequestHandleImpl(
+    val requestHandle = RequestHandleImpl(
       home = this,
       lifecycle = request.lifecycle,
       deferred = scope.async {
@@ -162,10 +162,14 @@ class Home private constructor(context: Context) {
         request.onBind()
       }
     )
-    pendingRequests[container] = requestHandle
-    if (request.playableKey != Empty) {
-      pendingRequests[request.playableKey] = requestHandle
+
+    if (!requestHandle.isCompleted && request.lifecycle.currentState.isAtLeast(INITIALIZED)) {
+      pendingRequests[container] = requestHandle
+      if (request.playableKey != Empty) {
+        pendingRequests[request.playableKey] = requestHandle
+      }
     }
+    "Home[${hexCode()}]_ENQUEUE_Request [handle=${requestHandle.hexCode()}] [R=$request] [C=${container.asString()}]".logInfo()
     return requestHandle
   }
 

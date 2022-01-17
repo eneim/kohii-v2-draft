@@ -31,14 +31,19 @@ class ViewPager2Fragment : Fragment(R.layout.fragment_viewpager_2) {
     fragmentManager: FragmentManager,
     lifecycle: Lifecycle
   ) : FragmentStateAdapter(fragmentManager, lifecycle) {
-    override fun getItemCount(): Int = 1
+    override fun getItemCount(): Int = 20
 
     override fun createFragment(position: Int): Fragment {
+      /* return when {
+        position % 4 == 0 -> SwitchPlayablesFragment.getInstance(position = position)
+        position % 4 == 2 -> VideosInRecyclerViewFragment.getInstance(position = position)
+        else -> TextInScrollViewFragment()
+      } */
+
       return if (position == 0) {
-        // VideosInScrollViewFragment()
-        // VideoInRecyclerViewFragment()
-        // VideoInScrollViewFragment()
-        SwitchPlayablesFragment()
+        // RebindPlayablesFragment.getInstance(position)
+        // SwitchPlayablesFragment.getInstance(position = position)
+        NoVideoInLandscapeScrollViewFragment()
       } else {
         TextInScrollViewFragment()
       }

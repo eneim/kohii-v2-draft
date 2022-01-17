@@ -17,6 +17,7 @@
 package kohii.v2.core
 
 import android.view.View
+import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.PlayableKey.Data
 import kohii.v2.core.PlayableKey.Empty
 import kohii.v2.core.PlayableState.Initialized
@@ -82,12 +83,13 @@ class Binder(
     return home.enqueueRequest(container, bindRequest)
   }
 
-  private fun preparePayload(): Lazy<Payload> {
+  @OptIn(ExperimentalKohiiApi::class)
+  private fun preparePayload(): Lazy<Playable> {
     val existingPlayable: Playable? = home.playables.entries
       .firstOrNull { (_, key) -> key !is Empty && key.tag == request.tag }
       ?.key
     // The state that can be used to transfer to the new Playable for the same tag.
-    val playableState = existingPlayable?.currentState() ?: Initialized
+    val playableState: PlayableState? = existingPlayable?.currentState()
 
     if (existingPlayable != null) {
       require(existingPlayable.data == request.data) {
@@ -96,7 +98,7 @@ class Binder(
       }
 
       if (existingPlayable.rendererType === engine.rendererType) {
-        return lazyOf(Payload(existingPlayable, null)) // Playable is reused.
+        return lazyOf(existingPlayable) // Playable is reused.
       } else {
         // Same request is executed by a different Engine --> unbind the Playback.
         // `existingPlayable` will also be released.
@@ -106,16 +108,20 @@ class Binder(
 
     return lazy(NONE) {
       val playableManager = engine.manager.playableManager
-      Payload(
-        playable = engine.playableCreator
-          .createPlayable(
-            playableManager = playableManager,
-            data = request.data,
-            tag = request.tag ?: Home.NO_TAG,
-          )
-          .also(playableManager::addPlayable),
-        state = playableState,
+      val playable = engine.playableCreator.createPlayable(
+        playableManager = playableManager,
+        data = request.data,
+        tag = request.tag ?: Home.NO_TAG,
       )
+
+      playableManager.addPlayable(
+        playable = playable,
+        state = playableState?.toBundle()
+          ?: playableManager.fetchPlayableState(playable)
+          ?: Initialized.toBundle()
+      )
+
+      return@lazy playable
     }
   }
 
@@ -136,9 +142,4 @@ class Binder(
     result = 31 * result + engine.hashCode()
     return result
   }
-
-  internal class Payload(
-    val playable: Playable,
-    val state: PlayableState?,
-  )
 }

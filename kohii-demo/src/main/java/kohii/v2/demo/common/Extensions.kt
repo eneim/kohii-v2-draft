@@ -14,25 +14,22 @@
  * limitations under the License.
  */
 
-package kohii.v2.exoplayer
+package kohii.v2.demo.common
 
-import android.app.Activity
 import android.view.View
-import androidx.annotation.MainThread
-import kohii.v2.R
-import kohii.v2.core.RendererProvider
-import kohii.v2.internal.getTagOrPut
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 
-/**
- * Returns a [StyledPlayerViewProvider] that is managed by the Activity.
- */
-@MainThread
-fun Activity.getStyledPlayerViewProvider(): RendererProvider {
-  val rootView: View = checkNotNull(window.peekDecorView()) {
-    "Activity's decorView must be available. Please call this method after Activity.onCreate()."
-  }
+inline fun BottomSheetDialog.doOnStateChanged(
+  crossinline onStateChanged: (newState: Int) -> Unit
+) = behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+  override fun onStateChanged(
+    bottomSheet: View,
+    newState: Int
+  ) = onStateChanged(newState)
 
-  return rootView.getTagOrPut(R.id.tag_styled_player_view_provider) {
-    StyledPlayerViewProvider()
-  }
-}
+  override fun onSlide(
+    bottomSheet: View,
+    slideOffset: Float
+  ) = Unit
+})

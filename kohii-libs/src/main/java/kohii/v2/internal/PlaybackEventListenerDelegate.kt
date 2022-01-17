@@ -49,27 +49,19 @@ internal class PlaybackEventListenerDelegate(val playable: Playable) : PlaybackE
 
   override fun onDeactivated(playback: Playback) {
     "CallbackDelegate[${hexCode()}]_DEACTIVATED [PK=$playback]".logInfo()
-    // TODO(eneim): this method is called when
-    //  - The Playback is scroll off-screen.
-    //  - The Playback is removed, which is caused by one of the following cases:
-    //  - 1. The bucket detaches the container -> the Playback is deactivated then detached, but the
-    //  lifecycle of the bucket/manager is unchanged.
-    //  - 2. The bucket is detached -> the Playback is deactivated then detached, though the lifecycle
-    //  of the manager is unchanged.
-    //  - 3. The manager is destroyed (with recreation) -> the Playback is deactivated then detached.
-    //  - 4. The manager is destroyed (without recreation) -> the Playback is deactivated then
-    //  detached.
-    //  - 5. The current Playable is rebound to another Playback, so this method is called on the
-    //  current one when it is removed.
-    //  In case 3 and 5, we do not want to touch the Playable. In case 1 and 2, we need to save the
-    //  Playable state and restore it when the container is attached again. In case 4, we need to
-    //  destroy the Playable and release its resources. We may need to think if there is a need to
-    //  restore the Playable state after a client re-launch, in which case we will save the Playable
-    //  state in case 4 before destroying it. Another scenario we need to save the state is when
-    //  the Manager is for a Fragment in a ViewPager.
-    if (!playback.manager.isChangingConfigurations && playable === playback.activePlayable) {
+    if (
+    // The provided Playback must be the same one bound to the current Playable.
+      playback === playable.playback &&
+      // If the Playback is being removed, either naturally (1), or to be replaced by another one
+      // that uses the same Playable (2), we don't save the Playable state:
+      // In (1), there is no point to save the state.
+      // In (2), we want the Playable to keep playing as-if it is still bound to a Playback.
+      !playback.isRemoving &&
+      // If this is a destruction for recreation, we want to keep the Playable alive and unchanged.
+      // If after the recreation, the Playable is not bound to a new Playback, it will be destroyed.
+      !playback.manager.isChangingConfigurations
+    ) {
       playable.manager.trySavePlayableState(playable)
-      // TODO: Allow the client to optionally release the playable on deactivated.
       playable.onRelease()
     }
   }

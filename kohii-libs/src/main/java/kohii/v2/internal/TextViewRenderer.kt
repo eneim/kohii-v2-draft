@@ -19,14 +19,12 @@ package kohii.v2.internal
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams
 import android.widget.FrameLayout
 import android.widget.TextView
-import androidx.core.os.bundleOf
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.STATE_BUFFERING
 import com.google.android.exoplayer2.Player.STATE_ENDED
@@ -37,6 +35,7 @@ import kohii.v2.core.Playable
 import kohii.v2.core.PlayableCreator
 import kohii.v2.core.PlayableManager
 import kohii.v2.core.PlayableState
+import kohii.v2.core.PlayableState.Companion.toPlayableState
 import kohii.v2.core.PlayableState.Initialized
 import kohii.v2.core.PlayableState.Progress
 import kohii.v2.core.Playback
@@ -79,38 +78,27 @@ class TextViewPlayable(
     "TextViewPlayable is created".logWarn()
   }
 
-  override fun onSaveState(): Bundle = bundleOf(
-    "POSITION" to timer.get(),
-    PlayableState.KEY_PLAYABLE_STATE to Progress(
-      playerState = STATE_READY,
-      totalDurationMillis = DUMMY_LENGTH_MS,
-      currentPositionMillis = timer.get(),
-      currentMediaItemIndex = 0,
-      contentDurationMillis = DUMMY_LENGTH_MS,
-      isStarted = true,
-      isPlaying = true,
-    )
+  override fun onSaveState(): Bundle = Progress(
+    playerState = STATE_READY,
+    totalDurationMillis = DUMMY_LENGTH_MS,
+    currentPositionMillis = timer.get(),
+    currentMediaItemIndex = 0,
+    contentDurationMillis = DUMMY_LENGTH_MS,
+    isStarted = true,
+    isPlaying = true,
   )
+    .toBundle()
+    .also { it.putLong("POSITION", timer.get()) }
 
   override fun onRestoreState(state: Bundle) {
     val position = state.getLong("POSITION", -1).takeIf { it >= 0 }
     if (position != null) {
       timer.set(position)
     } else {
-      val parcelable: Parcelable? = state.getParcelable(PlayableState.KEY_PLAYABLE_STATE)
-      if (parcelable is Progress) {
-        timer.set(parcelable.currentPositionMillis)
+      val playableState: PlayableState? = state.toPlayableState()
+      if (playableState is Progress) {
+        timer.set(playableState.currentPositionMillis)
       }
-    }
-  }
-
-  override fun onBind(
-    playback: Playback,
-    state: PlayableState?
-  ) {
-    super.onBind(playback, state)
-    if (state is Progress) {
-      timer.set(state.currentPositionMillis)
     }
   }
 

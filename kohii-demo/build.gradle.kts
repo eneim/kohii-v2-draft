@@ -152,8 +152,8 @@ dependencies {
   implementation("io.coil-kt:coil-compose:1.4.0")
   implementation("com.squareup.moshi:moshi:1.13.0")
 
-  debugImplementation("com.squareup.leakcanary:leakcanary-android:2.7")
-  implementation("com.squareup.leakcanary:plumber-android:2.7")
+  debugImplementation("com.squareup.leakcanary:leakcanary-android:2.8.1")
+  implementation("com.squareup.leakcanary:plumber-android:2.8.1")
 
   testImplementation("junit:junit:4.13.2")
   androidTestImplementation("androidx.test.ext:junit:1.1.3")

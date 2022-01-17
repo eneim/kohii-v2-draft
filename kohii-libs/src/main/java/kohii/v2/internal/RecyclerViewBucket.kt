@@ -49,18 +49,25 @@ internal class RecyclerViewBucket(
     }
 
   private val onScrollListener = object : RecyclerView.OnScrollListener() {
-    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+    override fun onScrolled(
+      recyclerView: RecyclerView,
+      dx: Int,
+      dy: Int,
+    ) {
       manager.refresh()
     }
   }
 
   private val recyclerListener = RecyclerView.RecyclerListener { holder ->
     "Recycle: holder=$holder".logInfo()
-    holder.itemView.getTag(R.id.container_recycler_item_view)?.let { container ->
-      "Recycle: container=$container".logDebug()
-      val playback = manager.playbacks[container]
-      if (playback != null) manager.removePlayback(playback)
-    }
+    holder.itemView.getTypedTag<MutableList<View>>(R.id.container_recycler_item_views)
+      ?.removeAll { container ->
+        "Recycle: container=$container".logDebug()
+        val playback = manager.playbacks[container]
+        if (playback != null) manager.removePlayback(playback)
+        return@removeAll true
+      }
+    holder.itemView.setTag(R.id.container_recycler_item_views, null)
   }
 
   override fun onAdd() {
@@ -78,18 +85,18 @@ internal class RecyclerViewBucket(
   override fun addContainer(container: Any) {
     super.addContainer(container)
     if (container is View) {
-      rootView.findContainingItemView(container)
-        ?.setTag(R.id.container_recycler_item_view, container)
+      val containers = rootView.findContainingItemView(container)
+        ?.getTagOrPut<MutableList<View>>(R.id.container_recycler_item_views) { mutableListOf() }
+      containers?.add(container)
     }
   }
 
   override fun removeContainer(container: Any) {
     super.removeContainer(container)
     if (container is View) {
-      val itemView = rootView.findContainingItemView(container)
-      if (itemView != null && itemView.getTag(R.id.container_recycler_item_view) === container) {
-        itemView.setTag(R.id.container_recycler_item_view, null)
-      }
+      rootView.findContainingItemView(container)
+        ?.getTypedTag<MutableList<View>>(R.id.container_recycler_item_views)
+        ?.remove(container)
     }
   }
 }

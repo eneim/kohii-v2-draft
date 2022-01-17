@@ -19,6 +19,7 @@ package kohii.v2.internal
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import androidx.annotation.MainThread
 import androidx.annotation.RestrictTo
 import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX
 import androidx.core.util.Pools.Pool
@@ -96,3 +97,14 @@ internal inline fun <T> Iterable<T>.partitionToMutableSets(
   }
   return Pair(first, second)
 }
+
+@MainThread
+internal inline fun <reified T : Any> View.getTagOrPut(
+  key: Int,
+  createNew: () -> T
+): T = getTag(key) as? T ?: synchronized(this) {
+  getTag(key) as? T ?: createNew().also { value -> setTag(key, value) }
+}
+
+@MainThread
+internal inline fun <reified T : Any> View.getTypedTag(key: Int): T? = getTag(key) as? T

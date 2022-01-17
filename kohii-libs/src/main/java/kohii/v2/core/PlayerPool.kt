@@ -100,8 +100,8 @@ abstract class PlayerPool<PLAYER : Any> @JvmOverloads constructor(
   }
 
   companion object {
-    // Max number of Player instance are cached in the Pool
-    // Magic number: Build.VERSION.SDK_INT / 6 --> API 16 ~ 18 will set pool size to 2, etc.
+    // Max number of Player instances that are cached in the Pool
+    // Magic number: Build.VERSION.SDK_INT / 6 --> API 21 ~ 23 will set pool size to 3, etc.
     val DEFAULT_POOL_SIZE =
       max(Build.VERSION.SDK_INT / 6, max(Runtime.getRuntime().availableProcessors(), 1))
 

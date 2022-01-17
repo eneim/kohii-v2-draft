@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2021. Nam Nguyen, nam@ene.im
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +15,7 @@
   -->
 
 <resources>
-  <item name="container_recycler_item_view" type="id" />
+  <item name="container_recycler_item_views" type="id" />
   <item name="tag_view_tree_coroutine_scope" type="id" />
   <item name="tag_styled_player_view_provider" type="id" />
 </resources>

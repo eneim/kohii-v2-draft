@@ -65,13 +65,9 @@ internal class StyledPlayerViewBridge(
 
   private var lastSeenTracksInfo: TracksInfo = TracksInfo.EMPTY
   private var playerPrepared = false
-  private var internalPlaybackInfo: PlaybackInfo = PlaybackInfo()
-    set(value) {
-      field = value
-      if (value.mediaItemIndex != C.INDEX_UNSET) {
-        internalPlayer?.seekTo(value.mediaItemIndex, value.currentPositionMillis)
-      }
-    }
+
+  // A temporary data for restoration only. It will be cleared after the restoration.
+  private var playbackRestoreInfo: PlaybackInfo = PlaybackInfo.EMPTY
 
   override var renderer: StyledPlayerView? = null
     set(value) {
@@ -110,9 +106,17 @@ internal class StyledPlayerViewBridge(
     set(value) {
       field = value
       if (value is PlayableState.Progress) {
-        internalPlaybackInfo = internalPlaybackInfo
-          .withMediaItemIndex(value.currentMediaItemIndex)
-          .withPositionMillis(value.currentPositionMillis)
+        val player: Player? = internalPlayer
+        if (player != null) {
+          if (value.currentMediaItemIndex != C.INDEX_UNSET) {
+            player.seekTo(value.currentMediaItemIndex, value.currentPositionMillis)
+          }
+        } else {
+          playbackRestoreInfo = PlaybackInfo(
+            mediaItemIndex = value.currentMediaItemIndex,
+            currentPositionMillis = value.currentPositionMillis
+          )
+        }
       }
     }
 
@@ -152,7 +156,7 @@ internal class StyledPlayerViewBridge(
   }
 
   override fun reset() {
-    internalPlaybackInfo = PlaybackInfo()
+    playbackRestoreInfo = PlaybackInfo.EMPTY
     internalPlayer?.let { player ->
       player.stop()
       player.clearMediaItems()
@@ -162,7 +166,7 @@ internal class StyledPlayerViewBridge(
 
   override fun release() {
     renderer?.player = null
-    internalPlaybackInfo = PlaybackInfo()
+    playbackRestoreInfo = PlaybackInfo.EMPTY
     internalPlayer?.let { player ->
       player.stop()
       player.clearMediaItems()
@@ -240,7 +244,8 @@ internal class StyledPlayerViewBridge(
       playerPrepared = false
     }
 
-    val playbackInfo = internalPlaybackInfo
+    val playbackInfo = playbackRestoreInfo
+    playbackRestoreInfo = PlaybackInfo.EMPTY
     val hasStartPosition = playbackInfo.mediaItemIndex != C.INDEX_UNSET
     if (hasStartPosition) {
       player.seekTo(playbackInfo.mediaItemIndex, playbackInfo.currentPositionMillis)

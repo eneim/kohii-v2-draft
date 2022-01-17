@@ -22,6 +22,8 @@ package kohii.v2.core
  */
 interface RequestHandle {
 
+  val isCompleted: Boolean
+
   /**
    * Cancel the on-going request. This method only takes effect if the request is not completed.
    */

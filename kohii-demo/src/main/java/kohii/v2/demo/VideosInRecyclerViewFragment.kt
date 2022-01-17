@@ -18,6 +18,7 @@ package kohii.v2.demo
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.airbnb.epoxy.SimpleEpoxyModel
 import com.google.android.exoplayer2.MediaItem
@@ -32,8 +33,11 @@ import kohii.v2.demo.databinding.FragmentVideosInRecyclerViewBinding
 import kohii.v2.demo.databinding.HolderVideoContainerBinding
 import kohii.v2.exoplayer.StyledPlayerViewPlayableCreator
 import kohii.v2.exoplayer.getStyledPlayerViewProvider
+import kotlin.LazyThreadSafetyMode.NONE
 
-class VideoInRecyclerViewFragment : Fragment(R.layout.fragment_videos_in_recycler_view) {
+class VideosInRecyclerViewFragment : Fragment(R.layout.fragment_videos_in_recycler_view) {
+
+  private val seed: String by lazy(NONE) { requireArguments().getString(KEY_SEED).orEmpty() }
 
   override fun onViewCreated(
     view: View,
@@ -51,20 +55,21 @@ class VideoInRecyclerViewFragment : Fragment(R.layout.fragment_videos_in_recycle
     )
 
     val binder = engine.setUp(
-      data = MediaItem.Builder().setUri(VideoUrls.HlsSample).build(),
+      data = MediaItem.Builder().setUri(VideoUrls.LocalVP9).build(),
       tag = VIDEO_TAG
     )
 
     binding.videos.withModels {
-      object : SimpleEpoxyModel(R.layout.holder_video_container) {
+      /* object : SimpleEpoxyModel(R.layout.holder_video_container) {
         private var requestHandle: RequestHandle? = null
+
         override fun bind(view: View) {
           super.bind(view)
-          val binding = HolderVideoContainerBinding.bind(view)
+          val holder = HolderVideoContainerBinding.bind(view)
           requestHandle?.cancel()
           requestHandle = binder
             .copy(tag = "TOP_VIDEO")
-            .bind(container = binding.videoContainer)
+            .bind(container = holder.videoContainer)
         }
 
         override fun unbind(view: View) {
@@ -73,22 +78,20 @@ class VideoInRecyclerViewFragment : Fragment(R.layout.fragment_videos_in_recycle
         }
       }
         .id(R.layout.holder_video_container)
-        .addTo(this)
+        .addTo(this) */
 
-      (0 until 20).forEach { index ->
-        /* SimpleEpoxyModel(R.layout.holder_text)
-          .id(index)
-          .addTo(this) */
-
+      (0 until 8).forEach { index ->
         object : SimpleEpoxyModel(R.layout.holder_video_container) {
+
           private var requestHandle: RequestHandle? = null
+
           override fun bind(view: View) {
             super.bind(view)
-            val binding = HolderVideoContainerBinding.bind(view)
+            val holder = HolderVideoContainerBinding.bind(view)
             requestHandle?.cancel()
             requestHandle = binder
-              .copy(tag = "VIDEO::$index")
-              .bind(container = binding.videoContainer)
+              .copy(tag = "$seed::$index::RecyclerView")
+              .bind(container = holder.videoContainer)
           }
 
           override fun unbind(view: View) {
@@ -99,6 +102,21 @@ class VideoInRecyclerViewFragment : Fragment(R.layout.fragment_videos_in_recycle
           .id(index)
           .addTo(this)
       }
+
+      (0 until 8).forEach { index ->
+        SimpleEpoxyModel(R.layout.holder_text)
+          .id(index + 100)
+          .addTo(this)
+      }
     }
+  }
+
+  companion object {
+    private const val KEY_SEED = "KEY_SEED"
+
+    fun getInstance(position: Int): VideosInRecyclerViewFragment = VideosInRecyclerViewFragment()
+      .apply {
+        arguments = bundleOf(KEY_SEED to "seed::$position")
+      }
   }
 }

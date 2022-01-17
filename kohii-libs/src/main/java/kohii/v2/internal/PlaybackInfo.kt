@@ -23,9 +23,7 @@ internal class PlaybackInfo(
   val currentPositionMillis: Long = C.POSITION_UNSET.toLong(),
 ) {
 
-  fun withMediaItemIndex(index: Int): PlaybackInfo =
-    PlaybackInfo(mediaItemIndex = index, currentPositionMillis = currentPositionMillis)
-
-  fun withPositionMillis(positionMills: Long): PlaybackInfo =
-    PlaybackInfo(mediaItemIndex = mediaItemIndex, currentPositionMillis = positionMills)
+  companion object {
+    val EMPTY = PlaybackInfo()
+  }
 }
