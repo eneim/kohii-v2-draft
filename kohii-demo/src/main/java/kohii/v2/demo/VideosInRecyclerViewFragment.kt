@@ -55,7 +55,7 @@ class VideosInRecyclerViewFragment : Fragment(R.layout.fragment_videos_in_recycl
     )
 
     val binder = engine.setUp(
-      data = MediaItem.Builder().setUri(VideoUrls.LocalVP9).build(),
+      data = MediaItem.Builder().setUri(VideoUrls.LocalHevc).build(),
       tag = VIDEO_TAG
     )
 

@@ -46,8 +46,8 @@ class SwitchPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
   private var playback: Playback? = null
 
   private val seed: String by lazy(NONE) { requireArguments().getString(KEY_SEED).orEmpty() }
-  private val commonTag: String by lazy(NONE) { "$seed::${VideoUrls.LocalVP9}::Switch" }
-  private val commonData: String = VideoUrls.LocalVP9
+  private val commonTag: String by lazy(NONE) { "$seed::${VideoUrls.LocalHevc}::Switch" }
+  private val commonData: String = VideoUrls.LocalHevc
 
   @OptIn(FlowPreview::class, kotlinx.coroutines.ExperimentalCoroutinesApi::class)
   override fun onViewCreated(

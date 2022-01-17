@@ -19,5 +19,5 @@ package kohii.v2.demo.common
 object VideoUrls {
 
   const val HlsSample = "https://content.jwplatform.com/manifests/Cl6EVHgQ.m3u8"
-  const val LocalVP9 = "file:///android_asset/media/bbb_vp9_45s.mp4"
+  const val LocalHevc = "file:///android_asset/media/bbb_hevc_mp3_45s.mp4"
 }

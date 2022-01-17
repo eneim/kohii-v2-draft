@@ -33,8 +33,6 @@ import kohii.v2.demo.databinding.FragmentSwitchPlayablesBinding
 import kohii.v2.exoplayer.StyledPlayerViewPlayableCreator
 import kohii.v2.exoplayer.getStyledPlayerViewProvider
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.LazyThreadSafetyMode.NONE
 
@@ -42,8 +40,8 @@ import kotlin.LazyThreadSafetyMode.NONE
 class RebindPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
 
   private val seed: String by lazy(NONE) { requireArguments().getString(KEY_SEED).orEmpty() }
-  private val commonTag: String by lazy(NONE) { "$seed::${VideoUrls.LocalVP9}::Switch" }
-  private val commonData: String = VideoUrls.LocalVP9
+  private val commonTag: String by lazy(NONE) { "$seed::${VideoUrls.LocalHevc}::Switch" }
+  private val commonData: String = VideoUrls.LocalHevc
 
   private var playback: Playback? = null
 
@@ -82,7 +80,7 @@ class RebindPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
     }
 
     var binders = listOf(
-      engine.setUp(VideoUrls.LocalVP9, tag = VideoUrls.LocalVP9),
+      engine.setUp(VideoUrls.LocalHevc, tag = VideoUrls.LocalHevc),
       engine.setUp(VideoUrls.HlsSample, tag = VideoUrls.HlsSample)
     )
 
