@@ -24,6 +24,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "Kohii v2 draft"
+rootProject.name = "kohii v2 draft"
 include(":kohii-demo")
 include(":kohii-libs")
