@@ -69,51 +69,9 @@ internal class BindRequest(
 
     "Home_Request[${hexCode()}]_BIND: SC=$sameContainer, SP=$samePlayable".logDebug()
 
-    val boundPlayback: Playback = //
-      if (sameContainer == null) { // Bind to a clean Container
-        if (samePlayable == null) {
-          // Both sameContainer and samePlayable are null --> completely new binding
-          val newPlayback = createNewPlayback()
-          newPlayback.bindPlayable(playable)
-          newPlayback
-        } else {
-          // samePlayable is not null -> a bound Playable to be rebound to a clean Container
-          // Action: create new Playback for the Container, establish the new binding and remove
-          // the old one of the 'samePlayable' Playback
-          samePlayable.manager.removePlayback(samePlayable, clearPlayable = false)
-          val newPlayback = createNewPlayback()
-          newPlayback.bindPlayable(playable)
-          newPlayback
-        }
-      } else { // Bind to a Container that was bound to a different Playback previously.
-        if (samePlayable == null) {
-          // Scenario: sameContainer is not null but samePlayable is null --> new Playable is bound
-          // to a bound Container.
-          // Action: create new Playback for current Container, make the new binding and remove old
-          // binding of the 'sameContainer'
-          sameContainer.manager.removePlayback(sameContainer)
-          val newPlayback = createNewPlayback()
-          newPlayback.bindPlayable(playable)
-          newPlayback
-        } else {
-          // Scenario: both sameContainer and samePlayable are not null --> a bound Playable to be
-          // rebound to a bound Container
-          if (sameContainer === samePlayable) {
-            // Those Playbacks are the same -> Nothing to do.
-            samePlayable
-          } else {
-            // Scenario: rebind a bound Playable from one Container to another Container that is
-            // being bound.
-            // Action: remove both 'sameContainer' and 'samePlayable', create new one for the
-            // Container
-            sameContainer.manager.removePlayback(sameContainer)
-            samePlayable.manager.removePlayback(samePlayable, clearPlayable = false)
-            val newPlayback = createNewPlayback()
-            newPlayback.bindPlayable(playable)
-            newPlayback
-          }
-        }
-      }
+    val boundPlayback: Playback = BindingType
+      .get(playable, samePlayable, sameContainer)
+      .performBind(createNewPlayback)
 
     manager.refresh() // Kick it.
     "Request[${hexCode()}]_BIND_End result=$boundPlayback".logDebug()
@@ -121,9 +79,4 @@ internal class BindRequest(
   }
 
   override fun toString(): String = "R@${hexCode()}"
-
-  private fun Playback.bindPlayable(playable: Playable) {
-    playable.playback = this
-    manager.addPlayback(this)
-  }
 }
