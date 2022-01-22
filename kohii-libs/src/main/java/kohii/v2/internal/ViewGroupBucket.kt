@@ -25,7 +25,7 @@ import kohii.v2.core.ViewBucket
 
 internal open class ViewGroupBucket(
   manager: Manager,
-  rootView: ViewGroup
+  rootView: ViewGroup,
 ) : ViewBucket(
   manager = manager,
   rootView = rootView

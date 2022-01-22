@@ -29,7 +29,7 @@ class StyledPlayerViewProvider : RecycledRendererProvider() {
 
   override fun getRendererType(
     container: Any,
-    data: Any
+    data: Any,
   ): Int {
     val isDrmMedias = when (data) {
       is MediaItem -> data.isDrmMedia
@@ -47,7 +47,7 @@ class StyledPlayerViewProvider : RecycledRendererProvider() {
 
   override fun createRenderer(
     playback: Playback,
-    rendererType: Int
+    rendererType: Int,
   ): Any {
     val container = playback.container as ViewGroup
     return LayoutInflater.from(container.context)

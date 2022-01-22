@@ -53,7 +53,7 @@ class Manager(
   internal val owner: Any,
   internal val group: Group,
   internal val playableManager: PlayableManager,
-  internal val lifecycleOwner: LifecycleOwner
+  internal val lifecycleOwner: LifecycleOwner,
 ) : DefaultLifecycleObserver, LifecycleEventObserver, RendererProviderManager, PlaybackManager {
 
   @VisibleForTesting
@@ -174,7 +174,7 @@ class Manager(
   @MainThread
   internal fun removePlayback(
     playback: Playback,
-    clearPlayable: Boolean = true
+    clearPlayable: Boolean = true,
   ) {
     "Manager[${hexCode()}]_REMOVE_Playback_Begin [PK=$playback]".logDebug()
     checkMainThread()
@@ -208,7 +208,7 @@ class Manager(
   @MainThread
   internal fun requirePlaybackCreator(
     playable: Playable,
-    container: Any
+    container: Any,
   ): PlaybackCreator {
     return playbackCreators.firstOrNull { creator ->
       creator.accept(playable = playable, container = container)
@@ -326,7 +326,7 @@ class Manager(
 
   override fun onStateChanged(
     source: LifecycleOwner,
-    event: Event
+    event: Event,
   ) {
     "Manager[${hexCode()}]_Lifecycle [State -> ${event.targetState}]".logInfo()
     playbacks.forEach { (_, playback) -> playback.lifecycleState = event.targetState }

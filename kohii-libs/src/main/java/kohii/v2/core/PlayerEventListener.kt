@@ -30,7 +30,7 @@ interface PlayerEventListener {
    */
   fun onStateChanged(
     playback: Playback,
-    @State state: Int
+    @State state: Int,
   ) = Unit
 
   /**
@@ -38,6 +38,6 @@ interface PlayerEventListener {
    */
   fun onVideoSizeChanged(
     playback: Playback,
-    videoSize: VideoSize
+    videoSize: VideoSize,
   ) = Unit
 }

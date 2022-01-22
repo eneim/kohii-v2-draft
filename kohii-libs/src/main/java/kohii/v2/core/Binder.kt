@@ -57,7 +57,7 @@ class Binder(
   @JvmOverloads
   fun bind(
     container: Any,
-    config: Config.() -> Unit = { /* no-op */ }
+    config: Config.() -> Unit = { /* no-op */ },
   ): RequestHandle = bind(
     container = container,
     config = Config(binder = this).apply(config)
@@ -65,7 +65,7 @@ class Binder(
 
   internal fun bind(
     container: Any,
-    config: Config
+    config: Config,
   ): RequestHandle {
     require(container is View /* || container is LifecycleOwner */) {
       "Currently, only View container is supported."

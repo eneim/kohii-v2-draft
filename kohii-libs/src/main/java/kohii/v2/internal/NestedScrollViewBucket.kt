@@ -25,7 +25,7 @@ import kohii.v2.core.ViewBucket
 
 class NestedScrollViewBucket(
   manager: Manager,
-  override val rootView: NestedScrollView
+  override val rootView: NestedScrollView,
 ) : ViewBucket(
   manager,
   rootView
@@ -38,7 +38,7 @@ class NestedScrollViewBucket(
     scrollX: Int,
     scrollY: Int,
     oldScrollX: Int,
-    oldScrollY: Int
+    oldScrollY: Int,
   ) {
     manager.refresh()
   }

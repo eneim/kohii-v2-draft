@@ -102,5 +102,7 @@ dependencies {
 
   androidTestImplementation("androidx.test.ext:junit:1.1.3")
   androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
-  androidTestImplementation("androidx.compose.ui:ui-test-junit4:${libs.versions.jetpack.compose.asProvider().get()}")
+  androidTestImplementation(
+    "androidx.compose.ui:ui-test-junit4:${libs.versions.jetpack.compose.asProvider().get()}"
+  )
 }

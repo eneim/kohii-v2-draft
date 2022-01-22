@@ -134,7 +134,7 @@ class Home private constructor(context: Context) {
 
   internal fun destroyPlayableDelayed(
     playable: Playable,
-    delayMillis: Long
+    delayMillis: Long,
   ) {
     "Home[${hexCode()}]_DESTROY_DELAYED_Playable [PB=$playable, delay=$delayMillis]".logDebug()
     cancelPlayableDestruction(playable)
@@ -143,7 +143,7 @@ class Home private constructor(context: Context) {
 
   internal fun enqueueRequest(
     container: Any,
-    request: BindRequest
+    request: BindRequest,
   ): RequestHandle {
     // Cancel any existing Request for the same container and playable (by its key).
     pendingRequests.remove(container)?.cancel()

@@ -428,7 +428,7 @@ abstract class Playback(
 
     open fun compare(
       other: Token,
-      axis: Axis
+      axis: Axis,
     ): Int = 0
 
     companion object {

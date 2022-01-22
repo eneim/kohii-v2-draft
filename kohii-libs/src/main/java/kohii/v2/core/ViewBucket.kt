@@ -38,7 +38,7 @@ import kohii.v2.internal.isAncestorOf
  */
 abstract class ViewBucket(
   manager: Manager,
-  protected open val rootView: ViewGroup
+  protected open val rootView: ViewGroup,
 ) : Bucket(
   manager = manager,
   root = rootView
@@ -62,19 +62,12 @@ abstract class ViewBucket(
     }
   }
 
-  private val containerLayoutChangeListener = OnLayoutChangeListener { v: View?,
-    left: Int,
-    top: Int,
-    right: Int,
-    bottom: Int,
-    oldLeft: Int,
-    oldTop: Int,
-    oldRight: Int,
-    oldBottom: Int ->
-    if (left != oldLeft || right != oldRight || top != oldTop || bottom != oldBottom) {
-      v?.let(manager::onContainerUpdated)
+  private val containerLayoutChangeListener =
+    OnLayoutChangeListener { v: View?, nl: Int, nt: Int, nr: Int, nb: Int, ol: Int, ot: Int, or: Int, ob: Int ->
+      if (nl != ol || nr != or || nt != ot || nb != ob) {
+        v?.let(manager::onContainerUpdated)
+      }
     }
-  }
 
   @CallSuper
   override fun onAdd() {
@@ -100,7 +93,7 @@ abstract class ViewBucket(
     return candidates.sortedWith(object : Comparator<Playback> {
       override fun compare(
         left: Playback?,
-        right: Playback?
+        right: Playback?,
       ): Int {
         if (left == null && right == null) return 0
         if (left == null) return -1
@@ -144,7 +137,7 @@ abstract class ViewBucket(
 
     internal operator fun get(
       manager: Manager,
-      root: ViewGroup
+      root: ViewGroup,
     ): ViewBucket = when {
       root is ViewPager2 -> ViewPager2Bucket(manager, root)
       root is NestedScrollView -> NestedScrollViewBucket(manager, root)

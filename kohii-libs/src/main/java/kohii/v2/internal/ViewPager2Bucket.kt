@@ -26,14 +26,18 @@ import kohii.v2.core.ViewBucket
 
 internal class ViewPager2Bucket(
   manager: Manager,
-  override val rootView: ViewPager2
+  override val rootView: ViewPager2,
 ) : ViewBucket(manager, rootView) {
 
   override val axis: Axis
     get() = if (rootView.orientation == RecyclerView.VERTICAL) VERTICAL else HORIZONTAL
 
   private val onPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
-    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+    override fun onPageScrolled(
+      position: Int,
+      positionOffset: Float,
+      positionOffsetPixels: Int,
+    ) {
       manager.refresh()
     }
     // override fun onPageSelected(position: Int): Unit = manager.refresh()

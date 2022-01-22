@@ -27,7 +27,7 @@ import java.util.concurrent.CopyOnWriteArraySet
  * the same time.
  */
 class AdComponentsListeners(
-  private val listeners: MutableSet<AdComponentsListener>
+  private val listeners: MutableSet<AdComponentsListener>,
 ) : MutableSet<AdComponentsListener> by listeners, AdComponentsListener {
 
   constructor() : this(CopyOnWriteArraySet<AdComponentsListener>())
@@ -38,7 +38,7 @@ class AdComponentsListeners(
 
   override fun onAdProgress(
     mediaInfo: AdMediaInfo,
-    progressUpdate: VideoProgressUpdate
+    progressUpdate: VideoProgressUpdate,
   ) = forEach { it.onAdProgress(mediaInfo, progressUpdate) }
 
   override fun onBuffering(mediaInfo: AdMediaInfo) = forEach { it.onBuffering(mediaInfo) }
@@ -59,6 +59,6 @@ class AdComponentsListeners(
 
   override fun onVolumeChanged(
     mediaInfo: AdMediaInfo,
-    percentage: Int
+    percentage: Int,
   ) = forEach { it.onVolumeChanged(mediaInfo, percentage) }
 }

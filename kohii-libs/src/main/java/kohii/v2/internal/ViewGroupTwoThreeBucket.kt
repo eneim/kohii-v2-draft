@@ -29,7 +29,7 @@ import kohii.v2.core.ViewBucket
 @RequiresApi(VERSION_CODES.M)
 internal class ViewGroupTwoThreeBucket(
   manager: Manager,
-  rootView: ViewGroup
+  rootView: ViewGroup,
 ) : ViewBucket(
   manager = manager,
   rootView = rootView
@@ -52,7 +52,7 @@ internal class ViewGroupTwoThreeBucket(
     scrollX: Int,
     scrollY: Int,
     oldScrollX: Int,
-    oldScrollY: Int
+    oldScrollY: Int,
   ) {
     "Bucket_REFRESH [x: $oldScrollX → $scrollX, y: $oldScrollY → $scrollY] b=$this".logDebug()
     manager.refresh()

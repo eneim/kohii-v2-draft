@@ -28,6 +28,6 @@ abstract class RendererProvider : DefaultLifecycleObserver {
 
   abstract fun releaseRenderer(
     playback: Playback,
-    renderer: Any?
+    renderer: Any?,
   )
 }

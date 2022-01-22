@@ -241,7 +241,7 @@ internal class StyledPlayerViewBridge(
   //region Player.Listener
   override fun onEvents(
     player: Player,
-    events: Events
+    events: Events,
   ) {
     "Bridge[${hexCode()}]_STATS [stats=${playbackStatsListener.playbackStats}]".logInfo()
   }

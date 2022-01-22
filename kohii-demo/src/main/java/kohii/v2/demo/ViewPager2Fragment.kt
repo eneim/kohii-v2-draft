@@ -30,7 +30,7 @@ class ViewPager2Fragment : Fragment(R.layout.fragment_viewpager_2) {
 
   class PagerAdapter(
     fragmentManager: FragmentManager,
-    lifecycle: Lifecycle
+    lifecycle: Lifecycle,
   ) : FragmentStateAdapter(fragmentManager, lifecycle) {
     override fun getItemCount(): Int = 20
 
@@ -57,7 +57,7 @@ class ViewPager2Fragment : Fragment(R.layout.fragment_viewpager_2) {
 
   override fun onViewCreated(
     view: View,
-    savedInstanceState: Bundle?
+    savedInstanceState: Bundle?,
   ) {
     super.onViewCreated(view, savedInstanceState)
     val binding = FragmentViewpager2Binding.bind(view)

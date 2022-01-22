@@ -76,7 +76,7 @@ interface LifecycleCallback {
   @MainThread
   fun onTokenUpdated(
     playback: Playback,
-    token: Token
+    token: Token,
   ) = Unit
 
   /**
@@ -89,6 +89,6 @@ interface LifecycleCallback {
   fun onStateChanged(
     playback: Playback,
     fromState: State,
-    toState: State
+    toState: State,
   ) = Unit
 }

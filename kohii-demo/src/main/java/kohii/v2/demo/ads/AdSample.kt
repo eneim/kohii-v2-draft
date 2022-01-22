@@ -32,7 +32,7 @@ data class AdSample(
   @Json(name = "uri")
   val contentUri: Uri,
   @Json(name = "ad_tag_uri")
-  val adTagUri: Uri
+  val adTagUri: Uri,
 ) : Parcelable
 
 fun AdSample.toMediaItem(): MediaItem = MediaItem.Builder()

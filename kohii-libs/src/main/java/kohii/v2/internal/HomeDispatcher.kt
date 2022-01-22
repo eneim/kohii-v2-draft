@@ -26,12 +26,15 @@ internal class HomeDispatcher(private val home: Home) : Handler(Looper.getMainLo
 
   fun dispatchDestroyPlayable(
     playable: Playable,
-    delayMillis: Long = DEFAULT_DELAY
+    delayMillis: Long = DEFAULT_DELAY,
   ) = sendMessageDelayed(obtainMessage(MSG_DESTROY_PLAYABLE, playable), delayMillis)
 
   fun cancelPlayableDestroy(playable: Playable) = removeMessages(MSG_DESTROY_PLAYABLE, playable)
 
-  override fun sendMessageAtTime(msg: Message, uptimeMillis: Long): Boolean {
+  override fun sendMessageAtTime(
+    msg: Message,
+    uptimeMillis: Long,
+  ): Boolean {
     "Home[${home.hexCode()}]_SEND_Message [MS=${msg.hexCode()}, ${msg.what}]".logInfo()
     return super.sendMessageAtTime(msg, uptimeMillis)
   }

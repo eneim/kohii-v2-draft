@@ -104,7 +104,7 @@ class TextViewPlayable(
 
   override fun onPlaybackChanged(
     previous: Playback?,
-    next: Playback?
+    next: Playback?,
   ) {
     super.onPlaybackChanged(previous, next)
     if (previous != null) rawPlayerListeners.remove(previous.rawListener)
@@ -199,7 +199,7 @@ class TextViewRendererProvider(poolSize: Int = 2) : RecycledRendererProvider(poo
 
   override fun createRenderer(
     playback: Playback,
-    rendererType: Int
+    rendererType: Int,
   ): TextView {
     val container = playback.container as ViewGroup
     val result = LayoutInflater.from(container.context)

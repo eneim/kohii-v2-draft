@@ -37,7 +37,7 @@ class KohiiApp : Application() {
       @ToJson
       override fun toJson(
         writer: JsonWriter,
-        value: Uri?
+        value: Uri?,
       ) {
         writer.value(value.toString())
       }

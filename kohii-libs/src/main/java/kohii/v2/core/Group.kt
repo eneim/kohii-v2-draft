@@ -32,7 +32,7 @@ import kohii.v2.internal.hexCode
  */
 class Group(
   val home: Home,
-  val lifecycleOwner: LifecycleOwner
+  val lifecycleOwner: LifecycleOwner,
 ) : DefaultLifecycleObserver {
 
   internal val managers = ArrayDeque<Manager>()

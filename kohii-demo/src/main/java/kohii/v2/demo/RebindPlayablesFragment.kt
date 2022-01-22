@@ -48,7 +48,7 @@ class RebindPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
   @OptIn(FlowPreview::class, kotlinx.coroutines.ExperimentalCoroutinesApi::class)
   override fun onViewCreated(
     view: View,
-    savedInstanceState: Bundle?
+    savedInstanceState: Bundle?,
   ) {
     super.onViewCreated(view, savedInstanceState)
     val manager: Manager = playbackManager()
@@ -86,7 +86,6 @@ class RebindPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
 
     val containers = listOf(binding.videoTop, binding.videoBottom)
 
-    val currentIndex = AtomicInteger(0)
     containers.forEachIndexed { index, playerView ->
       binders[index].bind(playerView)
     }

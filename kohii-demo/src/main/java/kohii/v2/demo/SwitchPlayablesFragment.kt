@@ -52,7 +52,7 @@ class SwitchPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
   @OptIn(FlowPreview::class, kotlinx.coroutines.ExperimentalCoroutinesApi::class)
   override fun onViewCreated(
     view: View,
-    savedInstanceState: Bundle?
+    savedInstanceState: Bundle?,
   ) {
     super.onViewCreated(view, savedInstanceState)
     val manager: Manager = playbackManager()

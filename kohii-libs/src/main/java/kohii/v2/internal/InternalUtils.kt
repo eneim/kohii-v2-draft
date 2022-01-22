@@ -84,7 +84,7 @@ internal inline fun debugOnly(action: () -> Unit) {
 }
 
 internal inline fun <T> Iterable<T>.partitionToMutableSets(
-  predicate: (T) -> Boolean
+  predicate: (T) -> Boolean,
 ): Pair<MutableSet<T>, MutableSet<T>> {
   val first = mutableSetOf<T>()
   val second = mutableSetOf<T>()
@@ -101,7 +101,7 @@ internal inline fun <T> Iterable<T>.partitionToMutableSets(
 @MainThread
 internal inline fun <reified T : Any> View.getTagOrPut(
   key: Int,
-  createNew: () -> T
+  createNew: () -> T,
 ): T = getTag(key) as? T ?: synchronized(this) {
   getTag(key) as? T ?: createNew().also { value -> setTag(key, value) }
 }

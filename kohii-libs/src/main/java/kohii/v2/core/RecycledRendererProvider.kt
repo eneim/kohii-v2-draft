@@ -21,14 +21,14 @@ import androidx.collection.forEach
 import androidx.core.util.Pools.Pool
 import androidx.core.util.Pools.SimplePool
 import androidx.lifecycle.LifecycleOwner
-import kohii.v2.internal.debugOnly
-import kohii.v2.internal.logInfo
 import kohii.v2.internal.asString
+import kohii.v2.internal.debugOnly
 import kohii.v2.internal.hexCode
+import kohii.v2.internal.logInfo
 import kohii.v2.internal.onEachAcquired
 
 abstract class RecycledRendererProvider @JvmOverloads constructor(
-  private val poolSize: Int = 2
+  private val poolSize: Int = 2,
 ) : RendererProvider() {
 
   private val pools = SparseArrayCompat<Pool<Any>>(2)
@@ -41,7 +41,10 @@ abstract class RecycledRendererProvider @JvmOverloads constructor(
     return result
   }
 
-  final override fun releaseRenderer(playback: Playback, renderer: Any?) {
+  final override fun releaseRenderer(
+    playback: Playback,
+    renderer: Any?,
+  ) {
     "RendererProvider[${hexCode()}]_RELEASE [RR=${renderer?.asString()}]".logInfo()
     if (renderer == null) return
     recycleRenderer(renderer)
@@ -66,7 +69,7 @@ abstract class RecycledRendererProvider @JvmOverloads constructor(
    */
   protected abstract fun createRenderer(
     playback: Playback,
-    rendererType: Int
+    rendererType: Int,
   ): Any?
 
   /**

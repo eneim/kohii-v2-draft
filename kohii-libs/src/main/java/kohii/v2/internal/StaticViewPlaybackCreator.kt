@@ -28,7 +28,7 @@ internal class StaticViewPlaybackCreator(manager: Manager) : PlaybackCreator(man
 
   override fun accept(
     playable: Playable,
-    container: Any
+    container: Any,
   ): Boolean =
     container is View && playable.rendererType.isAssignableFrom(container.javaClass)
 
@@ -36,7 +36,7 @@ internal class StaticViewPlaybackCreator(manager: Manager) : PlaybackCreator(man
     bucket: Bucket,
     playable: Playable,
     container: Any,
-    config: Config
+    config: Config,
   ): Playback = StaticViewRendererPlayback(
     playable = playable,
     bucket = bucket,

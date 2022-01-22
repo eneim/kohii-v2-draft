@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Nam Nguyen, nam@ene.im
+ * Copyright (c) 2022. Nam Nguyen, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo
+package kohii.v2.demo.ads
 
 import android.os.Bundle
 import android.view.View
@@ -39,10 +39,10 @@ import kohii.v2.core.Engine
 import kohii.v2.core.Manager
 import kohii.v2.core.RequestHandle
 import kohii.v2.core.playbackManager
-import kohii.v2.demo.ads.AdSample
-import kohii.v2.demo.ads.AdSamples
-import kohii.v2.demo.ads.toMediaItem
+import kohii.v2.demo.R
+import kohii.v2.demo.common.flowWithPrevious
 import kohii.v2.demo.databinding.FragmentVideosWithAdsBinding
+import kohii.v2.demo.demoApp
 import kohii.v2.exoplayer.StyledPlayerViewPlayableCreator
 import kohii.v2.exoplayer.getStyledPlayerViewProvider
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,7 +50,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import okio.buffer
@@ -65,7 +64,7 @@ class VideosWithAdsInRecyclerViewFragment : Fragment(R.layout.fragment_videos_wi
   @OptIn(ExperimentalKohiiApi::class)
   override fun onViewCreated(
     view: View,
-    savedInstanceState: Bundle?
+    savedInstanceState: Bundle?,
   ) {
     super.onViewCreated(view, savedInstanceState)
     val binding = FragmentVideosWithAdsBinding.bind(view)
@@ -83,7 +82,7 @@ class VideosWithAdsInRecyclerViewFragment : Fragment(R.layout.fragment_videos_wi
       .fromJson(demoApp.assets.open("media/media_with_ads.json").source().buffer())
       ?: AdSamples("No Ads", emptyList())
 
-    var latestBinding: RequestHandle? = null
+    var latestBinding: RequestHandle?
 
     viewModel.selectedAd
       .onEach { (prevAd, selectedAd) ->
@@ -99,10 +98,10 @@ class VideosWithAdsInRecyclerViewFragment : Fragment(R.layout.fragment_videos_wi
               addAdComponentsListener(object : AdComponentsListener {
                 override fun onAdProgress(
                   mediaInfo: AdMediaInfo,
-                  progressUpdate: VideoProgressUpdate
+                  progressUpdate: VideoProgressUpdate,
                 ) {
-                  binding.selectedAdTitle
-                    .text = "${selectedAd.name} | ${progressUpdate.currentTimeMs}ms"
+                  binding.selectedAdTitle.text =
+                    "${selectedAd.name} | ${progressUpdate.currentTimeMs}ms"
                 }
               })
             }
@@ -117,6 +116,7 @@ class VideosWithAdsInRecyclerViewFragment : Fragment(R.layout.fragment_videos_wi
     binding.videos.addItemDecoration(DividerItemDecoration(view.context, RecyclerView.VERTICAL))
 
     val itemMinHeight = resources.getDimensionPixelSize(R.dimen.text_item_min_height)
+
     binding.videos.withModels {
       adsSamples.samples.forEachIndexed { _, adSample: AdSample ->
         object : SimpleEpoxyModel(android.R.layout.simple_list_item_single_choice) {
@@ -166,13 +166,8 @@ internal class VideoWithAdsViewModel : ViewModel() {
 
   private val _selectedAd = MutableStateFlow<AdSample?>(null)
 
-  private var previousSelectedAd: AdSample? = null
   val selectedAd: StateFlow<Pair<AdSample?, AdSample?>> = _selectedAd
-    .map {
-      val result = previousSelectedAd to it
-      previousSelectedAd = it
-      result
-    }
+    .flowWithPrevious()
     .drop(1)
     .stateIn(
       scope = viewModelScope,

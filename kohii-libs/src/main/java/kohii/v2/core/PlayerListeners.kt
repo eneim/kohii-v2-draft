@@ -35,7 +35,7 @@ import com.google.android.exoplayer2.video.VideoSize
 import java.util.concurrent.CopyOnWriteArraySet
 
 class PlayerListeners(
-  private val listeners: MutableSet<Listener>
+  private val listeners: MutableSet<Listener>,
 ) : MutableSet<Listener> by listeners, Listener {
 
   constructor() : this(CopyOnWriteArraySet<Listener>())
@@ -46,7 +46,7 @@ class PlayerListeners(
 
   override fun onSurfaceSizeChanged(
     width: Int,
-    height: Int
+    height: Int,
   ): Unit = forEach {
     it.onSurfaceSizeChanged(width, height)
   }
@@ -85,21 +85,21 @@ class PlayerListeners(
 
   override fun onDeviceVolumeChanged(
     volume: Int,
-    muted: Boolean
+    muted: Boolean,
   ): Unit = forEach {
     it.onDeviceVolumeChanged(volume, muted)
   }
 
   override fun onTimelineChanged(
     timeline: Timeline,
-    reason: Int
+    reason: Int,
   ): Unit = forEach {
     it.onTimelineChanged(timeline, reason)
   }
 
   override fun onMediaItemTransition(
     mediaItem: MediaItem?,
-    reason: Int
+    reason: Int,
   ): Unit = forEach {
     it.onMediaItemTransition(mediaItem, reason)
   }
@@ -130,7 +130,7 @@ class PlayerListeners(
 
   override fun onPlayWhenReadyChanged(
     playWhenReady: Boolean,
-    reason: Int
+    reason: Int,
   ): Unit = forEach {
     it.onPlayWhenReadyChanged(playWhenReady, reason)
   }
@@ -162,7 +162,7 @@ class PlayerListeners(
   override fun onPositionDiscontinuity(
     oldPosition: PositionInfo,
     newPosition: PositionInfo,
-    reason: Int
+    reason: Int,
   ): Unit = forEach {
     it.onPositionDiscontinuity(oldPosition, newPosition, reason)
   }
@@ -181,7 +181,7 @@ class PlayerListeners(
 
   override fun onEvents(
     player: Player,
-    events: Events
+    events: Events,
   ): Unit = forEach {
     it.onEvents(player, events)
   }

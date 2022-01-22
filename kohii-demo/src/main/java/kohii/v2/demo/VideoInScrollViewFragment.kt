@@ -39,7 +39,7 @@ class VideoInScrollViewFragment : Fragment(R.layout.fragment_video_in_scroll_vie
   @OptIn(ExperimentalKohiiApi::class)
   override fun onViewCreated(
     view: View,
-    savedInstanceState: Bundle?
+    savedInstanceState: Bundle?,
   ) {
     super.onViewCreated(view, savedInstanceState)
     val manager: Manager = playbackManager()

@@ -26,7 +26,7 @@ import kotlin.math.max
  * Definition of a pool to provide [PLAYER] instance for the consumer.
  */
 abstract class PlayerPool<PLAYER : Any> @JvmOverloads constructor(
-  @IntRange(from = 1) val poolSize: Int = DEFAULT_POOL_SIZE
+  @IntRange(from = 1) val poolSize: Int = DEFAULT_POOL_SIZE,
 ) {
 
   init {
@@ -105,7 +105,10 @@ abstract class PlayerPool<PLAYER : Any> @JvmOverloads constructor(
     val DEFAULT_POOL_SIZE =
       max(Build.VERSION.SDK_INT / 6, max(Runtime.getRuntime().availableProcessors(), 1))
 
-    private fun <T> MutableSet<T>.release(item: T, maxSize: Int): Boolean {
+    private fun <T> MutableSet<T>.release(
+      item: T,
+      maxSize: Int,
+    ): Boolean {
       check(!contains(item)) { "Already in the pool!" }
       return if (size < maxSize) {
         add(item)

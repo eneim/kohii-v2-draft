@@ -33,10 +33,10 @@ internal class DynamicViewPlaybackCreator(
 
   override fun accept(
     playable: Playable,
-    container: Any
+    container: Any,
   ): Boolean = container is ViewGroup &&
-      !playable.rendererType.isAssignableFrom(container.javaClass) &&
-      View::class.java.isAssignableFrom(playable.rendererType)
+    !playable.rendererType.isAssignableFrom(container.javaClass) &&
+    View::class.java.isAssignableFrom(playable.rendererType)
 
   override fun createPlayback(
     bucket: Bucket,

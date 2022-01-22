@@ -32,7 +32,7 @@ internal class ExoPlayerWrapper private constructor(
 
   private constructor(
     builder: ExoPlayer.Builder,
-    mediaSourceFactory: MediaSourceFactory
+    mediaSourceFactory: MediaSourceFactory,
   ) : this(
     player = builder
       .setMediaSourceFactory(mediaSourceFactory)

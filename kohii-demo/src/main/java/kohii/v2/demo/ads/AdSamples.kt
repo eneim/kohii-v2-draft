@@ -24,5 +24,5 @@ data class AdSamples(
   @Json(name = "name")
   val name: String,
   @Json(name = "samples")
-  val samples: List<AdSample>
+  val samples: List<AdSample>,
 )

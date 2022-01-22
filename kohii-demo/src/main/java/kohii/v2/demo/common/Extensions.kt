@@ -19,17 +19,34 @@ package kohii.v2.demo.common
 import android.view.View
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 
 inline fun BottomSheetDialog.doOnStateChanged(
-  crossinline onStateChanged: (newState: Int) -> Unit
+  crossinline onStateChanged: (newState: Int) -> Unit,
 ) = behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
   override fun onStateChanged(
     bottomSheet: View,
-    newState: Int
+    newState: Int,
   ) = onStateChanged(newState)
 
   override fun onSlide(
     bottomSheet: View,
-    slideOffset: Float
+    slideOffset: Float,
   ) = Unit
 })
+
+/**
+ * Given a Flow A, returns a [Flow] that emits a pair of the latest value emitted by A (as the
+ * second value of the pair), and the previous value emitted before (as the first value of the
+ * pair).
+ */
+fun <T : Any?> Flow<T>.flowWithPrevious(): Flow<Pair<T?, T>> = flow {
+  var previousValue: T? = null
+  collect { value: T ->
+    val newPair = previousValue to value
+    previousValue = value
+    emit(newPair)
+  }
+}

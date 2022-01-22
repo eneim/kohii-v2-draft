@@ -36,7 +36,7 @@ class NoVideoInLandscapeScrollViewFragment :
   @OptIn(ExperimentalKohiiApi::class)
   override fun onViewCreated(
     view: View,
-    savedInstanceState: Bundle?
+    savedInstanceState: Bundle?,
   ) {
     super.onViewCreated(view, savedInstanceState)
     val binding = FragmentVideoInScrollViewPortraitOnlyBinding.bind(view)

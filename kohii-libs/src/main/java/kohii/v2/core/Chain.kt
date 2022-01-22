@@ -100,7 +100,7 @@ class Chain private constructor(
 
   override fun onStateChanged(
     playback: Playback,
-    state: Int
+    state: Int,
   ) {
     "Chain[${hexCode()}]_StateChanged: $state, pk: $playback".logInfo()
     if (state == Player.STATE_ENDED) {
@@ -145,7 +145,7 @@ class Chain private constructor(
 
   private class ShuffleOrderWrapper(
     private val origin: ShuffleOrder,
-    private val loop: Boolean = false
+    private val loop: Boolean = false,
   ) : ShuffleOrder by origin {
 
     val indices: Map<Int, Int>

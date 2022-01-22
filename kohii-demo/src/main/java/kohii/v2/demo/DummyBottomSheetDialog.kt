@@ -57,14 +57,14 @@ class DummyBottomSheetDialog : BottomSheetDialogFragment() {
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
-    savedInstanceState: Bundle?
+    savedInstanceState: Bundle?,
   ): View? {
     return inflater.inflate(R.layout.fragment_dummy_sheet, container, false)
   }
 
   override fun onViewCreated(
     view: View,
-    savedInstanceState: Bundle?
+    savedInstanceState: Bundle?,
   ) {
     super.onViewCreated(view, savedInstanceState)
     val manager: Manager = playbackManager()
@@ -80,7 +80,7 @@ class DummyBottomSheetDialog : BottomSheetDialogFragment() {
       addPlayerEventListener(object : PlayerEventListener {
         override fun onStateChanged(
           playback: Playback,
-          state: Int
+          state: Int,
         ) {
           if (state == Player.STATE_ENDED) dismissAllowingStateLoss()
         }

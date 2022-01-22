@@ -85,7 +85,7 @@ abstract class BasePlayable<RENDERER : Any>(
 
   override fun onPlaybackChanged(
     previous: Playback?,
-    next: Playback?
+    next: Playback?,
   ) {
     super.onPlaybackChanged(previous, next)
     if (previous != null) {

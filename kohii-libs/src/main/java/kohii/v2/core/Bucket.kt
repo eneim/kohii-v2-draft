@@ -160,7 +160,7 @@ abstract class Bucket(
   fun chain(
     loop: Boolean = false,
     selectScope: SelectScope = ALL,
-    builder: Chain.Builder.() -> Unit
+    builder: Chain.Builder.() -> Unit,
   ) = Chain.Builder(
     bucket = this,
     loop = loop,
@@ -185,7 +185,7 @@ abstract class Bucket(
 
     internal operator fun get(
       manager: Manager,
-      root: Any
+      root: Any,
     ): Bucket = when (root) {
       is ViewGroup -> ViewBucket[manager, root] // Delegate the creation to ViewBucket.
       else -> throw IllegalArgumentException("$root is not supported yet.")

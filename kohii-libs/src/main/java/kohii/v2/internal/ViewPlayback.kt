@@ -111,7 +111,10 @@ internal abstract class ViewPlayback(
     val boundInWindow: Rect,
   ) : Token() {
 
-    override fun compare(other: Token, axis: Axis): Int {
+    override fun compare(
+      other: Token,
+      axis: Axis,
+    ): Int {
       if (other !is ViewToken) return 1
       return when (axis) {
         VERTICAL -> compareValues(

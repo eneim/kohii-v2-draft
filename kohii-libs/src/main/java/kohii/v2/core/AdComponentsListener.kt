@@ -36,7 +36,7 @@ interface AdComponentsListener : AdEventListener, AdErrorListener, VideoAdPlayer
 
   override fun onAdProgress(
     mediaInfo: AdMediaInfo,
-    progressUpdate: VideoProgressUpdate
+    progressUpdate: VideoProgressUpdate,
   ) = Unit
 
   override fun onBuffering(mediaInfo: AdMediaInfo) = Unit
@@ -57,6 +57,6 @@ interface AdComponentsListener : AdEventListener, AdErrorListener, VideoAdPlayer
 
   override fun onVolumeChanged(
     mediaInfo: AdMediaInfo,
-    percentage: Int
+    percentage: Int,
   ) = Unit
 }

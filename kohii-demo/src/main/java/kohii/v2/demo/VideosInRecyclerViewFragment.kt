@@ -41,7 +41,7 @@ class VideosInRecyclerViewFragment : Fragment(R.layout.fragment_videos_in_recycl
 
   override fun onViewCreated(
     view: View,
-    savedInstanceState: Bundle?
+    savedInstanceState: Bundle?,
   ) {
     super.onViewCreated(view, savedInstanceState)
     val manager: Manager = playbackManager()

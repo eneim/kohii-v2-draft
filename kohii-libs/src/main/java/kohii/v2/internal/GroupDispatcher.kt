@@ -25,7 +25,7 @@ import kotlin.system.measureNanoTime
 
 internal class GroupDispatcher(
   private val group: Group,
-  looper: Looper
+  looper: Looper,
 ) : Handler(looper) {
 
   fun dispatchRefresh() {
@@ -35,7 +35,7 @@ internal class GroupDispatcher(
 
   fun dispatchStartPlayback(
     playback: Playback,
-    delay: Long = 0
+    delay: Long = 0,
   ) {
     removeMessages(MSG_START_PLAYBACK, playback)
     if (delay <= 0) {

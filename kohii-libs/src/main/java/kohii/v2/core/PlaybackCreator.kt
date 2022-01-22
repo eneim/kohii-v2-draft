@@ -22,7 +22,7 @@ abstract class PlaybackCreator(protected val manager: Manager) {
 
   abstract fun accept(
     playable: Playable,
-    container: Any
+    container: Any,
   ): Boolean
 
   abstract fun createPlayback(

@@ -18,14 +18,14 @@ package kohii.v2.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.RememberObserver
-import kohii.v2.internal.logInfo
 import kohii.v2.core.Playback
+import kohii.v2.internal.logInfo
 
 @Composable
 fun rememberPlayerState(): PlayerState = PlayerState(token = Playback.Token.EMPTY)
 
 class PlayerState(
-  var token: Playback.Token
+  var token: Playback.Token,
 ) : RememberObserver {
 
   override fun onAbandoned() {

@@ -191,7 +191,7 @@ abstract class Playable(
   @CallSuper
   protected open fun onPlaybackChanged(
     previous: Playback?,
-    next: Playback?
+    next: Playback?,
   ) {
     "Playable[${hexCode()}]_CHANGE_Playback [$previous → $next]".logWarn()
     previous?.removeLifecycleCallback(lifecycleCallback)

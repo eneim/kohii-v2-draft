@@ -21,7 +21,7 @@ package kohii.v2.common
  */
 open class Capsule<OUTPUT : Any, in INPUT>(
   creator: (INPUT) -> OUTPUT,
-  onCreate: ((OUTPUT) -> Unit) = { }
+  onCreate: ((OUTPUT) -> Unit) = { },
 ) {
   @Volatile private var instance: OUTPUT? = null
 

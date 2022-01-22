@@ -23,7 +23,7 @@ import kohii.v2.core.Playable.Controller
 import kohii.v2.core.Playback
 
 internal class PlayableControllerImpl(
-  private val playback: Playback
+  private val playback: Playback,
 ) : Controller {
 
   override fun play() = setPlayableCommand(STARTED_BY_USER)

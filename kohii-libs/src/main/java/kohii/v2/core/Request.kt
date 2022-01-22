@@ -57,7 +57,7 @@ class Request(
   internal companion object : Parceler<Request> {
     override fun Request.write(
       parcel: Parcel,
-      flags: Int
+      flags: Int,
     ) {
       if (data is Bundleable) {
         parcel.writeBundle(data.toBundle())

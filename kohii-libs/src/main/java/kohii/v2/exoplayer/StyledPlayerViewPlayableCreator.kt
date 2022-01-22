@@ -40,7 +40,7 @@ import kotlin.LazyThreadSafetyMode.NONE
  */
 class StyledPlayerViewPlayableCreator private constructor(
   private val home: Home,
-  private val playerPool: Lazy<PlayerPool<ExoPlayer>>
+  private val playerPool: Lazy<PlayerPool<ExoPlayer>>,
 ) : PlayableCreator() {
 
   private constructor(context: Context) : this(

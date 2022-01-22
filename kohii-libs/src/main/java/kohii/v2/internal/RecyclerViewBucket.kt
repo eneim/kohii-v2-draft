@@ -30,7 +30,7 @@ import kohii.v2.core.ViewBucket
 
 internal class RecyclerViewBucket(
   manager: Manager,
-  override val rootView: RecyclerView
+  override val rootView: RecyclerView,
 ) : ViewBucket(
   manager = manager,
   rootView = rootView
