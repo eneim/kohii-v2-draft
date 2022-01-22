@@ -328,6 +328,7 @@ class Manager(
     source: LifecycleOwner,
     event: Event
   ) {
+    "Manager[${hexCode()}]_Lifecycle [State -> ${event.targetState}]".logInfo()
     playbacks.forEach { (_, playback) -> playback.lifecycleState = event.targetState }
   }
 

@@ -47,7 +47,7 @@ internal class HomeDispatcher(private val home: Home) : Handler(Looper.getMainLo
     "Home[${home.hexCode()}]_DESTROY_Playable [PB=$playable]".logInfo()
     playable.onPause()
     playable.onRelease()
-    playable.manager.removePlayable(playable)
+    playable.onDestroy()
     home.playables.remove(playable)
   }
 

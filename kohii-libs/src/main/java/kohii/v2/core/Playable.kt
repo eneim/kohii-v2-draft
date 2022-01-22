@@ -16,12 +16,17 @@
 
 package kohii.v2.core
 
+import android.app.Application
 import android.os.Bundle
 import androidx.annotation.CallSuper
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.SavedStateHandle
 import kohii.v2.core.Home.Companion.NO_TAG
 import kohii.v2.core.Manager.Companion.DEFAULT_DESTRUCTION_DELAY_MS
 import kohii.v2.core.Playback.Config
+import kohii.v2.internal.debugOnly
 import kohii.v2.internal.hexCode
+import kohii.v2.internal.logDebug
 import kohii.v2.internal.logInfo
 import kohii.v2.internal.logWarn
 import kohii.v2.internal.playbackLifecycleCallback
@@ -47,15 +52,13 @@ abstract class Playable(
   /**
    * The current [PlayableManager].
    */
-  var manager: PlayableManager = initialManager
-    internal set(value) {
+  private var manager: PlayableManager = initialManager
+    set(value) {
       val prev = field
+      field = value
       if (prev !== value) {
         val state = prev.removePlayable(this)
         value.addPlayable(playable = this, state = state)
-      }
-      field = value
-      if (prev !== value) {
         onManagerChanged(previous = prev, next = value)
       }
     }
@@ -88,6 +91,30 @@ abstract class Playable(
   }
 
   override fun toString(): String = "PB[${hexCode()}, ${rendererType.simpleName}, t=$tag, d=$data]"
+
+  /**
+   * Called when a new [Playable] instance is created.
+   *
+   * @param initialState A [Bundle] that can be used to initialize the [Playable]. This state can be
+   * from a another [Playable] that plays the same data but uses a different rendering
+   * implementation, or a state previously managed by the [PlayableManager] (e.g. a [Playable] was
+   * destroyed due to its Playback being destroyed, but its state is stored and now it needs to be
+   * back to that state), or a default initial state ([PlayableState.Initialized]).
+   */
+  @CallSuper
+  open fun onCreate(initialState: Bundle) {
+    manager.addPlayable(this, initialState)
+  }
+
+  /**
+   * Notify the Playable that it is destroyed. This method is called right before the
+   * destruction of the [Playable] instance. The [Playable] instance is no longer used again after
+   * this method is called.
+   */
+  @CallSuper
+  open fun onDestroy() {
+    manager.removePlayable(this)
+  }
 
   /**
    * Returns the [Bundle] that contains the state of this [Playable]. This value will be used to
@@ -148,9 +175,7 @@ abstract class Playable(
   open fun onReset() = Unit
 
   /**
-   * Releases the resource hold by this [Playable]. This method is called right before the
-   * destruction of the [Playable] instance. The [Playable] instance is no longer used again after
-   * this method is called.
+   * Releases the resource hold by this [Playable].
    */
   abstract fun onRelease()
 
@@ -175,8 +200,8 @@ abstract class Playable(
 
   @CallSuper
   protected open fun onManagerChanged(
-    previous: PlayableManager,
-    next: PlayableManager
+    previous: PlayableManager?,
+    next: PlayableManager?,
   ) {
     "Playable[${hexCode()}]_CHANGE_Manager [$previous → $next]".logWarn()
   }
@@ -209,6 +234,75 @@ abstract class Playable(
 
     companion object : Controller
   }
+
+  internal class ManagerImpl(
+    application: Application,
+    private val stateHandle: SavedStateHandle,
+  ) : AndroidViewModel(application), PlayableManager {
+
+    private val home: Home = Home[application]
+
+    /**
+     * A [Set] of [Playable]s managed by this class.
+     */
+    private val playables = mutableSetOf<Playable>()
+
+    override fun toString(): String = "PM@${hexCode()}"
+
+    override fun addPlayable(
+      playable: Playable,
+      state: Bundle?,
+    ) {
+      "PlayableManager[${hexCode()}]_ADD_Playable [PB=$playable]".logInfo()
+      if (playables.add(playable)) {
+        "PlayableManager[${hexCode()}]_ADDED_Playable [PB=$playable]".logDebug()
+        if (state != null) {
+          stateHandle[playable.stateKey] = state
+        }
+      }
+    }
+
+    override fun removePlayable(playable: Playable): Bundle? {
+      "PlayableManager[${hexCode()}]_REMOVE_Playable [PB=$playable]".logInfo()
+      return if (playables.remove(playable)) {
+        "PlayableManager[${hexCode()}]_REMOVED_Playable [PB=$playable]".logDebug()
+        stateHandle.remove<Bundle>(playable.stateKey)
+      } else {
+        null
+      }
+    }
+
+    override fun getPlayableState(playable: Playable): Bundle? {
+      return stateHandle.get(playable.stateKey)
+    }
+
+    override fun trySavePlayableState(playable: Playable) {
+      "PlayableManager[${hexCode()}]_SAVE_Playable [PB=$playable]".logInfo()
+      val playableState = playable.onSaveState()
+      if (playableState != Bundle.EMPTY) {
+        stateHandle[playable.stateKey] = playableState
+      }
+    }
+
+    override fun tryRestorePlayableState(playable: Playable) {
+      "PlayableManager[${hexCode()}]_RESTORE_Playable [PB=$playable]".logInfo()
+      val savedState: Bundle? = stateHandle.remove<Bundle>(playable.stateKey)
+      savedState?.let(playable::onRestoreState)
+      "PlayableManager[${hexCode()}]_RESTORED_Playable [PB=$playable] [state=$savedState]".logDebug()
+    }
+
+    override fun onCleared() {
+      super.onCleared()
+      playables
+        .toMutableSet()
+        .onEach { playable ->
+          debugOnly { check(playable.manager === this) }
+          home.destroyPlayableDelayed(playable, 0)
+        }
+        .clear()
+      playables.clear()
+    }
+  }
 }
 
 internal sealed class PlayableKey(val tag: String) {
@@ -217,3 +311,5 @@ internal sealed class PlayableKey(val tag: String) {
 
   class Data(tag: String) : PlayableKey(tag = tag)
 }
+
+private val Playable.stateKey: String get() = tag.takeIf { it.isNotEmpty() } ?: internalId

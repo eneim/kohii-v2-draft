@@ -30,7 +30,6 @@ import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.PlayableKey.Empty
 import kohii.v2.internal.BindRequest
 import kohii.v2.internal.HomeDispatcher
-import kohii.v2.internal.ManagerViewModel
 import kohii.v2.internal.RequestHandleImpl
 import kohii.v2.internal.asString
 import kohii.v2.internal.awaitStarted
@@ -79,7 +78,7 @@ class Home private constructor(context: Context) {
   internal fun registerManagerInternal(
     owner: Any,
     managerLifecycleOwner: LifecycleOwner,
-    managerViewModel: Lazy<ManagerViewModel>,
+    managerViewModel: Lazy<PlayableManager>,
   ): Manager {
     val groupLifecycleOwner = when (owner) {
       is ComponentActivity -> owner
@@ -205,11 +204,11 @@ class Home private constructor(context: Context) {
 fun Fragment.playbackManager(): Manager = Home[requireContext()].registerManagerInternal(
   owner = this,
   managerLifecycleOwner = viewLifecycleOwner,
-  managerViewModel = viewModels()
+  managerViewModel = viewModels<Playable.ManagerImpl>()
 )
 
 fun ComponentActivity.playbackManager(): Manager = Home[this].registerManagerInternal(
   owner = this,
   managerLifecycleOwner = this,
-  managerViewModel = viewModels()
+  managerViewModel = viewModels<Playable.ManagerImpl>()
 )

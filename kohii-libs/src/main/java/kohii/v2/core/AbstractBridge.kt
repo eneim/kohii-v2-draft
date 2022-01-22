@@ -18,21 +18,27 @@ package kohii.v2.core
 
 import com.google.android.exoplayer2.Player
 import kohii.v2.core.Playable.Controller
-import kohii.v2.internal.PlayerListeners
-import java.util.concurrent.CopyOnWriteArraySet
 
 abstract class AbstractBridge<RENDERER : Any> : Bridge<RENDERER> {
 
-  override var controller: Controller? = null
+  override var controller: Controller = Controller
 
-  private val rawPlayerListeners = CopyOnWriteArraySet<Player.Listener>()
-  protected val playerListeners = PlayerListeners(rawPlayerListeners)
+  protected val playerListeners: PlayerListeners = PlayerListeners()
+  protected val adComponentsListeners: AdComponentsListeners = AdComponentsListeners()
 
   override fun addPlayerListener(listener: Player.Listener) {
-    rawPlayerListeners.add(listener)
+    playerListeners.add(listener)
   }
 
   override fun removePlayerListener(listener: Player.Listener) {
-    rawPlayerListeners.remove(listener)
+    playerListeners.remove(listener)
+  }
+
+  override fun addAdComponentsListener(listener: AdComponentsListener) {
+    adComponentsListeners.add(listener)
+  }
+
+  override fun removeAdComponentsListener(listener: AdComponentsListener) {
+    adComponentsListeners.remove(listener)
   }
 }

@@ -20,14 +20,26 @@ import android.os.Bundle
 
 interface PlayableManager {
 
+  /**
+   * Adds [playable] to this manager, with an optional initial state.
+   */
   fun addPlayable(
     playable: Playable,
     state: Bundle? = null,
   )
 
+  /**
+   * Removes [playable] from this manager, returns the last saved state as a [Bundle].
+   *
+   * This method is called by the [Playable] to remove itself from the current [PlayableManager]
+   * before adding to a new [PlayableManager], or before the destruction.
+   */
   fun removePlayable(playable: Playable): Bundle?
 
-  fun fetchPlayableState(playable: Playable): Bundle?
+  /**
+   * Returns the currently saved state of the [Playable] in this manager.
+   */
+  fun getPlayableState(playable: Playable): Bundle?
 
   /**
    * Saves the current state of the [Playable].

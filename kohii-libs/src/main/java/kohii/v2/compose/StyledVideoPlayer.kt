@@ -32,9 +32,9 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import kohii.v2.core.Engine
 import kohii.v2.core.Home
+import kohii.v2.core.Playable
 import kohii.v2.exoplayer.StyledPlayerViewPlayableCreator
 import kohii.v2.exoplayer.StyledPlayerViewProvider
-import kohii.v2.internal.ManagerViewModel
 
 @Composable
 fun StyledVideoPlayer(
@@ -52,7 +52,7 @@ fun StyledVideoPlayer(
       owner = lifecycleOwner,
       managerLifecycleOwner = lifecycleOwner,
       managerViewModel = ViewModelLazy(
-        viewModelClass = ManagerViewModel::class,
+        viewModelClass = Playable.ManagerImpl::class,
         storeProducer = { viewModelStoreOwner.viewModelStore },
         factoryProducer = {
           SavedStateViewModelFactory(

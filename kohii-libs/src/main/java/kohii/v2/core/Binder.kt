@@ -115,10 +115,9 @@ class Binder(
         tag = request.tag ?: Home.NO_TAG,
       )
 
-      playableManager.addPlayable(
-        playable = playable,
-        state = playableState?.toBundle() // Transferred state.
-          ?: playableManager.fetchPlayableState(playable) // PlayableManager managed state.
+      playable.onCreate(
+        initialState = playableState?.toBundle() // Transferred state.
+          ?: playableManager.getPlayableState(playable) // PlayableManager managed state.
           ?: Initialized.toBundle() // Default initial state.
       )
 
