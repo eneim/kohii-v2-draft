@@ -25,8 +25,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class Request(
-  internal val data: Any,
-  internal val tag: String? = null,
+  val data: Any,
+  val tag: String? = null,
 ) : Parcelable {
 
   @JvmOverloads

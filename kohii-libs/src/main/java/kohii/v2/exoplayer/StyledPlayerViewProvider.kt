@@ -62,6 +62,7 @@ class StyledPlayerViewProvider : RecycledRendererProvider() {
     renderer.setControllerOnFullScreenModeChangedListener(null)
     renderer.setErrorMessageProvider(null)
     renderer.setControllerVisibilityListener(null)
+    renderer.adViewGroup.removeAllViews()
   }
 
   override fun accept(playback: Playback): Boolean {

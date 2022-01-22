@@ -89,14 +89,16 @@ abstract class BasePlayable<RENDERER : Any>(
   ) {
     super.onPlaybackChanged(previous, next)
     if (previous != null) {
+      bridge.removeAdComponentsListener(previous.adComponentsListener)
       bridge.removePlayerListener(previous.rawListener)
     }
 
     if (next != null) {
       bridge.addPlayerListener(next.rawListener)
+      bridge.addAdComponentsListener(next.adComponentsListener)
       bridge.controller = next.controller
     } else {
-      bridge.controller = null
+      bridge.controller = Controller
     }
   }
 

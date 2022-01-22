@@ -20,4 +20,5 @@
     android:layout_height="wrap_content"
     app:surface_type="surface_view"
     app:resize_mode="zoom"
+    app:show_buffering="always"
     />

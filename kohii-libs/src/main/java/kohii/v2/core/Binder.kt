@@ -74,6 +74,7 @@ class Binder(
     val bindRequest = BindRequest(
       home = home,
       manager = engine.manager,
+      request = request,
       playableKey = request.tag?.let(::Data) ?: Empty,
       container = container,
       payload = preparePayload(),
@@ -86,7 +87,7 @@ class Binder(
   @OptIn(ExperimentalKohiiApi::class)
   private fun preparePayload(): Lazy<Playable> {
     val existingPlayable: Playable? = home.playables.entries
-      .firstOrNull { (_, key) -> key !is Empty && key.tag == request.tag }
+      .firstOrNull { (_, playableKey) -> playableKey !is Empty && playableKey.tag == request.tag }
       ?.key
     // The state that can be used to transfer to the new Playable for the same tag.
     val playableState: PlayableState? = existingPlayable?.currentState()
@@ -116,9 +117,9 @@ class Binder(
 
       playableManager.addPlayable(
         playable = playable,
-        state = playableState?.toBundle()
-          ?: playableManager.fetchPlayableState(playable)
-          ?: Initialized.toBundle()
+        state = playableState?.toBundle() // Transferred state.
+          ?: playableManager.fetchPlayableState(playable) // PlayableManager managed state.
+          ?: Initialized.toBundle() // Default initial state.
       )
 
       return@lazy playable

@@ -12,6 +12,7 @@ jetpack-compose-compiler = "1.1.0-rc02"
 
 [libraries]
 android-exoplayer = { module = "com.google.android.exoplayer:exoplayer", version.ref = "exoplayer" }
+android-exoplayer-ima = { module = "com.google.android.exoplayer:extension-ima", version.ref = "exoplayer" }
 
 androidx-media2-common = { module = "androidx.media2:media2-common", version.ref = "androidx-media2" }
 androidx-media2-widget = { module = "androidx.media2:media2-widget", version.ref = "androidx-media2" }

@@ -58,8 +58,10 @@ abstract class Playback(
   // thread, so we do not need thread-safety. We do not need the ability to modify the callbacks
   // during iteration as well. While ArrayDeque is well-known as the best queue implementation, we
   // do not use it as a queue. But it is still a good choice for our use case.
-  private val eventListeners = ArrayDeque(config.playbackEventListeners)
+  private val lifecycleCallbacks = ArrayDeque(config.lifecycleCallbacks)
   private val playerEventListeners = ArrayDeque(config.playerEventListeners)
+
+  internal val adComponentsListener = AdComponentsListeners(config.adComponentsListeners)
 
   internal val trigger: Float = config.trigger
 
@@ -87,8 +89,8 @@ abstract class Playback(
       val oldState = field
       if (field != value) {
         field = value
-        for (eventListener in eventListeners) {
-          eventListener.onStateChanged(playback = this, fromState = oldState, toState = value)
+        for (callback in lifecycleCallbacks) {
+          callback.onStateChanged(playback = this, fromState = oldState, toState = value)
         }
       }
     }
@@ -161,18 +163,18 @@ abstract class Playback(
   }
 
   @MainThread
-  internal fun addPlaybackEventListener(listener: PlaybackEventListener) {
+  internal fun addLifecycleCallback(callback: LifecycleCallback) {
     checkMainThread()
-    if (!eventListeners.contains(listener)) {
-      eventListeners.add(listener)
+    if (!lifecycleCallbacks.contains(callback)) {
+      lifecycleCallbacks.add(callback)
     }
   }
 
   @Suppress("unused")
   @MainThread
-  internal fun removePlaybackEventListener(listener: PlaybackEventListener?) {
+  internal fun removeLifecycleCallback(callback: LifecycleCallback?) {
     checkMainThread()
-    eventListeners.remove(listener)
+    lifecycleCallbacks.remove(callback)
   }
 
   @MainThread
@@ -200,8 +202,8 @@ abstract class Playback(
     onAdd()
     state = ADDED
     manager.notifyPlaybackAdded(this)
-    for (listener in eventListeners) {
-      listener.onAdded(this)
+    for (callback in lifecycleCallbacks) {
+      callback.onAdded(this)
     }
   }
 
@@ -216,7 +218,7 @@ abstract class Playback(
     checkState(ADDED)
     onAttach()
     state = ATTACHED
-    for (callback in eventListeners) {
+    for (callback in lifecycleCallbacks) {
       callback.onAttached(this)
     }
   }
@@ -234,7 +236,7 @@ abstract class Playback(
     onActivate()
     activePlayable?.onPrepare(config.preload)
     state = ACTIVATED
-    for (callback in eventListeners) {
+    for (callback in lifecycleCallbacks) {
       callback.onActivated(this)
     }
   }
@@ -250,7 +252,7 @@ abstract class Playback(
     checkMainThread()
     checkState(ACTIVATED)
     state = ATTACHED
-    for (callback in eventListeners) {
+    for (callback in lifecycleCallbacks) {
       callback.onDeactivated(this)
     }
     onDeactivate()
@@ -266,8 +268,8 @@ abstract class Playback(
     checkMainThread()
     checkState(ATTACHED)
     state = ADDED
-    for (listener in eventListeners) {
-      listener.onDetached(this)
+    for (callback in lifecycleCallbacks) {
+      callback.onDetached(this)
     }
     onDetach()
   }
@@ -283,11 +285,11 @@ abstract class Playback(
     checkState(ADDED)
     state = REMOVED
     manager.notifyPlaybackRemoved(this)
-    for (callback in eventListeners) {
+    for (callback in lifecycleCallbacks) {
       callback.onRemoved(this)
     }
     onRemove()
-    eventListeners.clear()
+    lifecycleCallbacks.clear()
     playerEventListeners.clear()
   }
 
@@ -301,8 +303,8 @@ abstract class Playback(
     onRefresh()
     val newToken = this.token
     if (newToken != oldToken) {
-      for (listener in eventListeners) {
-        listener.onTokenUpdated(playback = this, token = newToken)
+      for (callback in lifecycleCallbacks) {
+        callback.onTokenUpdated(playback = this, token = newToken)
       }
     }
   }
@@ -436,16 +438,15 @@ abstract class Playback(
     }
   }
 
-  // TODO:
-  //  - API for the specific Playback state that it should reset.
   class Config(
     internal val binder: Binder,
     internal var trigger: Float = 0.65f,
     internal var preload: Boolean = false,
   ) {
 
-    internal val playbackEventListeners = arraySetOf<PlaybackEventListener>()
+    internal val lifecycleCallbacks = arraySetOf<LifecycleCallback>()
     internal val playerEventListeners = arraySetOf<PlayerEventListener>()
+    internal val adComponentsListeners = arraySetOf<AdComponentsListener>()
 
     fun setPreload(preload: Boolean) = apply {
       this.preload = preload
@@ -455,12 +456,16 @@ abstract class Playback(
       this.trigger = trigger
     }
 
-    fun addPlaybackEventListener(listener: PlaybackEventListener): Config = apply {
-      playbackEventListeners.add(listener)
+    fun addLifecycleCallback(callback: LifecycleCallback): Config = apply {
+      lifecycleCallbacks.add(callback)
     }
 
     fun addPlayerEventListener(listener: PlayerEventListener): Config = apply {
       playerEventListeners.add(listener)
+    }
+
+    fun addAdComponentsListener(listener: AdComponentsListener): Config = apply {
+      adComponentsListeners.add(listener)
     }
   }
 

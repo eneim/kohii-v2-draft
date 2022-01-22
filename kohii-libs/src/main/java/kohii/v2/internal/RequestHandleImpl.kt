@@ -21,6 +21,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import kohii.v2.core.Home
 import kohii.v2.core.Playback
+import kohii.v2.core.Request
 import kohii.v2.core.RequestHandle
 import kotlinx.coroutines.Deferred
 
@@ -29,6 +30,7 @@ import kotlinx.coroutines.Deferred
  * or the lifecycle that requested this is destroyed.
  */
 internal class RequestHandleImpl(
+  override val request: Request,
   private val home: Home,
   internal val lifecycle: Lifecycle,
   private val deferred: Deferred<Playback>,

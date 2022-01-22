@@ -82,10 +82,14 @@ internal class ManagerViewModel(
 
   override fun onCleared() {
     super.onCleared()
-    for (playable in playables) {
-      debugOnly { check(playable.manager === this) }
-      home.destroyPlayable(playable)
-    }
+    playables
+      .toMutableSet()
+      .onEach { playable ->
+        debugOnly { check(playable.manager === this) }
+        home.destroyPlayableDelayed(playable, 0)
+      }
+      .clear()
+    playables.clear()
   }
 }
 

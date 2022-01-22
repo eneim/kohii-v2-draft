@@ -16,15 +16,15 @@
 
 package kohii.v2.internal
 
+import kohii.v2.core.LifecycleCallback
 import kohii.v2.core.Playable
 import kohii.v2.core.Playback
-import kohii.v2.core.PlaybackEventListener
 import kotlin.LazyThreadSafetyMode.NONE
 
 /**
- * Used by [Playable] to register a [PlaybackEventListener] to the [Playback] it is bound to.
+ * Used by [Playable] to register a [LifecycleCallback] to the [Playback] it is bound to.
  */
-internal class PlaybackEventListenerDelegate(val playable: Playable) : PlaybackEventListener {
+internal class LifecycleCallbackDelegate(val playable: Playable) : LifecycleCallback {
 
   override fun onAdded(playback: Playback) {
     "CallbackDelegate[${hexCode()}]_ADDED [PK=$playback]".logInfo()
@@ -67,5 +67,5 @@ internal class PlaybackEventListenerDelegate(val playable: Playable) : PlaybackE
   }
 }
 
-internal fun Playable.playbackEventListener(): Lazy<PlaybackEventListener> =
-  lazy(NONE) { PlaybackEventListenerDelegate(playable = this) }
+internal fun Playable.playbackLifecycleCallback(): Lazy<LifecycleCallback> =
+  lazy(NONE) { LifecycleCallbackDelegate(playable = this) }

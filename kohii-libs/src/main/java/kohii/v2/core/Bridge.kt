@@ -28,7 +28,7 @@ interface Bridge<RENDERER : Any> {
 
   var playableState: PlayableState
 
-  var controller: Playable.Controller?
+  var controller: Playable.Controller
 
   /**
    * Prepare the resource for a media. This method should:
@@ -77,4 +77,8 @@ interface Bridge<RENDERER : Any> {
   fun addPlayerListener(listener: Player.Listener)
 
   fun removePlayerListener(listener: Player.Listener)
+
+  fun addAdComponentsListener(listener: AdComponentsListener)
+
+  fun removeAdComponentsListener(listener: AdComponentsListener)
 }

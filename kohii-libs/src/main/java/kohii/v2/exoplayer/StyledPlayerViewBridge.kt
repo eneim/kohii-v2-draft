@@ -18,9 +18,14 @@ package kohii.v2.exoplayer
 
 import android.content.Context
 import android.util.Pair
+import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.annotation.VisibleForTesting
+import com.google.ads.interactivemedia.v3.api.FriendlyObstructionPurpose
+import com.google.ads.interactivemedia.v3.api.ImaSdkFactory
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.ExoPlayerWrapper
 import com.google.android.exoplayer2.ForwardingPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.PlaybackException
@@ -28,8 +33,11 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.Events
 import com.google.android.exoplayer2.TracksInfo
 import com.google.android.exoplayer2.analytics.PlaybackStatsListener
+import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
 import com.google.android.exoplayer2.mediacodec.MediaCodecRenderer.DecoderInitializationException
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil.DecoderQueryException
+import com.google.android.exoplayer2.ui.AdOverlayInfo
+import com.google.android.exoplayer2.ui.AdOverlayInfo.Purpose
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.util.ErrorMessageProvider
 import kohii.v2.R
@@ -45,21 +53,25 @@ import kohii.v2.internal.logInfo
  * A [Bridge] that works with [StyledPlayerView] and [Player].
  */
 internal class StyledPlayerViewBridge(
-  private val context: Context,
+  context: Context,
   private val mediaItems: List<MediaItem>,
-  private val playerPool: PlayerPool<Player>,
-) : AbstractBridge<StyledPlayerView>(), Player.Listener, ErrorMessageProvider<Throwable> {
+  private val playerPool: PlayerPool<ExoPlayer>,
+) : AbstractBridge<StyledPlayerView>(),
+  Player.Listener,
+  ErrorMessageProvider<Throwable> {
 
+  private val appContext: Context = context.applicationContext
   private val playbackStatsListener = PlaybackStatsListener(false, null)
 
+  private var imaSetupBundle: ImaSetupBundle? = null
   private var internalPlayer: InternalPlayerWrapper? = null
     set(value) {
       if (field !== value) {
-        (field?.wrappedPlayer as? ExoPlayer)?.removeAnalyticsListener(playbackStatsListener)
+        field?.wrappedPlayer?.removeAnalyticsListener(playbackStatsListener)
         field?.wrappedPlayer?.removeListener(playerListeners)
         field = value
         field?.wrappedPlayer?.addListener(playerListeners)
-        (field?.wrappedPlayer as? ExoPlayer)?.addAnalyticsListener(playbackStatsListener)
+        field?.wrappedPlayer?.addAnalyticsListener(playbackStatsListener)
       }
     }
 
@@ -72,17 +84,39 @@ internal class StyledPlayerViewBridge(
   override var renderer: StyledPlayerView? = null
     set(value) {
       if (field === value) return
-      if (value == null) {
-        field?.let { playerView ->
-          playerView.setErrorMessageProvider(null)
-          playerView.setCustomErrorMessage(null)
+
+      val imaBundle = imaSetupBundle
+
+      field?.let { playerView ->
+        playerView.setErrorMessageProvider(null)
+        playerView.setCustomErrorMessage(null)
+        if (imaBundle != null) {
+          playerView.adViewGroup.removeView(imaBundle.adViewGroup)
+          imaBundle.adsLoader.adDisplayContainer?.unregisterAllFriendlyObstructions()
         }
       }
 
       internalPlayer?.let { player ->
         StyledPlayerView.switchTargetView(player, field, value)
       }
-      value?.setErrorMessageProvider(this)
+
+      if (value != null) {
+        value.setErrorMessageProvider(this)
+        if (imaBundle != null) {
+          value.adViewGroup.addView(imaBundle.adViewGroup)
+          imaBundle.adsLoader.adDisplayContainer?.let { container ->
+            for (adOverlayInfo in value.adOverlayInfos) {
+              container.registerFriendlyObstruction(
+                ImaSdkFactory.getInstance().createFriendlyObstruction(
+                  adOverlayInfo.view,
+                  getFriendlyObstructionPurpose(adOverlayInfo.purpose),
+                  adOverlayInfo.reasonDetail
+                )
+              )
+            }
+          }
+        }
+      }
       field = value
     }
 
@@ -156,6 +190,7 @@ internal class StyledPlayerViewBridge(
   }
 
   override fun reset() {
+    (internalPlayer?.wrappedPlayer as? ExoPlayerWrapper)?.resetAdsBundle()
     playbackRestoreInfo = PlaybackInfo.EMPTY
     internalPlayer?.let { player ->
       player.stop()
@@ -174,6 +209,7 @@ internal class StyledPlayerViewBridge(
     }
     internalPlayer = null
     playerPrepared = false
+    (internalPlayer?.wrappedPlayer as? ExoPlayerWrapper)?.releaseAdsBundle()
     super.removePlayerListener(this)
   }
 
@@ -186,16 +222,16 @@ internal class StyledPlayerViewBridge(
       if (codecInfo == null) {
         when {
           cause.cause is DecoderQueryException ->
-            context.getString(R.string.error_querying_decoders)
+            appContext.getString(R.string.error_querying_decoders)
           cause.secureDecoderRequired ->
-            context.getString(R.string.error_no_secure_decoder, cause.mimeType)
-          else -> context.getString(R.string.error_no_decoder, cause.mimeType)
+            appContext.getString(R.string.error_no_secure_decoder, cause.mimeType)
+          else -> appContext.getString(R.string.error_no_decoder, cause.mimeType)
         }
       } else {
-        context.getString(R.string.error_instantiating_decoder, codecInfo.name)
+        appContext.getString(R.string.error_instantiating_decoder, codecInfo.name)
       }
     } else {
-      context.getString(R.string.error_generic)
+      appContext.getString(R.string.error_generic)
     }
 
     return Pair.create(0, errorString)
@@ -222,10 +258,10 @@ internal class StyledPlayerViewBridge(
   override fun onTracksInfoChanged(tracksInfo: TracksInfo) {
     if (tracksInfo != lastSeenTracksInfo) {
       if (!tracksInfo.isTypeSupportedOrEmpty(C.TRACK_TYPE_VIDEO)) {
-        Toast.makeText(context, R.string.error_unsupported_video, Toast.LENGTH_LONG).show()
+        Toast.makeText(appContext, R.string.error_unsupported_video, Toast.LENGTH_LONG).show()
       }
       if (!tracksInfo.isTypeSupportedOrEmpty(C.TRACK_TYPE_AUDIO)) {
-        Toast.makeText(context, R.string.error_unsupported_audio, Toast.LENGTH_LONG).show()
+        Toast.makeText(appContext, R.string.error_unsupported_audio, Toast.LENGTH_LONG).show()
       }
       lastSeenTracksInfo = tracksInfo
     }
@@ -252,6 +288,7 @@ internal class StyledPlayerViewBridge(
     }
 
     if (!playerPrepared) {
+      (internalPlayer?.wrappedPlayer as? ExoPlayerWrapper)?.prepareAdsBundle()
       player.setMediaItems(
         /* mediaItems */ mediaItems,
         /* resetPosition */ !hasStartPosition
@@ -261,18 +298,73 @@ internal class StyledPlayerViewBridge(
     }
   }
 
+  //region Ads support.
+  @VisibleForTesting
+  internal fun ExoPlayerWrapper.prepareAdsBundle() {
+    val hasAd = mediaItems.any { it.localConfiguration?.adsConfiguration != null }
+    mediaItems.takeIf { hasAd } ?: return
+
+    val imaBundle = ImaSetupBundle(
+      // TODO: API for clients to use their own ImaAdsLoader.Builder.
+      adsLoader = ImaAdsLoader.Builder(appContext)
+        .setAdEventListener(adComponentsListeners)
+        .setAdErrorListener(adComponentsListeners)
+        .setVideoAdPlayerCallback(adComponentsListeners)
+        .build(),
+      adViewGroup = FrameLayout(appContext),
+    )
+
+    requireNotNull(mediaSourceFactory) {
+      "To support MediaItem with Ad, client needs to use a DefaultMediaSourceFactory."
+    }
+      .apply {
+        setAdsLoaderProvider(imaBundle)
+        setAdViewProvider(imaBundle)
+      }
+    imaBundle.ready(this)
+    imaSetupBundle = imaBundle
+  }
+
+  @VisibleForTesting
+  internal fun ExoPlayerWrapper.resetAdsBundle() {
+    mediaSourceFactory?.apply {
+      setAdsLoaderProvider(null)
+      setAdViewProvider(null)
+    }
+    imaSetupBundle?.reset()
+  }
+
+  @VisibleForTesting
+  internal fun ExoPlayerWrapper.releaseAdsBundle() {
+    mediaSourceFactory?.apply {
+      setAdsLoaderProvider(null)
+      setAdViewProvider(null)
+    }
+    imaSetupBundle?.release()
+    imaSetupBundle = null
+  }
+  //endregion
+
   private fun StyledPlayerView.setupPlayer() {
     if (this.player !== internalPlayer) this.player = internalPlayer
   }
 
-  private inner class InternalPlayerWrapper(player: Player) : ForwardingPlayer(player) {
+  private inner class InternalPlayerWrapper(val player: ExoPlayer) : ForwardingPlayer(player) {
+    override fun play() = controller.play()
+    override fun pause() = controller.pause()
+    override fun getWrappedPlayer(): ExoPlayer = player
+  }
 
-    override fun play() {
-      controller?.play()
-    }
+  private companion object {
 
-    override fun pause() {
-      controller?.pause()
+    fun getFriendlyObstructionPurpose(@Purpose purpose: Int): FriendlyObstructionPurpose {
+      return when (purpose) {
+        AdOverlayInfo.PURPOSE_CONTROLS -> FriendlyObstructionPurpose.VIDEO_CONTROLS
+        AdOverlayInfo.PURPOSE_CLOSE_AD -> FriendlyObstructionPurpose.CLOSE_AD
+        AdOverlayInfo.PURPOSE_NOT_VISIBLE -> FriendlyObstructionPurpose.NOT_VISIBLE
+        AdOverlayInfo.PURPOSE_OTHER -> FriendlyObstructionPurpose.OTHER
+        else -> FriendlyObstructionPurpose.OTHER
+      }
     }
   }
 }

@@ -27,7 +27,7 @@ import kohii.v2.core.Playback.Token
 /**
  * Class that can receive the changes of a Playback lifecycle via callback methods.
  */
-interface PlaybackEventListener {
+interface LifecycleCallback {
 
   /**
    * Called when the [playback] is added to the manager. [Playback.state] is [ADDED].

@@ -26,5 +26,8 @@ class MainActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     val binding: ActivityMainBinding = ActivityMainBinding.inflate(layoutInflater)
     setContentView(binding.root)
+
+    val title = this.title.toString()
+    setTitle(title + " #${Integer.toHexString(hashCode())}")
   }
 }

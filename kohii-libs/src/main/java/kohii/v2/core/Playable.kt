@@ -24,7 +24,7 @@ import kohii.v2.core.Playback.Config
 import kohii.v2.internal.hexCode
 import kohii.v2.internal.logInfo
 import kohii.v2.internal.logWarn
-import kohii.v2.internal.playbackEventListener
+import kohii.v2.internal.playbackLifecycleCallback
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 
@@ -69,14 +69,19 @@ abstract class Playable(
       field = value
       if (value != null) manager = value.manager.playableManager
       if (prev !== value) onPlaybackChanged(previous = prev, next = value)
-      if (value == null) home.destroyPlayableDelayed(this, DEFAULT_DESTRUCTION_DELAY_MS)
+      if (value == null) {
+        val destroyPlayableDelay = if (prev != null && prev.manager.isChangingConfigurations) {
+          DEFAULT_DESTRUCTION_DELAY_MS
+        } else 0
+        home.destroyPlayableDelayed(this, destroyPlayableDelay)
+      }
     }
 
   //region Manual control support
   internal val command = AtomicReference<Command>(null)
   //endregion
 
-  private val playbackEventListener: PlaybackEventListener by playbackEventListener()
+  private val lifecycleCallback: LifecycleCallback by playbackLifecycleCallback()
 
   init {
     "Playable[${hexCode()}]_CREATED".logInfo()
@@ -164,8 +169,8 @@ abstract class Playable(
     next: Playback?
   ) {
     "Playable[${hexCode()}]_CHANGE_Playback [$previous → $next]".logWarn()
-    previous?.removePlaybackEventListener(playbackEventListener)
-    next?.addPlaybackEventListener(playbackEventListener)
+    previous?.removeLifecycleCallback(lifecycleCallback)
+    next?.addLifecycleCallback(lifecycleCallback)
   }
 
   @CallSuper
@@ -201,6 +206,8 @@ abstract class Playable(
      * Clears any [Command] set to the [Playable].
      */
     fun auto() = Unit
+
+    companion object : Controller
   }
 }
 

@@ -49,7 +49,6 @@ import java.util.ArrayDeque
  * TODO(eneim): this class should be named "PlaybackManager".
  */
 class Manager(
-  @PublishedApi
   internal val home: Home,
   internal val owner: Any,
   internal val group: Group,
@@ -223,7 +222,7 @@ class Manager(
     val bucket = buckets.lastOrNull { it.accept(container) }
     if (bucket == null) {
       val error = IllegalArgumentException("No bucket in $this accepts container $container.")
-      "Request[${hexCode()}]_BIND_End error=$error".logError()
+      "Manager[${hexCode()}]_BIND_End error=$error".logError()
       throw error
     }
 
@@ -345,11 +344,14 @@ class Manager(
 
   override fun onDestroy(owner: LifecycleOwner) {
     super.onDestroy(owner)
+    val destroyPlayableDelayMs = if (isChangingConfigurations) DEFAULT_DESTRUCTION_DELAY_MS else 0
     playbacks.values.toMutableList()
       .onEach(::removePlayback)
       .onEach {
         val playable = it.activePlayable
-        if (playable != null) home.destroyPlayableDelayed(playable, DEFAULT_DESTRUCTION_DELAY_MS)
+        if (playable != null) {
+          home.destroyPlayableDelayed(playable, destroyPlayableDelayMs)
+        }
       }
       .clear()
     playbacks.clear()

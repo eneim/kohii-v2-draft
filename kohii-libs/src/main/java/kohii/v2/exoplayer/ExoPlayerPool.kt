@@ -18,6 +18,7 @@ package kohii.v2.exoplayer
 
 import android.content.Context
 import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.ExoPlayerWrapper
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import kohii.v2.core.PlayerPool
@@ -28,25 +29,24 @@ import kohii.v2.core.PlayerPool
 class ExoPlayerPool(
   context: Context,
   private val builder: ExoPlayer.Builder.() -> Unit = {},
-) : PlayerPool<Player>() {
+) : PlayerPool<ExoPlayer>() {
 
   private val app: Context = context.applicationContext
 
-  override fun Player.accept(mediaData: Any): Boolean {
+  override fun ExoPlayer.accept(mediaData: Any): Boolean {
     return mediaData is MediaItem ||
       (mediaData is Collection<*> && mediaData.all { it is MediaItem })
   }
 
-  override fun createPlayer(mediaData: Any): Player = ExoPlayer.Builder(app)
-    .apply(builder)
-    .build()
+  override fun createPlayer(mediaData: Any): ExoPlayer =
+    ExoPlayerWrapper(ExoPlayer.Builder(app).apply(builder))
 
-  override fun resetPlayer(player: Player) {
+  override fun resetPlayer(player: ExoPlayer) {
     player.stop()
     player.clearMediaItems()
   }
 
-  override fun destroyPlayer(player: Player) {
+  override fun destroyPlayer(player: ExoPlayer) {
     player.release()
   }
 }

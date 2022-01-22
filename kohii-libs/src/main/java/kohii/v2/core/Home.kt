@@ -26,6 +26,7 @@ import androidx.lifecycle.Lifecycle.State.DESTROYED
 import androidx.lifecycle.Lifecycle.State.INITIALIZED
 import androidx.lifecycle.LifecycleOwner
 import kohii.v2.common.Capsule
+import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.PlayableKey.Empty
 import kohii.v2.internal.BindRequest
 import kohii.v2.internal.HomeDispatcher
@@ -42,7 +43,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
-import kotlinx.coroutines.cancel
 import kotlin.coroutines.cancellation.CancellationException
 
 class Home private constructor(context: Context) {
@@ -142,11 +142,6 @@ class Home private constructor(context: Context) {
     dispatcher.dispatchDestroyPlayable(playable, delayMillis)
   }
 
-  internal fun destroyPlayable(playable: Playable) {
-    "Home[${hexCode()}]_DESTROY_Playable [PB=$playable]".logDebug()
-    destroyPlayableDelayed(playable, delayMillis = 0)
-  }
-
   internal fun enqueueRequest(
     container: Any,
     request: BindRequest
@@ -155,6 +150,7 @@ class Home private constructor(context: Context) {
     pendingRequests.remove(container)?.cancel()
     pendingRequests.remove(request.playableKey)?.cancel()
     val requestHandle = RequestHandleImpl(
+      request = request.request,
       home = this,
       lifecycle = request.lifecycle,
       deferred = scope.async {
@@ -177,20 +173,19 @@ class Home private constructor(context: Context) {
     groups.remove(group)
     if (groups.isEmpty()) {
       pendingRequests.entries
+        .toMutableSet()
         .onEach { (_, handle) -> handle.cancel() }
         .clear()
+      pendingRequests.entries.clear()
     }
   }
 
-  internal fun shutdown() {
-    pendingRequests.entries
-      .onEach { (_, handle) -> handle.cancel() }
-      .clear()
-
-    scope.cancel()
-  }
-
   //region Public APIs
+  @ExperimentalKohiiApi
+  fun cancel(tag: String) {
+    playables.keys.firstOrNull { it.tag == tag }?.playback?.unbind()
+      ?: pendingRequests.values.firstOrNull { it.request.tag == tag }?.cancel()
+  }
   //endregion
 
   companion object {

@@ -17,19 +17,30 @@
 package kohii.v2.exoplayer
 
 import android.content.Context
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.ui.StyledPlayerView
 import kohii.v2.common.Capsule
+import kohii.v2.core.Engine
 import kohii.v2.core.Home
+import kohii.v2.core.Manager
 import kohii.v2.core.Playable
 import kohii.v2.core.PlayableCreator
 import kohii.v2.core.PlayableManager
 import kohii.v2.core.PlayerPool
 import kotlin.LazyThreadSafetyMode.NONE
 
+/**
+ * A [PlayableCreator] that supports [ExoPlayer] as playback backend, and [StyledPlayerView] as the
+ * playback frontend. Instance of this class is used to initialize the [Engine] object. Resource of
+ * this class will be cleared by [onClear] automatically when there is no active [Manager] that is
+ * using it.
+ *
+ * Using [StyledPlayerViewPlayableCreator.getInstance] to obtain an instance of this class.
+ */
 class StyledPlayerViewPlayableCreator private constructor(
   private val home: Home,
-  private val playerPool: Lazy<PlayerPool<Player>>
+  private val playerPool: Lazy<PlayerPool<ExoPlayer>>
 ) : PlayableCreator() {
 
   private constructor(context: Context) : this(

@@ -25,10 +25,12 @@ import kohii.v2.core.Playable
 import kohii.v2.core.PlayableKey
 import kohii.v2.core.Playback
 import kohii.v2.core.Playback.Config
+import kohii.v2.core.Request
 
 internal class BindRequest(
   val home: Home,
   val manager: Manager,
+  val request: Request,
   val playableKey: PlayableKey, // Tag used by Home to store the Playable.
   val container: Any,
   val payload: Lazy<Playable>,
