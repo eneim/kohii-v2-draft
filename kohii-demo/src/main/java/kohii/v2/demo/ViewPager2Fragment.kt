@@ -44,11 +44,12 @@ class ViewPager2Fragment : Fragment(R.layout.fragment_viewpager_2) {
 
       return if (position == 0) {
         // RebindPlayablesFragment.getInstance(position)
-        SwitchPlayablesFragment.getInstance(position)
+        // SwitchPlayablesFragment.getInstance(position)
         // VideosWithAdsInRecyclerViewFragment.getInstance(position)
         // VideosInRecyclerViewFragment.getInstance(position)
         // VideoInScrollViewFragment()
         // VideosInScrollViewFragment()
+        MixedVideosInRecyclerViewFragment.newInstance(initSeed = "$position")
       } else {
         TextInScrollViewFragment()
       }

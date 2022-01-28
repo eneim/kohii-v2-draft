@@ -27,6 +27,9 @@ import kohii.v2.core.Axis.UNKNOWN
 import kohii.v2.core.Axis.VERTICAL
 import kohii.v2.core.Manager
 import kohii.v2.core.ViewBucket
+import kohii.v2.core.fetchContainersTag
+import kohii.v2.core.getContainersTag
+import kohii.v2.core.removeContainersTag
 
 internal class RecyclerViewBucket(
   manager: Manager,
@@ -60,14 +63,14 @@ internal class RecyclerViewBucket(
 
   private val recyclerListener = RecyclerView.RecyclerListener { holder ->
     "Recycle: holder=$holder".logInfo()
-    holder.itemView.getTypedTag<MutableList<View>>(R.id.container_recycler_item_views)
-      ?.removeAll { container ->
+    holder.itemView.fetchContainersTag()
+      ?.iterator()
+      ?.onRemoveEach { container ->
         "Recycle: container=$container".logDebug()
-        val playback = manager.playbacks[container]
-        if (playback != null) manager.removePlayback(playback)
-        return@removeAll true
+        removeContainer(container)
       }
-    holder.itemView.setTag(R.id.container_recycler_item_views, null)
+
+    holder.itemView.removeContainersTag()
   }
 
   override fun onAdd() {
@@ -85,9 +88,9 @@ internal class RecyclerViewBucket(
   override fun addContainer(container: Any) {
     super.addContainer(container)
     if (container is View) {
-      val containers = rootView.findContainingItemView(container)
-        ?.getTagOrPut<MutableList<View>>(R.id.container_recycler_item_views) { mutableListOf() }
-      containers?.add(container)
+      rootView.findContainingItemView(container)
+        ?.getContainersTag()
+        ?.add(container)
     }
   }
 
@@ -95,7 +98,7 @@ internal class RecyclerViewBucket(
     super.removeContainer(container)
     if (container is View) {
       rootView.findContainingItemView(container)
-        ?.getTypedTag<MutableList<View>>(R.id.container_recycler_item_views)
+        ?.fetchContainersTag()
         ?.remove(container)
     }
   }

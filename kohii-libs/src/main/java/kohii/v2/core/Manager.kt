@@ -35,6 +35,7 @@ import kohii.v2.internal.hexCode
 import kohii.v2.internal.logDebug
 import kohii.v2.internal.logError
 import kohii.v2.internal.logInfo
+import kohii.v2.internal.onRemoveEach
 import kohii.v2.internal.partitionToMutableSets
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -59,9 +60,8 @@ class Manager(
   @VisibleForTesting
   internal var stickyBucket: Bucket? = null
 
-  @VisibleForTesting
-  internal val buckets = ArrayDeque<Bucket>(4 /* Skip size check */)
-  internal val playbacks = linkedMapOf<Any /* Container */, Playback>()
+  private val buckets = ArrayDeque<Bucket>(4 /* Skip size check */)
+  private val playbacks = linkedMapOf<Any /* Container */, Playback>()
   private val playbacksFlow = MutableStateFlow<List<Playback>>(emptyList())
 
   @Suppress("RemoveExplicitTypeArguments")
@@ -89,6 +89,8 @@ class Manager(
   override fun toString(): String = "M@${hexCode()}"
 
   internal fun refresh(): Unit = group.onRefresh()
+
+  internal fun findPlaybackForContainer(container: Any): Playback? = playbacks[container]
 
   //region Bucket APIs
   @MainThread
@@ -178,7 +180,6 @@ class Manager(
   ) {
     "Manager[${hexCode()}]_REMOVE_Playback_Begin [PK=$playback]".logDebug()
     checkMainThread()
-    playback.isRemoving = true
     val container = playback.container
     val removedPlayback = playbacks.remove(container)
     debugOnly {
@@ -186,16 +187,7 @@ class Manager(
         "Removing $playback for container $container, but got a different one $removedPlayback"
       }
     }
-    if (playback.isAttached) {
-      if (playback.isActive) playback.performDeactivate()
-      playback.performDetach()
-    }
-    playback.bucket.removeContainer(container)
-    // Playback should not let the bucket touch its container at this point.
-    playback.performRemove()
-    if (clearPlayable) {
-      playback.playable.playback = null
-    }
+    onRemovePlayback(playback, clearPlayable)
     refresh()
     "Manager[${hexCode()}]_REMOVE_Playback_End [PK=$playback]".logDebug()
   }
@@ -203,6 +195,23 @@ class Manager(
   internal fun notifyPlaybackRemoved(playback: Playback) {
     val currentPlaybacks = playbacksFlow.value
     playbacksFlow.value = currentPlaybacks - playback
+  }
+
+  private fun onRemovePlayback(
+    playback: Playback,
+    clearPlayable: Boolean = true,
+  ) {
+    playback.isRemoving = true
+    if (playback.isAttached) {
+      if (playback.isActive) playback.performDeactivate()
+      playback.performDetach()
+    }
+    playback.bucket.removeContainer(playback.container)
+    // Playback should not let the bucket touch its container at this point.
+    playback.performRemove()
+    if (clearPlayable) {
+      playback.playable.playback = null
+    }
   }
 
   @MainThread
@@ -261,6 +270,7 @@ class Manager(
   private fun refreshPlaybackStates(): Pair<MutableSet<Playback>, MutableSet<Playback>> {
     return playbacks.values
       .onEach { playback ->
+        playback.performRefresh()
         if (!playback.isActive && playback.shouldActivate()) {
           if (!playback.isAttached) playback.performAttach()
           playback.performActivate()
@@ -345,30 +355,16 @@ class Manager(
 
   override fun onDestroy(owner: LifecycleOwner) {
     super.onDestroy(owner)
-    val destroyPlayableDelayMs = if (isChangingConfigurations) DEFAULT_DESTRUCTION_DELAY_MS else 0
-    playbacks.values.toMutableList()
-      .onEach(::removePlayback)
-      .onEach {
-        val playable = it.activePlayable
-        if (playable != null) {
-          home.destroyPlayableDelayed(playable, destroyPlayableDelayMs)
-        }
-      }
-      .clear()
-    playbacks.clear()
+    playbacks.values.onRemoveEach(::onRemovePlayback)
 
-    val lifecycle = lifecycleOwner.lifecycle
+    val lifecycle = owner.lifecycle
     rendererProviders.onEach { rendererProvider ->
-      rendererProvider.onDestroy(lifecycleOwner)
+      rendererProvider.onDestroy(owner)
       lifecycle.removeObserver(rendererProvider)
     }
       .clear()
 
-    buckets.removeAll { bucket ->
-      bucket.onRemove()
-      true
-    }
-
+    buckets.onRemoveEach(Bucket::onRemove)
     home.pendingRequests.values.removeAll { handle -> handle.lifecycle === lifecycle }
     group.removeManager(this)
   }

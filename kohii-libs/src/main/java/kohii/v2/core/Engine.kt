@@ -27,7 +27,7 @@ import androidx.lifecycle.LifecycleOwner
  */
 class Engine constructor(
   internal val rendererType: Class<*>,
-  internal val manager: Manager,
+  val manager: Manager,
   internal val playableCreator: PlayableCreator,
   internal val rendererProvider: RendererProvider,
 ) : DefaultLifecycleObserver {

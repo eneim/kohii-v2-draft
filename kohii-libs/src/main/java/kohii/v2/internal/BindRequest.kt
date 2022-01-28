@@ -66,7 +66,7 @@ internal class BindRequest(
         )
     }
 
-    val sameContainer: Playback? = manager.playbacks[container]
+    val sameContainer: Playback? = manager.findPlaybackForContainer(container)
     val samePlayable: Playback? = playable.playback
 
     "Home_Request[${hexCode()}]_BIND: SC=$sameContainer, SP=$samePlayable".logDebug()

@@ -98,6 +98,20 @@ internal inline fun <T> Iterable<T>.partitionToMutableSets(
   return Pair(first, second)
 }
 
+/**
+ * Removes all item from this object, and applies [action] on each item after it is removed.
+ */
+internal inline fun <T> MutableIterator<T>.onRemoveEach(action: (T) -> Unit) {
+  while (hasNext()) {
+    val target = next()
+    remove()
+    action(target)
+  }
+}
+
+internal inline fun <T> MutableCollection<T>.onRemoveEach(action: (T) -> Unit) =
+  iterator().onRemoveEach(action)
+
 @MainThread
 internal inline fun <reified T : Any> View.getTagOrPut(
   key: Int,

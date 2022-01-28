@@ -21,6 +21,7 @@ import android.util.Pair
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.annotation.VisibleForTesting
+import com.google.ads.interactivemedia.v3.api.FriendlyObstruction
 import com.google.ads.interactivemedia.v3.api.FriendlyObstructionPurpose
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory
 import com.google.android.exoplayer2.C
@@ -105,13 +106,10 @@ internal class StyledPlayerViewBridge(
         if (imaBundle != null) {
           value.adViewGroup.addView(imaBundle.adViewGroup)
           imaBundle.adsLoader.adDisplayContainer?.let { container ->
+            val imaSdkFactory = ImaSdkFactory.getInstance()
             for (adOverlayInfo in value.adOverlayInfos) {
               container.registerFriendlyObstruction(
-                ImaSdkFactory.getInstance().createFriendlyObstruction(
-                  adOverlayInfo.view,
-                  getFriendlyObstructionPurpose(adOverlayInfo.purpose),
-                  adOverlayInfo.reasonDetail
-                )
+                imaSdkFactory.createFriendlyObstruction(adOverlayInfo)
               )
             }
           }
@@ -366,5 +364,12 @@ internal class StyledPlayerViewBridge(
         else -> FriendlyObstructionPurpose.OTHER
       }
     }
+
+    fun ImaSdkFactory.createFriendlyObstruction(adOverlayInfo: AdOverlayInfo): FriendlyObstruction =
+      createFriendlyObstruction(
+        adOverlayInfo.view,
+        getFriendlyObstructionPurpose(adOverlayInfo.purpose),
+        adOverlayInfo.reasonDetail
+      )
   }
 }

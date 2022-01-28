@@ -21,4 +21,5 @@
     app:surface_type="texture_view"
     app:resize_mode="zoom"
     app:show_buffering="always"
+    app:use_controller="false"
     />

@@ -71,9 +71,6 @@ class Group(
     val toPause = arraySetOf<Playback>()
 
     managers.forEach { manager ->
-      for (playback in manager.playbacks) {
-        playback.value.performRefresh()
-      }
       val (canPlay, canPause) = manager.splitPlaybacks()
       toPlay.addAll(canPlay)
       toPause.addAll(canPause)

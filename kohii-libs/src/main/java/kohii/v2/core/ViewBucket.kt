@@ -25,11 +25,14 @@ import androidx.annotation.CallSuper
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
+import kohii.v2.R
 import kohii.v2.internal.NestedScrollViewBucket
 import kohii.v2.internal.RecyclerViewBucket
 import kohii.v2.internal.ViewGroupBucket
 import kohii.v2.internal.ViewGroupTwoThreeBucket
 import kohii.v2.internal.ViewPager2Bucket
+import kohii.v2.internal.getTagOrPut
+import kohii.v2.internal.getTypedTag
 import kohii.v2.internal.isAncestorOf
 
 // TODO(eneim): figure out the way to use Instrumentation Test to verify the ViewBucket behavior.
@@ -147,3 +150,11 @@ abstract class ViewBucket(
     }
   }
 }
+
+internal fun View.fetchContainersTag(): MutableList<View>? =
+  getTypedTag(R.id.container_recycler_item_views)
+
+internal fun View.getContainersTag(): MutableList<View> =
+  getTagOrPut(R.id.container_recycler_item_views) { mutableListOf() }
+
+internal fun View.removeContainersTag(): Unit = setTag(R.id.container_recycler_item_views, null)

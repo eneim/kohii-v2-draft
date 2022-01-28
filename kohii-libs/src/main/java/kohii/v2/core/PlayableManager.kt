@@ -34,7 +34,10 @@ interface PlayableManager {
    * This method is called by the [Playable] to remove itself from the current [PlayableManager]
    * before adding to a new [PlayableManager], or before the destruction.
    */
-  fun removePlayable(playable: Playable): Bundle?
+  fun removePlayable(
+    playable: Playable,
+    clearState: Boolean,
+  ): Bundle?
 
   /**
    * Returns the currently saved state of the [Playable] in this manager.

@@ -23,9 +23,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 
-inline fun BottomSheetDialog.doOnStateChanged(
+inline fun BottomSheetBehavior<*>.doOnStateChanged(
   crossinline onStateChanged: (newState: Int) -> Unit,
-) = behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+) = addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
   override fun onStateChanged(
     bottomSheet: View,
     newState: Int,
@@ -36,6 +36,10 @@ inline fun BottomSheetDialog.doOnStateChanged(
     slideOffset: Float,
   ) = Unit
 })
+
+inline fun BottomSheetDialog.doOnStateChanged(
+  crossinline onStateChanged: (newState: Int) -> Unit,
+) = behavior.doOnStateChanged(onStateChanged)
 
 /**
  * Given a Flow A, returns a [Flow] that emits a pair of the latest value emitted by A (as the

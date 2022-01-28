@@ -43,6 +43,7 @@ internal suspend fun View.awaitAttached() {
 }
 
 internal val Rect.area: Int get() = width() * height()
+
 internal fun <V : View> ViewGroup.isAncestorOf(view: V): Boolean {
   if (view === this || this.contains(view)) return true
   var target: View = view

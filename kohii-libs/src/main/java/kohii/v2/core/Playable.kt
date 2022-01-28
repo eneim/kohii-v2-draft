@@ -57,7 +57,7 @@ abstract class Playable(
       val prev = field
       field = value
       if (prev !== value) {
-        val state = prev.removePlayable(this)
+        val state = prev.removePlayable(playable = this, clearState = true)
         value.addPlayable(playable = this, state = state)
         onManagerChanged(previous = prev, next = value)
       }
@@ -76,7 +76,7 @@ abstract class Playable(
         val destroyPlayableDelay = if (prev != null && prev.manager.isChangingConfigurations) {
           DEFAULT_DESTRUCTION_DELAY_MS
         } else 0
-        home.destroyPlayableDelayed(this, destroyPlayableDelay)
+        home.destroyPlayableDelayed(playable = this, delayMillis = destroyPlayableDelay)
       }
     }
 
@@ -113,7 +113,9 @@ abstract class Playable(
    */
   @CallSuper
   open fun onDestroy() {
-    manager.removePlayable(this)
+    // On normal destruction, we do not need to clear the state. When the manager is cleared, it
+    // will clear them automatically.
+    manager.removePlayable(playable = this, clearState = false)
   }
 
   /**
@@ -262,11 +264,14 @@ abstract class Playable(
       }
     }
 
-    override fun removePlayable(playable: Playable): Bundle? {
+    override fun removePlayable(
+      playable: Playable,
+      clearState: Boolean,
+    ): Bundle? {
       "PlayableManager[${hexCode()}]_REMOVE_Playable [PB=$playable]".logInfo()
       return if (playables.remove(playable)) {
         "PlayableManager[${hexCode()}]_REMOVED_Playable [PB=$playable]".logDebug()
-        stateHandle.remove<Bundle>(playable.stateKey)
+        if (clearState) stateHandle.remove<Bundle>(playable.stateKey) else null
       } else {
         null
       }
@@ -293,11 +298,12 @@ abstract class Playable(
 
     override fun onCleared() {
       super.onCleared()
+      // TODO: update to avoid new allocation.
       playables
         .toMutableSet()
         .onEach { playable ->
           debugOnly { check(playable.manager === this) }
-          home.destroyPlayableDelayed(playable, 0)
+          home.destroyPlayableDelayed(playable = playable, delayMillis = 0)
         }
         .clear()
       playables.clear()

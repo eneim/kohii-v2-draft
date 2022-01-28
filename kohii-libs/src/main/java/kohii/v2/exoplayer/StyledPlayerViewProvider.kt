@@ -57,7 +57,7 @@ class StyledPlayerViewProvider : RecycledRendererProvider() {
   override fun recycleRenderer(renderer: Any) {
     // View must be removed from its parent before this call.
     require(renderer is StyledPlayerView && renderer.parent == null && !renderer.isAttachedToWindow)
-    renderer.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT // Default
+    renderer.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM // Default
     renderer.setAspectRatioListener(null)
     renderer.setControllerOnFullScreenModeChangedListener(null)
     renderer.setErrorMessageProvider(null)

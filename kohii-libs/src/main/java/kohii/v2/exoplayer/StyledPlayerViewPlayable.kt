@@ -41,6 +41,7 @@ internal class StyledPlayerViewPlayable(
   firstManager = firstManager
 ) {
 
+  // TODO: the StyledPlayerView controller is not disappearing sometime ...
   override fun onRendererAttached(renderer: Any?) {
     super.onRendererAttached(renderer)
     if (renderer != null) {
