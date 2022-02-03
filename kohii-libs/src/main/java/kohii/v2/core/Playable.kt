@@ -18,6 +18,7 @@ package kohii.v2.core
 
 import android.app.Application
 import android.os.Bundle
+import android.util.Range
 import androidx.annotation.CallSuper
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
@@ -48,6 +49,8 @@ abstract class Playable(
   abstract val isPlaying: Boolean
 
   abstract val renderer: Any?
+
+  abstract val triggerRange: Range<Float>
 
   /**
    * The current [PlayableManager].

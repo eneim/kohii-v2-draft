@@ -62,7 +62,9 @@ internal abstract class ViewPlayback(
 
   override fun shouldPrepare(): Boolean = internalToken.activePixelsRatio > 0
 
-  override fun shouldPlay(): Boolean = internalToken.activePixelsRatio >= trigger
+  override fun shouldPlay(): Boolean = internalToken.activePixelsRatio.let { ratio ->
+    ratio >= trigger && ratio in playable.triggerRange
+  }
 
   override fun onRefresh() {
     val refreshTimeNano = measureNanoTime {

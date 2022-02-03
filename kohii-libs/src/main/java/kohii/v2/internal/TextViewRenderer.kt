@@ -19,6 +19,7 @@ package kohii.v2.internal
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Range
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -66,6 +67,7 @@ class TextViewPlayable(
   override val renderer: TextView? get() = internalRenderer
   override val isStarted: Boolean get() = renderer?.text?.startsWith("START") == true
   override val isPlaying: Boolean get() = renderer?.text?.startsWith("START") == true
+  override val triggerRange: Range<Float> = Range(0.0f, 1.0f)
 
   private val rawPlayerListeners = CopyOnWriteArraySet<Player.Listener>()
 

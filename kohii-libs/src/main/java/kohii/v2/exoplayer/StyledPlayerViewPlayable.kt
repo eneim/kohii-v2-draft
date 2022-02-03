@@ -16,6 +16,7 @@
 
 package kohii.v2.exoplayer
 
+import android.util.Range
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import kohii.v2.core.BasePlayable
 import kohii.v2.core.Bridge
@@ -40,6 +41,8 @@ internal class StyledPlayerViewPlayable(
   rendererType = StyledPlayerView::class.java,
   firstManager = firstManager
 ) {
+
+  override val triggerRange: Range<Float> = Range(0.0f, 1.0f)
 
   // TODO: the StyledPlayerView controller is not disappearing sometime ...
   override fun onRendererAttached(renderer: Any?) {
