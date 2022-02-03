@@ -148,6 +148,8 @@ dependencies {
   implementation(libs.compose.material)
   implementation(libs.compose.ui.tooling)
 
+  implementation(libs.youtube.player)
+
   val composeVersion = "1.1.0-rc01"
   androidTestImplementation("androidx.compose.ui:ui-test-junit4:$composeVersion")
 
