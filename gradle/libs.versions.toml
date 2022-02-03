@@ -52,3 +52,5 @@ compose-foundation = { module = "androidx.compose.foundation:foundation", versio
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "jetpack-compose" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "jetpack-compose" }
 compose-material = { module = "androidx.compose.material:material", version.ref = "jetpack-compose" }
+
+youtube-player = "com.pierfrancescosoffritti.androidyoutubeplayer:core:11.0.1"

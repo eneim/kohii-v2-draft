@@ -20,4 +20,9 @@ object VideoUrls {
 
   const val HlsSample = "https://content.jwplatform.com/manifests/Cl6EVHgQ.m3u8"
   const val LocalHevc = "file:///android_asset/media/bbb_hevc_mp3_45s.mp4"
+  val YtVideos = listOf(
+    "mdQjuZbLv9Y",
+    "kp53qL_O5gk",
+    "aYhgwII6_VM",
+  )
 }
