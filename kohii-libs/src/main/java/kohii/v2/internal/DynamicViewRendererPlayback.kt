@@ -53,13 +53,14 @@ internal class DynamicViewRendererPlayback(
   private val rendererProvider = providerManager.getRendererProvider(this)
 
   override fun onStarted() {
-    super.onStarted()
+    // The renderer might need to be available before starting.
     tryAttachRenderer()
+    super.onStarted()
   }
 
   override fun onPaused() {
-    tryDetachRenderer()
     super.onPaused()
+    tryDetachRenderer()
   }
 
   private fun tryAttachRenderer() {
