@@ -54,7 +54,7 @@ internal class RequestHandleImpl(
   }
 
   private fun onCompleted(error: Throwable?) {
-    "Home[${home.hexCode()}]_COMPLETED_Request [error: $error] [handle=${hexCode()}]".logInfo()
+    "Handle[${hexCode()}]_COMPLETED_Request [error: $error] [handle=${hexCode()}]".logInfo()
     lifecycle.removeObserver(this)
     home.pendingRequests.values.removeAll { handle -> handle === this }
     // TODO: how to properly notify the client about the non-cancellation error.
