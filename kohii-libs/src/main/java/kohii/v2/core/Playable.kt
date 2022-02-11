@@ -84,6 +84,7 @@ abstract class Playable(
     }
 
   //region Manual control support
+  // TODO: save and restore this value across recreation.
   internal val command = AtomicReference<Command>(null)
   //endregion
 
@@ -180,7 +181,8 @@ abstract class Playable(
   open fun onReset() = Unit
 
   /**
-   * Releases the resource hold by this [Playable].
+   * Releases the resource hold by this [Playable]. This method is called when the [Playable] is
+   * destroyed, or it becomes inactive so that it needs to give others the resources for playback.
    */
   abstract fun onRelease()
 

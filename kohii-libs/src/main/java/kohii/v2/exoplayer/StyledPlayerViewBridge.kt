@@ -45,14 +45,21 @@ import kohii.v2.R
 import kohii.v2.core.AbstractBridge
 import kohii.v2.core.Bridge
 import kohii.v2.core.PlayableState
+import kohii.v2.core.PlayableState.Ended
+import kohii.v2.core.PlayableState.Idle
+import kohii.v2.core.PlayableState.Initialized
+import kohii.v2.core.PlayableState.Progress
 import kohii.v2.core.PlayerPool
 import kohii.v2.internal.PlaybackInfo
 import kohii.v2.internal.hexCode
 import kohii.v2.internal.logInfo
 
 /**
- * A [Bridge] that works with [StyledPlayerView] and [Player].
+ * A [Bridge] that works with [StyledPlayerView] and [ExoPlayer].
+ *
+ * Note: [ExoPlayer] is required rather than [Player] for Ad support and AnalyticsListener usage.
  */
+// TODO: save and restore playback speed, track selections, etc.
 internal class StyledPlayerViewBridge(
   context: Context,
   private val mediaItems: List<MediaItem>,
@@ -76,6 +83,8 @@ internal class StyledPlayerViewBridge(
       }
     }
 
+  @get:Player.State
+  private var lastSeenPlayerState: Int = Player.STATE_IDLE
   private var lastSeenTracksInfo: TracksInfo = TracksInfo.EMPTY
   private var playerPrepared = false
 
@@ -118,26 +127,38 @@ internal class StyledPlayerViewBridge(
       field = value
     }
 
-  override var playableState: PlayableState = PlayableState.Initialized
+  override var playableState: PlayableState = Initialized
     get() {
-      val player = internalPlayer ?: return PlayableState.Idle
-      return when (val playerState = player.playbackState) {
-        Player.STATE_ENDED -> PlayableState.Ended
-        Player.STATE_IDLE -> PlayableState.Idle
-        else -> PlayableState.Progress(
-          playerState = playerState,
-          totalDurationMillis = player.duration,
-          contentDurationMillis = player.contentDuration,
-          currentPositionMillis = player.currentPosition,
-          currentMediaItemIndex = player.currentMediaItemIndex,
-          isStarted = isStarted,
-          isPlaying = player.isPlaying,
-        )
+      if (lastSeenPlayerState == Player.STATE_ENDED) return Ended
+
+      val player = internalPlayer
+      return when (val playerState: Int = player?.playbackState ?: lastSeenPlayerState) {
+        Player.STATE_ENDED -> Ended
+        Player.STATE_IDLE -> Idle
+        else -> if (player != null) {
+          Progress(
+            playerState = playerState,
+            totalDurationMillis = player.duration,
+            contentDurationMillis = player.contentDuration,
+            currentPositionMillis = player.currentPosition,
+            currentMediaItemIndex = player.currentMediaItemIndex,
+            isStarted = isStarted,
+            isPlaying = player.isPlaying,
+          )
+        } else {
+          Idle
+        }
       }
     }
     set(value) {
       field = value
-      if (value is PlayableState.Progress) {
+      lastSeenPlayerState = when (value) {
+        Initialized, Idle -> Player.STATE_IDLE
+        Ended -> Player.STATE_ENDED
+        is Progress -> value.playerState
+      }
+
+      if (value is Progress) {
         val player: Player? = internalPlayer
         if (player != null) {
           if (value.currentMediaItemIndex != C.INDEX_UNSET) {
@@ -171,16 +192,19 @@ internal class StyledPlayerViewBridge(
       playerPrepared = false
     }
 
-    if (loadSource) ensurePlayer()
+    if (loadSource) preparePlayer()
   }
 
   override fun ready() {
-    ensurePlayer()
-    renderer?.setupPlayer()
+    preparePlayer()
+    renderer?.attachPlayer()
   }
 
   override fun play() {
-    requireNotNull(internalPlayer).wrappedPlayer.play()
+    // It can be skip if the Player/Playback was ended before.
+    if (playerPrepared) {
+      requireNotNull(internalPlayer).wrappedPlayer.play()
+    }
   }
 
   override fun pause() {
@@ -194,9 +218,14 @@ internal class StyledPlayerViewBridge(
       player.stop()
       player.clearMediaItems()
     }
+    // Note: playerPrepared is set to false, but the internalPlayer can be nonnull.
     playerPrepared = false
+    lastSeenPlayerState = Player.STATE_IDLE
   }
 
+  // This method should not reset lastSeenPlayerState because it may be called when
+  // the container is scrolled off-screen and we need to release the resource hold by inactive
+  // Playable. When it is scrolled back, the Playable will be prepared again.
   override fun release() {
     renderer?.player = null
     playbackRestoreInfo = PlaybackInfo.EMPTY
@@ -244,6 +273,10 @@ internal class StyledPlayerViewBridge(
     "Bridge[${hexCode()}]_STATS [stats=${playbackStatsListener.playbackStats}]".logInfo()
   }
 
+  override fun onPlaybackStateChanged(playbackState: Int) {
+    lastSeenPlayerState = playbackState
+  }
+
   override fun onPlayerError(error: PlaybackException) {
     if (error.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW) {
       internalPlayer?.let {
@@ -266,16 +299,11 @@ internal class StyledPlayerViewBridge(
   }
   //endregion
 
-  private fun ensurePlayer() {
-    val player: Player = internalPlayer ?: run {
+  // Make sure the Player instance is available and set the MediaItems.
+  private fun initPlayer(): InternalPlayerWrapper {
+    val player = internalPlayer ?: run {
       playerPrepared = false
-      val playerWrapper = InternalPlayerWrapper(player = playerPool.getPlayer(mediaItems))
-      internalPlayer = playerWrapper
-      playerWrapper
-    }
-
-    if (player.playbackState == Player.STATE_IDLE) {
-      playerPrepared = false
+      InternalPlayerWrapper(player = playerPool.getPlayer(mediaItems))
     }
 
     val playbackInfo = playbackRestoreInfo
@@ -286,11 +314,26 @@ internal class StyledPlayerViewBridge(
     }
 
     if (!playerPrepared) {
-      (internalPlayer?.wrappedPlayer as? ExoPlayerWrapper)?.prepareAdsBundle()
       player.setMediaItems(
         /* mediaItems */ mediaItems,
         /* resetPosition */ !hasStartPosition
       )
+    }
+
+    return player
+  }
+
+  // Make sure that the Player is available and prepared.
+  // Note: this method will do nothing if `lastSeenPlayerState` is Player.STATE_ENDED
+  private fun preparePlayer() {
+    val player = initPlayer()
+    internalPlayer = player
+
+    if (lastSeenPlayerState == Player.STATE_ENDED) return
+    if (player.playbackState == Player.STATE_IDLE) playerPrepared = false
+
+    if (!playerPrepared) {
+      (internalPlayer?.wrappedPlayer as? ExoPlayerWrapper)?.prepareAdsBundle()
       player.prepare()
       playerPrepared = true
     }
@@ -343,14 +386,23 @@ internal class StyledPlayerViewBridge(
   }
   //endregion
 
-  private fun StyledPlayerView.setupPlayer() {
+  private fun StyledPlayerView.attachPlayer() {
     if (this.player !== internalPlayer) this.player = internalPlayer
   }
 
+  // When this player is set to the [StyledPlayerView] and then its [StyledPlayerControlView], it
+  // will redirect the call to [play()] and [pause()] to the `controller`. This is to centralize the
+  // manual play and pause request to the Playback:
+  // - A call to [play()] will set a special flag to the [Playable], indicate that the Playback is
+  // started by the user, and then it will refresh to send the request to this Bridge to start the
+  // actual Player (if the Playback is in the condition to be able to start).
+  // - Similarly, a call to [pause()] will set a special flag to the [Playable], indicate that the
+  // Playback is paused by the user, and then it will refresh to send the pause request to this
+  // Bridge to pause the actual Player.
   private inner class InternalPlayerWrapper(val player: ExoPlayer) : ForwardingPlayer(player) {
     override fun play() = controller.play()
     override fun pause() = controller.pause()
-    override fun getWrappedPlayer(): ExoPlayer = player
+    override fun getWrappedPlayer(): ExoPlayer = player // Typed overriding.
   }
 
   private companion object {

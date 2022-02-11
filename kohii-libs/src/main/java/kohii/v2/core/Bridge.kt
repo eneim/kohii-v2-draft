@@ -68,7 +68,8 @@ interface Bridge<RENDERER : Any> {
   fun reset()
 
   /**
-   * Release all resources. After this, the [Bridge] instance is no longer usable.
+   * Release all resources. The [Playable] may call this when it is not active, but not yet
+   * destroyed.
    *
    * @see [Playable.onRelease]
    */

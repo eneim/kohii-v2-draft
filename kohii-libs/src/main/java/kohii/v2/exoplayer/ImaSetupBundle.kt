@@ -35,6 +35,7 @@ internal class ImaSetupBundle(
   override fun getAdViewGroup(): ViewGroup = adViewGroup
   override fun getAdOverlayInfos(): MutableList<AdOverlayInfo> = mutableListOf()
 
+  // Must be called before player.prepare()
   fun ready(player: Player) {
     adsLoader.setPlayer(player)
   }

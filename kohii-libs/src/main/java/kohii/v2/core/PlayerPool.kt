@@ -25,6 +25,7 @@ import kotlin.math.max
 /**
  * Definition of a pool to provide [PLAYER] instance for the consumer.
  */
+// TODO: put an optional expiration so that it will cleanup unused instance after some time.
 abstract class PlayerPool<PLAYER : Any> @JvmOverloads constructor(
   @IntRange(from = 1) val poolSize: Int = DEFAULT_POOL_SIZE,
 ) {
@@ -41,7 +42,8 @@ abstract class PlayerPool<PLAYER : Any> @JvmOverloads constructor(
   protected abstract fun PLAYER.accept(mediaData: Any): Boolean
 
   /**
-   * Resets the internal state of the [player] instance before putting it back to the pool.
+   * Resets the internal state of the [player] instance before putting it back to the pool. The
+   * player instance still be usable with a preparation.
    *
    * @param player The [PLAYER] instance to reset.
    */
@@ -56,15 +58,15 @@ abstract class PlayerPool<PLAYER : Any> @JvmOverloads constructor(
   protected abstract fun createPlayer(mediaData: Any): PLAYER
 
   /**
-   * Destroys the [PLAYER] instance. After this, the [player] must not be reused.
+   * Destroys the [PLAYER] instance. After this, the [player] must not be reusable.
    *
    * @param player The [PLAYER] instance.
    */
   protected abstract fun destroyPlayer(player: PLAYER)
 
   /**
-   * Acquires a [PLAYER] that can be used to play the [mediaData] from the pool. If there is no
-   * available instance in the pool, this method will create a new one.
+   * Acquires a [PLAYER] instance that can be used to play the [mediaData] from the pool. If there
+   * is no available instance in the pool, the client will be asked to create a new one.
    *
    * @param mediaData The media data.
    * @return a [PLAYER] instance that can be used to play the [mediaData].
@@ -74,9 +76,9 @@ abstract class PlayerPool<PLAYER : Any> @JvmOverloads constructor(
     ?: createPlayer(mediaData)
 
   /**
-   * Releases an unused [PLAYER] to the pool. If the pool is already full, this method must destroy
-   * the [PLAYER] instance. Return `true` if the instance is successfully put back to the pool, or
-   * `false` otherwise.
+   * Releases an unused [PLAYER] to the pool. If the pool is already full, the client needs to
+   * destroy the [PLAYER] instance. Return `true` if the instance is successfully put back to the
+   * pool, or `false` otherwise.
    *
    * @param player The [PLAYER] to be put back to the pool.
    * @return `true` if the instance is successfully put back to the pool, or `false` otherwise.
