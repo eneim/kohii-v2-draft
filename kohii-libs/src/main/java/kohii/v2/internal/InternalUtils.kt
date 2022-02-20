@@ -23,6 +23,8 @@ import androidx.annotation.MainThread
 import androidx.annotation.RestrictTo
 import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX
 import androidx.core.util.Pools.Pool
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.TracksInfo
 import kohii.v2.BuildConfig
 
 internal fun checkMainThread() = check(Looper.myLooper() == Looper.getMainLooper()) {
@@ -122,3 +124,12 @@ internal inline fun <reified T : Any> View.getTagOrPut(
 
 @MainThread
 internal inline fun <reified T : Any> View.getTypedTag(key: Int): T? = getTag(key) as? T
+
+internal inline fun Player.doOnTrackInfoChanged(
+  crossinline action: Player.(TracksInfo) -> Unit,
+) = addListener(object : Player.Listener {
+  override fun onTracksInfoChanged(tracksInfo: TracksInfo) {
+    removeListener(this)
+    action(tracksInfo)
+  }
+})

@@ -35,7 +35,7 @@
     <activity android:name=".ComposeVideoActivity" />
 
     <activity-alias
-        android:name="LauncherActivity"
+        android:name="Launcher"
         android:targetActivity=".MainActivity"
         android:exported="true">
       <intent-filter>

@@ -53,8 +53,8 @@ class MixedVideosInRecyclerViewFragment : BaseDemoFragment(R.layout.fragment_sim
           requests.onEach(RequestHandle::cancel).clear()
 
           requests += engine.setUp(
-            data = MediaItem.Builder().setUri(VideoUrls.LocalHevc).build(),
-            tag = "$initSeed::${VideoUrls.LocalHevc}::FIRST"
+            data = MediaItem.Builder().setUri(VideoUrls.MpdSample).build(),
+            tag = "$initSeed::${VideoUrls.MpdSample}::FIRST"
           )
             .bind(container = holder.firstVideo)
 
@@ -70,7 +70,7 @@ class MixedVideosInRecyclerViewFragment : BaseDemoFragment(R.layout.fragment_sim
           requests.onEach(RequestHandle::cancel).clear()
         }
       }
-        .id(VideoUrls.LocalHevc)
+        .id("${VideoUrls.MpdSample}, ${VideoUrls.LocalHevc}")
         .addTo(this)
 
       (0 until 8).forEach { index ->

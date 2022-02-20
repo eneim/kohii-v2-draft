@@ -74,6 +74,16 @@ internal abstract class ViewPlayback(
     "Playback[${hexCode()}]_REFRESH [$=${refreshTimeNano / 1E6f}ms]".logDebug()
   }
 
+  override fun onStarted() {
+    viewContainer.keepScreenOn = true
+    super.onStarted()
+  }
+
+  override fun onPaused() {
+    super.onPaused()
+    viewContainer.keepScreenOn = false
+  }
+
   private fun fetchToken(): ViewToken {
     checkMainThread()
     tokenRect.setEmpty()

@@ -17,10 +17,15 @@
 package kohii.v2.internal
 
 import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.trackselection.TrackSelectionParameters
+import kohii.v2.exoplayer.PlayerParameters
 
 internal class PlaybackInfo(
   val mediaItemIndex: Int = C.INDEX_UNSET,
   val currentPositionMillis: Long = C.POSITION_UNSET.toLong(),
+  val playerParameters: PlayerParameters = PlayerParameters.DEFAULT,
+  val trackSelectionParameters: TrackSelectionParameters =
+    TrackSelectionParameters.DEFAULT_WITHOUT_CONTEXT,
 ) {
 
   companion object {

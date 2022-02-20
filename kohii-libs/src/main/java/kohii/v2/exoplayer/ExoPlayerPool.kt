@@ -21,6 +21,8 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerWrapper
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.parameters
+import com.google.android.exoplayer2.trackselection.TrackSelectionParameters
 import kohii.v2.core.PlayerPool
 
 /**
@@ -44,6 +46,8 @@ class ExoPlayerPool(
   override fun resetPlayer(player: ExoPlayer) {
     player.stop()
     player.clearMediaItems()
+    player.parameters = PlayerParameters.DEFAULT
+    player.trackSelectionParameters = TrackSelectionParameters.DEFAULT_WITHOUT_CONTEXT
   }
 
   override fun destroyPlayer(player: ExoPlayer) {

@@ -18,6 +18,8 @@ package kohii.v2.demo.common
 
 object VideoUrls {
 
-  const val HlsSample = "https://content.jwplatform.com/manifests/Cl6EVHgQ.m3u8"
+  const val HlsSample = "https://bitmovin-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
+  // Video sample with multiple Audios.
+  const val MpdSample = "https://bitmovin-a.akamaihd.net/content/sintel/sintel.mpd"
   const val LocalHevc = "file:///android_asset/media/bbb_hevc_mp3_45s.mp4"
 }

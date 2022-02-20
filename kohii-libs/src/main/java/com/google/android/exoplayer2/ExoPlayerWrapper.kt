@@ -16,8 +16,11 @@
 
 package com.google.android.exoplayer2
 
+import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.MediaSourceFactory
+import kohii.v2.exoplayer.AudioParameters
+import kohii.v2.exoplayer.PlayerParameters
 import kohii.v2.exoplayer.StyledPlayerViewBridge
 
 /**
@@ -25,7 +28,7 @@ import kohii.v2.exoplayer.StyledPlayerViewBridge
  * to create the player instance. This is used by the [StyledPlayerViewBridge] to setup for Ad
  * playback.
  */
-internal class ExoPlayerWrapper private constructor(
+class ExoPlayerWrapper private constructor(
   private val player: ExoPlayer,
   val mediaSourceFactory: DefaultMediaSourceFactory?,
 ) : ExoPlayer by player {
@@ -44,4 +47,61 @@ internal class ExoPlayerWrapper private constructor(
     builder = builder,
     mediaSourceFactory = builder.mediaSourceFactorySupplier.get(),
   )
+
+  private var audioParameters: AudioParameters = AudioParameters.DEFAULT
+    set(value) {
+      field = value
+      player.setAudioAttributes(value.audioAttributes, value.handleAudioFocus)
+    }
+
+  var playerParameters: PlayerParameters = PlayerParameters.DEFAULT
+    get() = PlayerParameters(
+      volume = volume,
+      repeatMode = repeatMode,
+      shuffleModeEnabled = shuffleModeEnabled,
+      audioParameters = audioParameters,
+      playbackParameters = playbackParameters,
+    )
+    set(value) {
+      field = value
+      volume = value.volume
+      repeatMode = value.repeatMode
+      shuffleModeEnabled = value.shuffleModeEnabled
+      audioParameters = value.audioParameters
+      playbackParameters = value.playbackParameters
+    }
+
+  override fun setAudioAttributes(
+    audioAttributes: AudioAttributes,
+    handleAudioFocus: Boolean,
+  ) {
+    this.audioParameters = AudioParameters(
+      audioAttributes = audioAttributes,
+      handleAudioFocus = handleAudioFocus
+    )
+  }
 }
+
+internal var ExoPlayer.parameters: PlayerParameters
+  get() = if (this is ExoPlayerWrapper) {
+    playerParameters
+  } else {
+    PlayerParameters(
+      volume = volume,
+      repeatMode = repeatMode,
+      shuffleModeEnabled = shuffleModeEnabled,
+      audioParameters = AudioParameters(handleAudioFocus = true, audioAttributes = audioAttributes),
+      playbackParameters = playbackParameters,
+    )
+  }
+  set(value) {
+    if (this is ExoPlayerWrapper) playerParameters = value
+    else {
+      volume = value.volume
+      repeatMode = value.repeatMode
+      shuffleModeEnabled = value.shuffleModeEnabled
+      setAudioAttributes(value.audioParameters.audioAttributes,
+        value.audioParameters.handleAudioFocus)
+      playbackParameters = playbackParameters
+    }
+  }

@@ -21,9 +21,7 @@ import android.os.Looper
 import androidx.collection.arraySetOf
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import kohii.v2.BuildConfig
 import kohii.v2.internal.GroupDispatcher
-import kohii.v2.internal.TextViewRendererProvider
 import kohii.v2.internal.hexCode
 
 /**
@@ -36,30 +34,18 @@ class Group(
 ) : DefaultLifecycleObserver {
 
   internal val managers = ArrayDeque<Manager>()
-  private val activityScopeRendererProviders = mutableSetOf<RendererProvider>()
-
   private val dispatcher = GroupDispatcher(this, Looper.getMainLooper())
-
-  init {
-    if (BuildConfig.DEBUG) activityScopeRendererProviders.add(TextViewRendererProvider())
-  }
 
   override fun toString(): String = "G@${hexCode()}"
 
   internal fun addManager(manager: Manager) {
     if (managers.add(manager)) {
-      for (rendererProvider in activityScopeRendererProviders) {
-        manager.addRendererProvider(rendererProvider)
-      }
       onRefresh()
     }
   }
 
   internal fun removeManager(manager: Manager) {
     if (managers.remove(manager)) {
-      for (rendererProvider in activityScopeRendererProviders) {
-        manager.removeRendererProvider(rendererProvider)
-      }
       onRefresh()
     }
   }

@@ -33,10 +33,15 @@ import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.Events
 import com.google.android.exoplayer2.TracksInfo
+import com.google.android.exoplayer2.TracksInfo.TrackGroupInfo
 import com.google.android.exoplayer2.analytics.PlaybackStatsListener
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
 import com.google.android.exoplayer2.mediacodec.MediaCodecRenderer.DecoderInitializationException
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil.DecoderQueryException
+import com.google.android.exoplayer2.parameters
+import com.google.android.exoplayer2.trackselection.TrackSelectionOverrides
+import com.google.android.exoplayer2.trackselection.TrackSelectionOverrides.TrackSelectionOverride
+import com.google.android.exoplayer2.trackselection.TrackSelectionParameters
 import com.google.android.exoplayer2.ui.AdOverlayInfo
 import com.google.android.exoplayer2.ui.AdOverlayInfo.Purpose
 import com.google.android.exoplayer2.ui.StyledPlayerView
@@ -45,12 +50,13 @@ import kohii.v2.R
 import kohii.v2.core.AbstractBridge
 import kohii.v2.core.Bridge
 import kohii.v2.core.PlayableState
+import kohii.v2.core.PlayableState.Active
 import kohii.v2.core.PlayableState.Ended
 import kohii.v2.core.PlayableState.Idle
 import kohii.v2.core.PlayableState.Initialized
-import kohii.v2.core.PlayableState.Progress
 import kohii.v2.core.PlayerPool
-import kohii.v2.internal.PlaybackInfo
+import kohii.v2.core.PlayerProgress
+import kohii.v2.internal.doOnTrackInfoChanged
 import kohii.v2.internal.hexCode
 import kohii.v2.internal.logInfo
 
@@ -59,20 +65,18 @@ import kohii.v2.internal.logInfo
  *
  * Note: [ExoPlayer] is required rather than [Player] for Ad support and AnalyticsListener usage.
  */
-// TODO: save and restore playback speed, track selections, etc.
+// TODO: when a video is paused manually, do not start the next one automatically :thinking:
 internal class StyledPlayerViewBridge(
   context: Context,
   private val mediaItems: List<MediaItem>,
   private val playerPool: PlayerPool<ExoPlayer>,
-) : AbstractBridge<StyledPlayerView>(),
-  Player.Listener,
-  ErrorMessageProvider<Throwable> {
+) : AbstractBridge<StyledPlayerView>(), Player.Listener, ErrorMessageProvider<Throwable> {
 
   private val appContext: Context = context.applicationContext
   private val playbackStatsListener = PlaybackStatsListener(false, null)
 
   private var imaSetupBundle: ImaSetupBundle? = null
-  private var internalPlayer: InternalPlayerWrapper? = null
+  private var internalPlayer: InternalExoPlayerWrapper? = null
     set(value) {
       if (field !== value) {
         field?.wrappedPlayer?.removeAnalyticsListener(playbackStatsListener)
@@ -89,7 +93,7 @@ internal class StyledPlayerViewBridge(
   private var playerPrepared = false
 
   // A temporary data for restoration only. It will be cleared after the restoration.
-  private var playbackRestoreInfo: PlaybackInfo = PlaybackInfo.EMPTY
+  private var lastSeenState: Active = Active.DEFAULT
 
   override var renderer: StyledPlayerView? = null
     set(value) {
@@ -130,20 +134,24 @@ internal class StyledPlayerViewBridge(
   override var playableState: PlayableState = Initialized
     get() {
       if (lastSeenPlayerState == Player.STATE_ENDED) return Ended
-
       val player = internalPlayer
       return when (val playerState: Int = player?.playbackState ?: lastSeenPlayerState) {
         Player.STATE_ENDED -> Ended
         Player.STATE_IDLE -> Idle
         else -> if (player != null) {
-          Progress(
-            playerState = playerState,
-            totalDurationMillis = player.duration,
-            contentDurationMillis = player.contentDuration,
-            currentPositionMillis = player.currentPosition,
-            currentMediaItemIndex = player.currentMediaItemIndex,
-            isStarted = isStarted,
-            isPlaying = player.isPlaying,
+          Active(
+            progress = PlayerProgress(
+              isStarted = isStarted,
+              totalDurationMillis = player.duration,
+              contentDurationMillis = player.contentDuration,
+              currentPositionMillis = player.currentPosition,
+              currentMediaItemIndex = player.currentMediaItemIndex,
+            ),
+            extras = ExoPlayerExtras(
+              playerState = playerState,
+              playerParameters = player.player.parameters,
+              trackSelectionParameters = player.trackSelectionParameters,
+            ),
           )
         } else {
           Idle
@@ -155,20 +163,32 @@ internal class StyledPlayerViewBridge(
       lastSeenPlayerState = when (value) {
         Initialized, Idle -> Player.STATE_IDLE
         Ended -> Player.STATE_ENDED
-        is Progress -> value.playerState
+        is Active -> (value.extras as? ExoPlayerExtras)?.playerState ?: Player.STATE_IDLE
       }
 
-      if (value is Progress) {
-        val player: Player? = internalPlayer
+      if (value is Active) {
+        val playerProgress = value.progress
+        val playerState = value.extras as? ExoPlayerExtras ?: ExoPlayerExtras.DEFAULT
+        val player: InternalExoPlayerWrapper? = internalPlayer
         if (player != null) {
-          if (value.currentMediaItemIndex != C.INDEX_UNSET) {
-            player.seekTo(value.currentMediaItemIndex, value.currentPositionMillis)
+          if (playerProgress.currentMediaItemIndex != C.INDEX_UNSET) {
+            player.seekTo(
+              playerProgress.currentMediaItemIndex,
+              playerProgress.currentPositionMillis
+            )
           }
+
+          player.player.parameters = playerState.playerParameters
+          if (lastSeenTracksInfo !== TracksInfo.EMPTY) {
+            player.applyTrackSelectionParameters(playerState.trackSelectionParameters)
+          } else {
+            player.doOnTrackInfoChanged {
+              player.applyTrackSelectionParameters(playerState.trackSelectionParameters)
+            }
+          }
+          lastSeenState = Active.DEFAULT
         } else {
-          playbackRestoreInfo = PlaybackInfo(
-            mediaItemIndex = value.currentMediaItemIndex,
-            currentPositionMillis = value.currentPositionMillis
-          )
+          lastSeenState = value
         }
       }
     }
@@ -213,7 +233,7 @@ internal class StyledPlayerViewBridge(
 
   override fun reset() {
     (internalPlayer?.wrappedPlayer as? ExoPlayerWrapper)?.resetAdsBundle()
-    playbackRestoreInfo = PlaybackInfo.EMPTY
+    lastSeenState = Active.DEFAULT
     internalPlayer?.let { player ->
       player.stop()
       player.clearMediaItems()
@@ -228,7 +248,7 @@ internal class StyledPlayerViewBridge(
   // Playable. When it is scrolled back, the Playable will be prepared again.
   override fun release() {
     renderer?.player = null
-    playbackRestoreInfo = PlaybackInfo.EMPTY
+    lastSeenState = Active.DEFAULT
     internalPlayer?.let { player ->
       player.stop()
       player.clearMediaItems()
@@ -300,17 +320,29 @@ internal class StyledPlayerViewBridge(
   //endregion
 
   // Make sure the Player instance is available and set the MediaItems.
-  private fun initPlayer(): InternalPlayerWrapper {
+  private fun initPlayer(): InternalExoPlayerWrapper {
     val player = internalPlayer ?: run {
       playerPrepared = false
-      InternalPlayerWrapper(player = playerPool.getPlayer(mediaItems))
+      InternalExoPlayerWrapper(player = playerPool.getPlayer(mediaItems))
     }
 
-    val playbackInfo = playbackRestoreInfo
-    playbackRestoreInfo = PlaybackInfo.EMPTY
-    val hasStartPosition = playbackInfo.mediaItemIndex != C.INDEX_UNSET
+    val activeState = lastSeenState
+    val playerExtras = activeState.extras as? ExoPlayerExtras ?: ExoPlayerExtras.DEFAULT
+    lastSeenState = Active.DEFAULT
+
+    if (playerExtras !== ExoPlayerExtras.DEFAULT) {
+      player.player.parameters = playerExtras.playerParameters
+      player.doOnTrackInfoChanged {
+        applyTrackSelectionParameters(playerExtras.trackSelectionParameters)
+      }
+    }
+
+    val hasStartPosition = activeState.progress.currentMediaItemIndex != C.INDEX_UNSET
     if (hasStartPosition) {
-      player.seekTo(playbackInfo.mediaItemIndex, playbackInfo.currentPositionMillis)
+      player.seekTo(
+        activeState.progress.currentMediaItemIndex,
+        activeState.progress.currentPositionMillis,
+      )
     }
 
     if (!playerPrepared) {
@@ -399,7 +431,7 @@ internal class StyledPlayerViewBridge(
   // - Similarly, a call to [pause()] will set a special flag to the [Playable], indicate that the
   // Playback is paused by the user, and then it will refresh to send the pause request to this
   // Bridge to pause the actual Player.
-  private inner class InternalPlayerWrapper(val player: ExoPlayer) : ForwardingPlayer(player) {
+  private inner class InternalExoPlayerWrapper(val player: ExoPlayer) : ForwardingPlayer(player) {
     override fun play() = controller.play()
     override fun pause() = controller.pause()
     override fun getWrappedPlayer(): ExoPlayer = player // Typed overriding.
@@ -424,4 +456,31 @@ internal class StyledPlayerViewBridge(
         adOverlayInfo.reasonDetail
       )
   }
+}
+
+// Note: because TrackGroupArray finds the index of TrackGroup by comparing
+// reference, we need to swap the restored TrackGroups by the existing ones
+// (but are structural equal to the restored ones).
+// Ref: https://github.com/google/ExoPlayer/issues/9718
+private fun Player.applyTrackSelectionParameters(parameters: TrackSelectionParameters) {
+  val restoredOverrideGroups = parameters.trackSelectionOverrides
+    .asList()
+    .map(TrackSelectionOverride::trackGroup)
+
+  val swappedTrackSelectionOverride = currentTracksInfo.trackGroupInfos
+    .map(TrackGroupInfo::getTrackGroup)
+    .filter(restoredOverrideGroups::contains)
+    .map(TrackSelectionOverrides::TrackSelectionOverride)
+
+  val swappedTrackSelectionOverrides = TrackSelectionOverrides.Builder()
+    .apply {
+      for (trackSelectionOverride in swappedTrackSelectionOverride) {
+        addOverride(trackSelectionOverride)
+      }
+    }
+    .build()
+
+  trackSelectionParameters = parameters.buildUpon()
+    .setTrackSelectionOverrides(swappedTrackSelectionOverrides)
+    .build()
 }

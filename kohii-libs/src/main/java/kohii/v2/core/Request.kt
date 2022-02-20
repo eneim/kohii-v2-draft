@@ -53,7 +53,8 @@ class Request(
     return result
   }
 
-  // This Parceler only handles MediaItem.
+  // This Parceler only handles ExoPlayer's MediaItem.
+  // TODO: list of MediaItems?
   internal companion object : Parceler<Request> {
     override fun Request.write(
       parcel: Parcel,

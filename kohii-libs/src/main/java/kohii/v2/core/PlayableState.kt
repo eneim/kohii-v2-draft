@@ -19,7 +19,6 @@ package kohii.v2.core
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.core.os.bundleOf
-import com.google.android.exoplayer2.Player
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -42,55 +41,39 @@ sealed interface PlayableState {
   }
 
   @Parcelize
-  class Progress(
-    @Player.State val playerState: Int,
-    val totalDurationMillis: Long, // Ads + Content, Long.MIN_VALUE if unknown.
-    val contentDurationMillis: Long, // Content only, Long.MIN_VALUE if unknown.
-    val currentPositionMillis: Long,
-    val currentMediaItemIndex: Int,
-    val isStarted: Boolean,
-    val isPlaying: Boolean,
+  class Active(
+    val progress: PlayerProgress,
+    val extras: Parcelable,
   ) : PlayableState, Parcelable {
+
+    override fun toBundle(): Bundle = bundleOf(KEY_PLAYABLE_STATE to this as Parcelable)
 
     override fun equals(other: Any?): Boolean {
       if (this === other) return true
-      if (javaClass != other?.javaClass) return false
+      if (other !is Active) return false
 
-      other as Progress
-
-      if (playerState != other.playerState) return false
-      if (totalDurationMillis != other.totalDurationMillis) return false
-      if (contentDurationMillis != other.contentDurationMillis) return false
-      if (currentPositionMillis != other.currentPositionMillis) return false
-      if (currentMediaItemIndex != other.currentMediaItemIndex) return false
-      if (isStarted != other.isStarted) return false
-      if (isPlaying != other.isPlaying) return false
+      if (progress != other.progress) return false
+      if (extras != other.extras) return false
 
       return true
     }
 
     override fun hashCode(): Int {
-      var result = playerState
-      result = 31 * result + totalDurationMillis.hashCode()
-      result = 31 * result + contentDurationMillis.hashCode()
-      result = 31 * result + currentPositionMillis.hashCode()
-      result = 31 * result + currentMediaItemIndex.hashCode()
-      result = 31 * result + isStarted.hashCode()
-      result = 31 * result + isPlaying.hashCode()
+      var result = progress.hashCode()
+      result = 31 * result + extras.hashCode()
       return result
     }
 
     override fun toString(): String {
-      return "Progress(playerState=$playerState, " +
-        "totalDurationMillis=$totalDurationMillis, " +
-        "contentDurationMillis=$contentDurationMillis, " +
-        "currentPositionMillis=$currentPositionMillis, " +
-        "currentMediaItemIndex=$currentMediaItemIndex, " +
-        "isStarted=$isStarted, " +
-        "isPlaying=$isPlaying)"
+      return "ActivePlayable(progress=$progress, extras=$extras)"
     }
 
-    override fun toBundle(): Bundle = bundleOf(KEY_PLAYABLE_STATE to this as Parcelable)
+    companion object {
+      val DEFAULT: Active = Active(
+        progress = PlayerProgress.DEFAULT,
+        extras = Bundle.EMPTY,
+      )
+    }
   }
 
   companion object {
@@ -98,7 +81,7 @@ sealed interface PlayableState {
 
     fun Bundle.toPlayableState(): PlayableState? = with(get(KEY_PLAYABLE_STATE)) {
       when (this) {
-        is Progress -> return@with this
+        is Active -> return@with this
         is String -> return@with when (this) {
           Initialized.toString() -> Initialized
           Idle.toString() -> Idle
