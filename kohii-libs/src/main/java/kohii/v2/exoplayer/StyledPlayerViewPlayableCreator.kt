@@ -57,7 +57,10 @@ class StyledPlayerViewPlayableCreator private constructor(
       is Collection<*> -> data.filterIsInstance<MediaItem>()
         .takeIf { it.size == data.size }
         ?: throw IllegalArgumentException("$data is a collection that contain non-MediaItem item.")
-      is MediaItem -> listOf(data) // Force cast.
+      is Array<*> -> data.filterIsInstance<MediaItem>()
+        .takeIf { it.size == data.size }
+        ?: throw IllegalArgumentException("$data is an array that contain non-MediaItem item.")
+      is MediaItem -> listOf(data)
       else -> listOf(MediaItem.fromUri(data.toString()))
     }
 
