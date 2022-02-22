@@ -50,32 +50,19 @@ class StyledPlayerViewPlayableCreator private constructor(
 
   override fun createPlayable(
     playableManager: PlayableManager,
-    data: Any,
+    data: List<MediaItem>,
     tag: String,
-  ): Playable {
-    val mediaItems: List<MediaItem> = when (data) {
-      is Collection<*> -> data.filterIsInstance<MediaItem>()
-        .takeIf { it.size == data.size }
-        ?: throw IllegalArgumentException("$data is a collection that contain non-MediaItem item.")
-      is Array<*> -> data.filterIsInstance<MediaItem>()
-        .takeIf { it.size == data.size }
-        ?: throw IllegalArgumentException("$data is an array that contain non-MediaItem item.")
-      is MediaItem -> listOf(data)
-      else -> listOf(MediaItem.fromUri(data.toString()))
-    }
-
-    return StyledPlayerViewPlayable(
-      home = home,
-      tag = tag,
-      data = data,
-      firstManager = playableManager,
-      bridge = StyledPlayerViewBridge(
-        context = home.application,
-        mediaItems = mediaItems,
-        playerPool = playerPool.value
-      )
+  ): Playable = StyledPlayerViewPlayable(
+    home = home,
+    tag = tag,
+    data = data,
+    firstManager = playableManager,
+    bridge = StyledPlayerViewBridge(
+      context = home.application,
+      mediaItems = data,
+      playerPool = playerPool.value
     )
-  }
+  )
 
   override fun onClear() {
     super.onClear()

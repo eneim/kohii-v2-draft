@@ -18,6 +18,7 @@ package kohii.v2.core
 
 import androidx.annotation.CallSuper
 import androidx.annotation.MainThread
+import com.google.android.exoplayer2.MediaItem
 
 /**
  * A class that can create [Playable] for a specific piece of data.
@@ -32,7 +33,7 @@ abstract class PlayableCreator {
    */
   abstract fun createPlayable(
     playableManager: PlayableManager,
-    data: Any,
+    data: List<MediaItem>,
     tag: String,
   ): Playable
 

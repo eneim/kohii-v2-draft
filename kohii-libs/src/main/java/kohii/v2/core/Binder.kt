@@ -38,7 +38,6 @@ class Binder(
   /**
    * Copies the content of this [Binder] using an (optional) tag, returns a new [Binder] instance.
    */
-  @JvmOverloads
   fun copy(tag: String? = null): Binder = Binder(
     request = request.copy(tag = tag),
     engine,

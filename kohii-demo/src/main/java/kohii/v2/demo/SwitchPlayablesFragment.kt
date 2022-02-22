@@ -21,6 +21,7 @@ import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.ui.StyledPlayerControlView.OnFullScreenModeChangedListener
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import kohii.v2.common.ExperimentalKohiiApi
@@ -47,7 +48,7 @@ class SwitchPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
 
   private val seed: String by lazy(NONE) { requireArguments().getString(KEY_SEED).orEmpty() }
   private val commonTag: String by lazy(NONE) { "$seed::${VideoUrls.LocalHevc}::Switch" }
-  private val commonData: String = VideoUrls.LocalHevc
+  private val commonData: MediaItem = VideoUrls.LocalHevc
 
   @OptIn(FlowPreview::class, kotlinx.coroutines.ExperimentalCoroutinesApi::class)
   override fun onViewCreated(

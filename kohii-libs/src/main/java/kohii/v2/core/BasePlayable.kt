@@ -17,6 +17,7 @@
 package kohii.v2.core
 
 import android.os.Bundle
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import kohii.v2.core.Playable.Command.PAUSED_BY_USER
 import kohii.v2.core.PlayableState.Companion.toPlayableState
@@ -24,7 +25,7 @@ import kohii.v2.core.PlayableState.Companion.toPlayableState
 abstract class BasePlayable<RENDERER : Any>(
   home: Home,
   tag: String,
-  data: Any,
+  data: List<MediaItem>,
   protected val bridge: Bridge<RENDERER>,
   rendererType: Class<RENDERER>,
   firstManager: PlayableManager,

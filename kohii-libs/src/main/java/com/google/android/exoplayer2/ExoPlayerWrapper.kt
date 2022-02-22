@@ -100,8 +100,10 @@ internal var ExoPlayer.parameters: PlayerParameters
       volume = value.volume
       repeatMode = value.repeatMode
       shuffleModeEnabled = value.shuffleModeEnabled
-      setAudioAttributes(value.audioParameters.audioAttributes,
-        value.audioParameters.handleAudioFocus)
+      setAudioAttributes(
+        value.audioParameters.audioAttributes,
+        value.audioParameters.handleAudioFocus
+      )
       playbackParameters = playbackParameters
     }
   }

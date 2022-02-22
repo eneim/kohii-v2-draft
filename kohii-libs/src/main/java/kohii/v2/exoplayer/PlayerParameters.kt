@@ -26,7 +26,7 @@ import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize
 
 /**
- * Common parameters used by an [ExoPlayer] instance.
+ * Common parameters used to restore an [ExoPlayer] instance.
  */
 @Parcelize
 class PlayerParameters(

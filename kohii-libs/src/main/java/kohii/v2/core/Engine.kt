@@ -18,6 +18,7 @@ package kohii.v2.core
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import com.google.android.exoplayer2.MediaItem
 
 /**
  * [Engine] instance should have the same lifecycle as the [Manager] instance.
@@ -50,23 +51,41 @@ class Engine constructor(
   }
 
   /**
-   * Creates a [Binder] that can be used to bind the media request to a container.
-   *
-   * If [data] is a [Request] or a [Binder], [tag] will be ignored. Use [Request.copy] or
-   * [Binder.copy] to create a new one with a different tag.
+   * Creates a [Binder] for a list of [MediaItem]s.
    */
   @JvmOverloads
   fun setUp(
-    data: Any,
+    data: List<MediaItem>,
     tag: String? = null,
   ): Binder = Binder(
-    request = when (data) {
-      is Binder -> data.request
-      is Request -> data
-      else -> Request(data = data, tag = tag)
-    },
+    request = Request(data, tag),
     engine = this,
   )
+
+  /**
+   * Creates a [Binder] for a single [MediaItem].
+   */
+  @JvmOverloads
+  fun setUp(
+    data: MediaItem,
+    tag: String? = null,
+  ): Binder = setUp(data = listOf(data), tag = tag)
+
+  /**
+   * Creates a new [Binder] using an existing [Request].
+   *
+   * This method can be used to continue a [Request], for example when the client needs to open a
+   * Video in fullscreen, or in a different Window, the original [Request] can be parceled, passed
+   * to the new Window and set up there using this method.
+   */
+  fun setUp(request: Request): Binder = setUp(data = request.data, tag = request.tag)
+
+  /**
+   * Creates a new [Binder] from an existing [Binder].
+   *
+   * This method can be used to switch a [Binder] to a different [Engine].
+   */
+  fun setUp(binder: Binder): Binder = setUp(request = binder.request)
 
   companion object {
 

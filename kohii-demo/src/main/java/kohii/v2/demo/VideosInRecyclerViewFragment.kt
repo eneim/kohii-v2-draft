@@ -21,7 +21,6 @@ import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import com.airbnb.epoxy.SimpleEpoxyModel
-import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import kohii.v2.core.Engine
 import kohii.v2.core.Manager
@@ -55,7 +54,7 @@ class VideosInRecyclerViewFragment : Fragment(R.layout.fragment_videos_in_recycl
     )
 
     val binder = engine.setUp(
-      data = MediaItem.Builder().setUri(VideoUrls.LocalHevc).build(),
+      data = VideoUrls.LocalHevc,
       tag = VIDEO_TAG
     )
 

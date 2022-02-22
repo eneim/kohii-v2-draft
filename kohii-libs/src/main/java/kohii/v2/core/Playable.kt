@@ -22,6 +22,7 @@ import android.util.Range
 import androidx.annotation.CallSuper
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
+import com.google.android.exoplayer2.MediaItem
 import kohii.v2.core.Home.Companion.NO_TAG
 import kohii.v2.core.Manager.Companion.DEFAULT_DESTRUCTION_DELAY_MS
 import kohii.v2.core.Playback.Config
@@ -37,7 +38,7 @@ import java.util.concurrent.atomic.AtomicReference
 abstract class Playable(
   val home: Home,
   val tag: String,
-  val data: Any,
+  val data: List<MediaItem>,
   val rendererType: Class<*>,
   initialManager: PlayableManager,
 ) {
