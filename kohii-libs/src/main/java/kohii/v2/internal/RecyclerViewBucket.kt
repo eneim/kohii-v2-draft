@@ -20,7 +20,6 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import kohii.v2.R
 import kohii.v2.core.Axis
 import kohii.v2.core.Axis.HORIZONTAL
 import kohii.v2.core.Axis.UNKNOWN

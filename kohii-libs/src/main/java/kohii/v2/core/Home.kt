@@ -37,6 +37,7 @@ import kohii.v2.internal.logDebug
 import kohii.v2.internal.logInfo
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
@@ -48,14 +49,10 @@ class Home private constructor(context: Context) {
 
   internal val playables = mutableMapOf<Playable, PlayableKey>()
   internal val pendingRequests = mutableMapOf<Any /* Container, PlayableKey */, RequestHandleImpl>()
-  internal val scope = CoroutineScope(
+  private val scope = CoroutineScope(
     context = SupervisorJob() +
       Dispatchers.Main.immediate +
-      CoroutineExceptionHandler { _, throwable ->
-        // TODO: Proper error handling. Allow client to provide custom handler.
-        debugOnly(throwable::printStackTrace)
-        if (throwable !is CancellationException) throw throwable
-      }
+      CoroutineExceptionHandler { _, throwable -> debugOnly(throwable::printStackTrace) }
   )
 
   private val groups = mutableSetOf<Group>()
@@ -84,13 +81,11 @@ class Home private constructor(context: Context) {
       else -> managerLifecycleOwner
     }
 
-    val groupLifecycleState = groupLifecycleOwner.lifecycle.currentState
-    check(groupLifecycleState > DESTROYED) {
-      "The group [$groupLifecycleOwner](state=$groupLifecycleState) is already destroyed"
+    check(groupLifecycleOwner.lifecycle.currentState > DESTROYED) {
+      "The group $groupLifecycleOwner is already destroyed"
     }
-    val managerLifecycleState = managerLifecycleOwner.lifecycle.currentState
-    check(managerLifecycleState > DESTROYED) {
-      "The manager [$managerLifecycleOwner](state=$managerLifecycleState) is already destroyed"
+    check(managerLifecycleOwner.lifecycle.currentState > DESTROYED) {
+      "The manager $managerLifecycleOwner is already destroyed"
     }
 
     val group: Group = groups
@@ -146,16 +141,31 @@ class Home private constructor(context: Context) {
     // Cancel any existing Request for the same container and playable (by its key).
     pendingRequests.remove(container)?.cancel()
     pendingRequests.remove(request.playableKey)?.cancel()
+
+    val deferredBindResult: Deferred<Result<Playback>> = scope.async {
+      try {
+        request.lifecycle.awaitStarted()
+        val playback = request.onBind()
+        request.callback?.onSuccess(playback, request.request)
+        return@async Result.success(playback)
+      } catch (error: Throwable) {
+        if (error is CancellationException) {
+          request.callback?.onCanceled(error, request.request)
+        } else {
+          request.callback?.onFailure(error, request.request)
+        }
+        return@async Result.failure(error)
+      }
+    }
+
     val requestHandle = RequestHandleImpl(
       request = request.request,
       home = this,
       lifecycle = request.lifecycle,
-      deferred = scope.async {
-        request.lifecycle.awaitStarted()
-        request.onBind()
-      }
+      deferred = deferredBindResult
     )
 
+    // The request may complete immediately, also the Lifecycle is not destroyed.
     if (!requestHandle.isCompleted && request.lifecycle.currentState.isAtLeast(INITIALIZED)) {
       pendingRequests[container] = requestHandle
       if (request.playableKey != Empty) {

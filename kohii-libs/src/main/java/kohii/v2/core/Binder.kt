@@ -18,19 +18,25 @@ package kohii.v2.core
 
 import android.view.View
 import kohii.v2.common.ExperimentalKohiiApi
+import kohii.v2.core.Binder.Callback
 import kohii.v2.core.PlayableKey.Data
 import kohii.v2.core.PlayableKey.Empty
 import kohii.v2.core.PlayableState.Initialized
 import kohii.v2.core.Playback.Config
 import kohii.v2.internal.BindRequest
 import kotlin.LazyThreadSafetyMode.NONE
+import kotlin.coroutines.cancellation.CancellationException
 
 /**
  * See [Engine.setUp].
+ *
+ * Instance of a [Binder] must not be reused across different [engine]. To reuse an existing
+ * [Request] in another [Engine], use [Engine.setUp] with the [Request] parameter instead.
  */
 class Binder(
   val request: Request,
-  private val engine: Engine,
+  val engine: Engine,
+  private val callback: Callback = EMPTY_CALLBACK,
 ) {
 
   private val home = engine.manager.home
@@ -38,9 +44,47 @@ class Binder(
   /**
    * Copies the content of this [Binder] using an (optional) tag, returns a new [Binder] instance.
    */
-  fun copy(tag: String? = null): Binder = Binder(
+  fun withTag(tag: String?): Binder = Binder(
     request = request.copy(tag = tag),
-    engine,
+    engine = engine,
+    callback = callback,
+  )
+
+  /**
+   * Creates a new [Binder] with a [Callback].
+   */
+  fun withCallback(callback: Callback): Binder = Binder(
+    request = request,
+    engine = engine,
+    callback = callback,
+  )
+
+  /**
+   * Inline version of [withCallback].
+   */
+  inline fun withCallback(
+    crossinline onFailure: (Throwable, Request) -> Unit = { _, _ -> },
+    crossinline onCanceled: (CancellationException, Request) -> Unit = { _, _ -> },
+    crossinline onSuccess: (Playback, Request) -> Unit = { _, _ -> },
+  ): Binder = Binder(
+    request = request,
+    engine = engine,
+    callback = object : Callback {
+      override fun onFailure(
+        error: Throwable,
+        request: Request,
+      ) = onFailure(error, request)
+
+      override fun onCanceled(
+        reason: CancellationException,
+        request: Request,
+      ) = onCanceled(reason, request)
+
+      override fun onSuccess(
+        playback: Playback,
+        request: Request,
+      ) = onSuccess(playback, request)
+    },
   )
 
   /**
@@ -57,14 +101,16 @@ class Binder(
   fun bind(
     container: Any,
     config: Config.() -> Unit = { /* no-op */ },
-  ): RequestHandle = bind(
+  ): RequestHandle = bindInternal(
     container = container,
-    config = Config(binder = this).apply(config)
+    config = Config(binder = this).apply(config),
+    callback = callback,
   )
 
-  internal fun bind(
+  internal fun bindInternal(
     container: Any,
     config: Config,
+    callback: Callback?,
   ): RequestHandle {
     require(container is View /* || container is LifecycleOwner */) {
       "Currently, only View container is supported."
@@ -74,6 +120,7 @@ class Binder(
       home = home,
       manager = engine.manager,
       request = request,
+      callback = callback,
       playableKey = request.tag?.let(::Data) ?: Empty,
       container = container,
       payload = preparePayload(),
@@ -141,4 +188,23 @@ class Binder(
     result = 31 * result + engine.hashCode()
     return result
   }
+
+  interface Callback {
+    fun onCanceled(
+      reason: CancellationException,
+      request: Request,
+    ) = Unit
+
+    fun onFailure(
+      error: Throwable,
+      request: Request,
+    ) = Unit
+
+    fun onSuccess(
+      playback: Playback,
+      request: Request,
+    ) = Unit
+  }
 }
+
+private val EMPTY_CALLBACK: Callback = object : Callback {}

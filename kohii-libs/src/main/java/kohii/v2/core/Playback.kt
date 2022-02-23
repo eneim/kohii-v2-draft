@@ -376,9 +376,14 @@ abstract class Playback(
   protected abstract fun detachRenderer()
 
   @ExperimentalKohiiApi
-  fun rebind(): RequestHandle {
+  @JvmOverloads
+  fun rebind(callback: Binder.Callback? = null): RequestHandle {
     check(isAdded)
-    return config.binder.bind(container, config)
+    return config.binder.bindInternal(
+      container = container,
+      config = config,
+      callback = callback,
+    )
   }
 
   @ExperimentalKohiiApi

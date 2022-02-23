@@ -89,7 +89,7 @@ class VideosInRecyclerViewFragment : Fragment(R.layout.fragment_videos_in_recycl
             val holder = HolderVideoContainerBinding.bind(view)
             requestHandle?.cancel()
             requestHandle = binder
-              .copy(tag = "$seed::$index::RecyclerView")
+              .withTag(tag = "$seed::$index::RecyclerView")
               .bind(container = holder.videoContainer)
           }
 

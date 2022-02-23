@@ -80,13 +80,6 @@ class Engine constructor(
    */
   fun setUp(request: Request): Binder = setUp(data = request.data, tag = request.tag)
 
-  /**
-   * Creates a new [Binder] from an existing [Binder].
-   *
-   * This method can be used to switch a [Binder] to a different [Engine].
-   */
-  fun setUp(binder: Binder): Binder = setUp(request = binder.request)
-
   companion object {
 
     /**

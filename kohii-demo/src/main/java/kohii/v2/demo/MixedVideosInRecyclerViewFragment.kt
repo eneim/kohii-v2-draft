@@ -17,10 +17,10 @@
 package kohii.v2.demo
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
 import com.airbnb.epoxy.SimpleEpoxyModel
-import com.google.android.exoplayer2.MediaItem
 import kohii.v2.core.Engine
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.RequestHandle
@@ -56,6 +56,9 @@ class MixedVideosInRecyclerViewFragment : BaseDemoFragment(R.layout.fragment_sim
             data = VideoUrls.MpdSample,
             tag = "$initSeed::${VideoUrls.MpdSample}::FIRST"
           )
+            .withCallback { playback, request ->
+              Log.i("Mixed", "Playback: $playback, Request: $request")
+            }
             .bind(container = holder.firstVideo)
 
           requests += engine.setUp(

@@ -33,7 +33,7 @@ internal class RequestHandleImpl(
   override val request: Request,
   private val home: Home,
   internal val lifecycle: Lifecycle,
-  private val deferred: Deferred<Playback>,
+  private val deferred: Deferred<Result<Playback>>,
 ) : RequestHandle, DefaultLifecycleObserver {
 
   init {
@@ -47,17 +47,11 @@ internal class RequestHandleImpl(
 
   override fun cancel(): Unit = deferred.cancel()
 
-  override suspend fun result(): Result<Playback> = try {
-    Result.success(deferred.await())
-  } catch (error: Throwable) {
-    Result.failure(error)
-  }
+  override suspend fun result(): Result<Playback> = deferred.await()
 
   private fun onCompleted(error: Throwable?) {
     "Handle[${hexCode()}]_COMPLETED_Request [error: $error] [handle=${hexCode()}]".logInfo()
     lifecycle.removeObserver(this)
     home.pendingRequests.values.removeAll { handle -> handle === this }
-    // TODO: how to properly notify the client about the non-cancellation error.
-    // if (error != null && error !is CancellationException) throw error
   }
 }

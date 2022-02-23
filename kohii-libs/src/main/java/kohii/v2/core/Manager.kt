@@ -365,7 +365,10 @@ class Manager(
       .clear()
 
     buckets.onRemoveEach(Bucket::onRemove)
-    home.pendingRequests.values.removeAll { handle -> handle.lifecycle === lifecycle }
+    home.pendingRequests.values.filter { handle -> handle.lifecycle === lifecycle }
+      .onEach(RequestHandle::cancel)
+      .let(home.pendingRequests.values::removeAll)
+
     group.removeManager(this)
   }
 

@@ -19,6 +19,7 @@ package kohii.v2.internal
 import android.view.View
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import kohii.v2.core.Binder.Callback
 import kohii.v2.core.Home
 import kohii.v2.core.Manager
 import kohii.v2.core.Playable
@@ -31,6 +32,7 @@ internal class BindRequest(
   val home: Home,
   val manager: Manager,
   val request: Request,
+  val callback: Callback?,
   val playableKey: PlayableKey, // Tag used by Home to store the Playable.
   val container: Any,
   val payload: Lazy<Playable>,
