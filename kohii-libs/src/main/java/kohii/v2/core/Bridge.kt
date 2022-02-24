@@ -16,7 +16,7 @@
 
 package kohii.v2.core
 
-import com.google.android.exoplayer2.Player
+import kohii.v2.exoplayer.ComponentsListener
 
 interface Bridge<RENDERER : Any> {
 
@@ -75,11 +75,7 @@ interface Bridge<RENDERER : Any> {
    */
   fun release()
 
-  fun addPlayerListener(listener: Player.Listener)
+  fun addComponentsListener(listener: ComponentsListener)
 
-  fun removePlayerListener(listener: Player.Listener)
-
-  fun addAdComponentsListener(listener: AdComponentsListener)
-
-  fun removeAdComponentsListener(listener: AdComponentsListener)
+  fun removeComponentsListener(listener: ComponentsListener?)
 }

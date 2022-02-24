@@ -16,29 +16,27 @@
 
 package kohii.v2.core
 
-import com.google.android.exoplayer2.Player
+import androidx.annotation.CallSuper
 import kohii.v2.core.Playable.Controller
+import kohii.v2.exoplayer.ComponentsListener
+import kohii.v2.exoplayer.ComponentsListeners
 
 abstract class AbstractBridge<RENDERER : Any> : Bridge<RENDERER> {
 
   override var controller: Controller = Controller
 
-  protected val playerListeners: PlayerListeners = PlayerListeners()
-  protected val adComponentsListeners: AdComponentsListeners = AdComponentsListeners()
+  protected val componentsListeners: ComponentsListeners = ComponentsListeners()
 
-  override fun addPlayerListener(listener: Player.Listener) {
-    playerListeners.add(listener)
+  override fun addComponentsListener(listener: ComponentsListener) {
+    componentsListeners.add(listener)
   }
 
-  override fun removePlayerListener(listener: Player.Listener) {
-    playerListeners.remove(listener)
+  override fun removeComponentsListener(listener: ComponentsListener?) {
+    componentsListeners.remove(listener)
   }
 
-  override fun addAdComponentsListener(listener: AdComponentsListener) {
-    adComponentsListeners.add(listener)
-  }
-
-  override fun removeAdComponentsListener(listener: AdComponentsListener) {
-    adComponentsListeners.remove(listener)
+  @CallSuper
+  override fun release() {
+    componentsListeners.clear()
   }
 }

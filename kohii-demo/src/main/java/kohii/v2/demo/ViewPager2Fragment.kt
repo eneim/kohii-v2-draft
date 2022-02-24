@@ -50,6 +50,7 @@ class ViewPager2Fragment : Fragment(R.layout.fragment_viewpager_2) {
         // VideoInScrollViewFragment()
         // VideosInScrollViewFragment()
         MixedVideosInRecyclerViewFragment.newInstance(initSeed = "$position")
+        // VideosWithAdsInRecyclerViewFragment.getInstance(position)
       } else {
         TextInScrollViewFragment()
       }

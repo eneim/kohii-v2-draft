@@ -18,7 +18,6 @@ package kohii.v2.core
 
 import android.os.Bundle
 import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
 import kohii.v2.core.Playable.Command.PAUSED_BY_USER
 import kohii.v2.core.PlayableState.Companion.toPlayableState
 
@@ -35,7 +34,7 @@ abstract class BasePlayable<RENDERER : Any>(
   data = data,
   rendererType = rendererType,
   firstManager = firstManager
-), Player.Listener {
+) {
 
   override val isStarted: Boolean get() = bridge.isStarted && command.get() != PAUSED_BY_USER
 
@@ -47,7 +46,6 @@ abstract class BasePlayable<RENDERER : Any>(
 
   override fun onPrepare(preload: Boolean) {
     super.onPrepare(preload)
-    bridge.addPlayerListener(this)
     bridge.prepare(preload)
   }
 
@@ -74,7 +72,6 @@ abstract class BasePlayable<RENDERER : Any>(
   override fun onRelease() {
     super.onRelease()
     bridge.release()
-    bridge.removePlayerListener(this)
   }
 
   override fun onRendererDetached(renderer: Any?) {
@@ -90,13 +87,11 @@ abstract class BasePlayable<RENDERER : Any>(
   ) {
     super.onPlaybackChanged(previous, next)
     if (previous != null) {
-      bridge.removeAdComponentsListener(previous.adComponentsListener)
-      bridge.removePlayerListener(previous.rawListener)
+      bridge.removeComponentsListener(previous.componentsListener)
     }
 
     if (next != null) {
-      bridge.addPlayerListener(next.rawListener)
-      bridge.addAdComponentsListener(next.adComponentsListener)
+      bridge.addComponentsListener(next.componentsListener)
       bridge.controller = next.controller
     } else {
       bridge.controller = Controller

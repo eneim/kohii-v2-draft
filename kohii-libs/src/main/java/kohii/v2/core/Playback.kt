@@ -18,11 +18,12 @@ package kohii.v2.core
 
 import androidx.annotation.CallSuper
 import androidx.annotation.MainThread
-import androidx.annotation.RestrictTo
-import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX
 import androidx.collection.arraySetOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Lifecycle.State.STARTED
+import com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
+import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
+import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.video.VideoSize
 import kohii.v2.common.ExperimentalKohiiApi
@@ -32,6 +33,8 @@ import kohii.v2.core.Playback.State.ADDED
 import kohii.v2.core.Playback.State.ATTACHED
 import kohii.v2.core.Playback.State.CREATED
 import kohii.v2.core.Playback.State.REMOVED
+import kohii.v2.exoplayer.ComponentsListener
+import kohii.v2.exoplayer.ComponentsListeners
 import kohii.v2.internal.PlayableControllerImpl
 import kohii.v2.internal.asString
 import kohii.v2.internal.checkMainThread
@@ -61,7 +64,26 @@ abstract class Playback(
   private val lifecycleCallbacks = ArrayDeque(config.lifecycleCallbacks)
   private val playerEventListeners = ArrayDeque(config.playerEventListeners)
 
-  internal val adComponentsListener = AdComponentsListeners(config.adComponentsListeners)
+  private val internalComponentsListener: ComponentsListener = object : ComponentsListener {
+    override fun onPlaybackStateChanged(playbackState: Int) {
+      val playback = this@Playback
+      for (callback in playerEventListeners) {
+        callback.onStateChanged(playback = playback, state = playbackState)
+      }
+    }
+
+    override fun onVideoSizeChanged(videoSize: VideoSize) {
+      val playback = this@Playback
+      for (callback in playerEventListeners) {
+        callback.onVideoSizeChanged(playback = playback, videoSize = videoSize)
+      }
+    }
+  }
+
+  internal val componentsListener: ComponentsListener = with(config) {
+    componentsListeners.add(internalComponentsListener)
+    componentsListeners
+  }
 
   internal val trigger: Float = config.trigger
 
@@ -116,23 +138,6 @@ abstract class Playback(
   val isActive: Boolean get() = state >= ACTIVATED
 
   abstract val token: Token
-
-  @RestrictTo(LIBRARY_GROUP_PREFIX)
-  internal val rawListener: Player.Listener = object : Player.Listener {
-    override fun onPlaybackStateChanged(playbackState: Int) {
-      val playback = this@Playback
-      for (callback in playerEventListeners) {
-        callback.onStateChanged(playback = playback, state = playbackState)
-      }
-    }
-
-    override fun onVideoSizeChanged(videoSize: VideoSize) {
-      val playback = this@Playback
-      for (callback in playerEventListeners) {
-        callback.onVideoSizeChanged(playback = playback, videoSize = videoSize)
-      }
-    }
-  }
 
   /**
    * This value should be set once.
@@ -451,7 +456,7 @@ abstract class Playback(
 
     internal val lifecycleCallbacks = arraySetOf<LifecycleCallback>()
     internal val playerEventListeners = arraySetOf<PlayerEventListener>()
-    internal val adComponentsListeners = arraySetOf<AdComponentsListener>()
+    internal val componentsListeners = ComponentsListeners()
 
     fun setPreload(preload: Boolean) = apply {
       this.preload = preload
@@ -469,8 +474,20 @@ abstract class Playback(
       playerEventListeners.add(listener)
     }
 
-    fun addAdComponentsListener(listener: AdComponentsListener): Config = apply {
-      adComponentsListeners.add(listener)
+    fun addPlayerListener(listener: Player.Listener): Config = apply {
+      componentsListeners.add(ComponentsListener(listener))
+    }
+
+    fun addAdEventListener(listener: AdEventListener): Config = apply {
+      componentsListeners.add(ComponentsListener(adEventListener = listener))
+    }
+
+    fun addAdErrorListener(listener: AdErrorListener): Config = apply {
+      componentsListeners.add(ComponentsListener(adErrorListener = listener))
+    }
+
+    fun addVideoAdPlayerCallback(callback: VideoAdPlayerCallback): Config = apply {
+      componentsListeners.add(ComponentsListener(videoAdPlayerCallback = callback))
     }
   }
 

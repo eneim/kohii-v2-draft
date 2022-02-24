@@ -74,15 +74,16 @@ internal class StyledPlayerViewBridge(
 
   private val appContext: Context = context.applicationContext
   private val playbackStatsListener = PlaybackStatsListener(false, null)
+  private val playerListener = ComponentsListener(playerListener = this)
 
   private var imaSetupBundle: ImaSetupBundle? = null
   private var internalPlayer: InternalExoPlayerWrapper? = null
     set(value) {
       if (field !== value) {
         field?.wrappedPlayer?.removeAnalyticsListener(playbackStatsListener)
-        field?.wrappedPlayer?.removeListener(playerListeners)
+        field?.wrappedPlayer?.removeListener(componentsListeners)
         field = value
-        field?.wrappedPlayer?.addListener(playerListeners)
+        field?.wrappedPlayer?.addListener(componentsListeners)
         field?.wrappedPlayer?.addAnalyticsListener(playbackStatsListener)
       }
     }
@@ -207,7 +208,7 @@ internal class StyledPlayerViewBridge(
     }
 
   override fun prepare(loadSource: Boolean) {
-    super.addPlayerListener(this)
+    super.addComponentsListener(playerListener)
     if (internalPlayer == null) {
       playerPrepared = false
     }
@@ -253,11 +254,12 @@ internal class StyledPlayerViewBridge(
       player.stop()
       player.clearMediaItems()
       playerPool.putPlayer(player = player.wrappedPlayer)
+      (player.wrappedPlayer as? ExoPlayerWrapper)?.releaseAdsBundle()
     }
     internalPlayer = null
     playerPrepared = false
-    (internalPlayer?.wrappedPlayer as? ExoPlayerWrapper)?.releaseAdsBundle()
-    super.removePlayerListener(this)
+    super.removeComponentsListener(playerListener)
+    super.release()
   }
 
   //region ErrorMessageProvider<Throwable>
@@ -346,6 +348,7 @@ internal class StyledPlayerViewBridge(
     }
 
     if (!playerPrepared) {
+      (player.wrappedPlayer as? ExoPlayerWrapper)?.prepareAdsBundle()
       player.setMediaItems(
         /* mediaItems */ mediaItems,
         /* resetPosition */ !hasStartPosition
@@ -365,7 +368,6 @@ internal class StyledPlayerViewBridge(
     if (player.playbackState == Player.STATE_IDLE) playerPrepared = false
 
     if (!playerPrepared) {
-      (internalPlayer?.wrappedPlayer as? ExoPlayerWrapper)?.prepareAdsBundle()
       player.prepare()
       playerPrepared = true
     }
@@ -380,9 +382,9 @@ internal class StyledPlayerViewBridge(
     val imaBundle = ImaSetupBundle(
       // TODO: API for clients to use their own ImaAdsLoader.Builder.
       adsLoader = ImaAdsLoader.Builder(appContext)
-        .setAdEventListener(adComponentsListeners)
-        .setAdErrorListener(adComponentsListeners)
-        .setVideoAdPlayerCallback(adComponentsListeners)
+        .setAdEventListener(componentsListeners)
+        .setAdErrorListener(componentsListeners)
+        .setVideoAdPlayerCallback(componentsListeners)
         .build(),
       adViewGroup = FrameLayout(appContext),
     )

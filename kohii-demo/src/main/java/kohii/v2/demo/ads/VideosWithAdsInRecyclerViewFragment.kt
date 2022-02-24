@@ -32,19 +32,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.epoxy.SimpleEpoxyModel
 import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
-import com.google.android.exoplayer2.ui.StyledPlayerView
 import kohii.v2.common.ExperimentalKohiiApi
-import kohii.v2.core.AdComponentsListener
-import kohii.v2.core.Engine
-import kohii.v2.core.Manager
+import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.RequestHandle
-import kohii.v2.core.playbackManager
 import kohii.v2.demo.R
 import kohii.v2.demo.common.flowWithPrevious
 import kohii.v2.demo.databinding.FragmentVideosWithAdsBinding
 import kohii.v2.demo.demoApp
-import kohii.v2.exoplayer.StyledPlayerViewPlayableCreator
-import kohii.v2.exoplayer.getStyledPlayerViewProvider
+import kohii.v2.exoplayer.DefaultVideoAdPlayerCallback
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -68,14 +63,7 @@ class VideosWithAdsInRecyclerViewFragment : Fragment(R.layout.fragment_videos_wi
   ) {
     super.onViewCreated(view, savedInstanceState)
     val binding = FragmentVideosWithAdsBinding.bind(view)
-    val manager: Manager = playbackManager()
-    manager.bucket(binding.videoContainer)
-
-    val engine = Engine.get<StyledPlayerView>(
-      manager = manager,
-      playableCreator = StyledPlayerViewPlayableCreator.getInstance(view.context),
-      rendererProvider = requireActivity().getStyledPlayerViewProvider(),
-    )
+    val engine = ExoPlayerEngine(binding.videoContainer)
 
     val adsSamples = demoApp.moshi
       .adapter(AdSamples::class.java)
@@ -95,7 +83,7 @@ class VideosWithAdsInRecyclerViewFragment : Fragment(R.layout.fragment_videos_wi
             tag = "$seed::${selectedAd.name}"
           )
             .bind(binding.videoContainer) {
-              addAdComponentsListener(object : AdComponentsListener {
+              addVideoAdPlayerCallback(object : DefaultVideoAdPlayerCallback {
                 override fun onAdProgress(
                   mediaInfo: AdMediaInfo,
                   progressUpdate: VideoProgressUpdate,
