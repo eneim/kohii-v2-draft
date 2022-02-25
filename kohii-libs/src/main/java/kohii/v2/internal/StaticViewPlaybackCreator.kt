@@ -29,8 +29,7 @@ internal class StaticViewPlaybackCreator(manager: Manager) : PlaybackCreator(man
   override fun accept(
     playable: Playable,
     container: Any,
-  ): Boolean =
-    container is View && playable.rendererType.isAssignableFrom(container.javaClass)
+  ): Boolean = container is View && playable.rendererType.isAssignableFrom(container.javaClass)
 
   override fun createPlayback(
     bucket: Bucket,

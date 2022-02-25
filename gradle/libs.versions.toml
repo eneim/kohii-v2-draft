@@ -10,6 +10,8 @@ androidx-lifecycle = "2.4.0"
 jetpack-compose = "1.1.0"
 jetpack-compose-compiler = "1.1.0"
 
+coil = "2.0.0-alpha09"
+
 [libraries]
 android-exoplayer = { module = "com.google.android.exoplayer:exoplayer", version.ref = "exoplayer" }
 android-exoplayer-ima = { module = "com.google.android.exoplayer:extension-ima", version.ref = "exoplayer" }
@@ -52,3 +54,6 @@ compose-foundation = { module = "androidx.compose.foundation:foundation", versio
 compose-ui = { module = "androidx.compose.ui:ui", version.ref = "jetpack-compose" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "jetpack-compose" }
 compose-material = { module = "androidx.compose.material:material", version.ref = "jetpack-compose" }
+
+coil-common = { module = "io.coil-kt:coil", version.ref = "coil" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }

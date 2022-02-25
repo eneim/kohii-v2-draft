@@ -464,7 +464,8 @@ internal class StyledPlayerViewBridge(
 // reference, we need to swap the restored TrackGroups by the existing ones
 // (but are structural equal to the restored ones).
 // Ref: https://github.com/google/ExoPlayer/issues/9718
-private fun Player.applyTrackSelectionParameters(parameters: TrackSelectionParameters) {
+@JvmSynthetic
+internal fun Player.applyTrackSelectionParameters(parameters: TrackSelectionParameters) {
   val restoredOverrideGroups = parameters.trackSelectionOverrides
     .asList()
     .map(TrackSelectionOverride::trackGroup)

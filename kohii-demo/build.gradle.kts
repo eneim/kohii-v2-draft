@@ -148,11 +148,12 @@ dependencies {
   implementation(libs.compose.material)
   implementation(libs.compose.ui.tooling)
 
-  val composeVersion = "1.1.0-rc01"
+  val composeVersion = "1.1.0"
   androidTestImplementation("androidx.compose.ui:ui-test-junit4:$composeVersion")
 
-  implementation("io.coil-kt:coil:1.4.0")
-  implementation("io.coil-kt:coil-compose:1.4.0")
+  implementation(libs.coil.common)
+  implementation(libs.coil.compose)
+
   implementation("com.squareup.moshi:moshi:1.13.0")
   kapt("com.squareup.moshi:moshi-kotlin-codegen:1.13.0")
 
