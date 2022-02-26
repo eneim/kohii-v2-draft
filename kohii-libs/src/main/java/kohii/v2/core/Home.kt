@@ -191,7 +191,9 @@ class Home private constructor(context: Context) {
   //region Public APIs
   @ExperimentalKohiiApi
   fun cancel(tag: String) {
-    playables.keys.firstOrNull { it.tag == tag }?.playback?.unbind()
+    playables.keys.firstOrNull { it.tag == tag }
+      ?.playback
+      ?.unbind()
       ?: pendingRequests.values.firstOrNull { it.request.tag == tag }?.cancel()
   }
   //endregion

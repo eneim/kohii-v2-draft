@@ -32,7 +32,6 @@
       tools:ignore="DataExtractionRules">
 
     <activity android:name=".MainActivity" />
-    <activity android:name=".ComposeVideoActivity" />
 
     <activity-alias
         android:name="Launcher"

@@ -80,7 +80,7 @@ abstract class Playback(
     }
   }
 
-  internal val componentsListener: ComponentsListener = with(config) {
+  internal val componentsListeners: ComponentsListeners = with(config) {
     componentsListeners.add(internalComponentsListener)
     componentsListeners
   }
@@ -296,6 +296,7 @@ abstract class Playback(
     onRemove()
     lifecycleCallbacks.clear()
     playerEventListeners.clear()
+    componentsListeners.clear()
   }
 
   /**

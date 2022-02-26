@@ -81,17 +81,13 @@ android {
 
   buildFeatures {
     viewBinding = true
-    // Enables Jetpack Compose for this module
-    compose = true
-  }
-
-  composeOptions {
-    kotlinCompilerExtensionVersion = libs.versions.jetpack.compose.compiler.get()
   }
 }
 
 dependencies {
   implementation(project(mapOf("path" to ":kohii-libs")))
+  implementation(libs.android.exoplayer)
+  implementation(libs.android.exoplayer.ima)
 
   implementation(libs.androidx.core)
   implementation(libs.androidx.appcompat)
@@ -105,8 +101,6 @@ dependencies {
   implementation(libs.androidx.recyclerview)
   implementation(libs.androidx.viewpager)
   implementation(libs.androidx.viewpager2)
-
-  implementation(libs.airbnb.epoxy.core)
 
   implementation(libs.androidx.lifecycle.runtime)
   implementation(libs.androidx.lifecycle.viewmodel)
@@ -139,26 +133,17 @@ dependencies {
   // implementation("androidx.media3:media3-decoder:$media3Version")
   // implementation("androidx.media3:media3-datasource:$media3Version")
 
-  implementation(libs.android.exoplayer)
-  implementation(libs.android.exoplayer.ima)
-
-  // Jetpack Compose
-  implementation(libs.compose.foundation)
-  implementation(libs.compose.ui)
-  implementation(libs.compose.material)
-  implementation(libs.compose.ui.tooling)
-
-  val composeVersion = "1.1.0"
-  androidTestImplementation("androidx.compose.ui:ui-test-junit4:$composeVersion")
+  implementation(libs.airbnb.epoxy.core)
+  kapt(libs.airbnb.epoxy.processor)
 
   implementation(libs.coil.common)
-  implementation(libs.coil.compose)
 
-  implementation("com.squareup.moshi:moshi:1.13.0")
-  kapt("com.squareup.moshi:moshi-kotlin-codegen:1.13.0")
+  implementation(libs.square.moshi)
+  implementation(libs.square.moshi.adapters)
+  kapt(libs.square.moshi.codegen)
 
-  debugImplementation("com.squareup.leakcanary:leakcanary-android:2.8.1")
-  implementation("com.squareup.leakcanary:plumber-android:2.8.1")
+  debugImplementation(libs.square.leakcanary)
+  implementation(libs.square.leakcanary.plumber)
 
   testImplementation("junit:junit:4.13.2")
   androidTestImplementation("androidx.test.ext:junit:1.1.3")

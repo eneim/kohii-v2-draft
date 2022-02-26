@@ -10,6 +10,11 @@ androidx-lifecycle = "2.4.0"
 jetpack-compose = "1.1.0"
 jetpack-compose-compiler = "1.1.0"
 
+square-moshi = "1.13.0"
+square-leakcanary = "2.8.1"
+
+airbnb-epoxy = "4.6.4"
+
 coil = "2.0.0-alpha09"
 
 [libraries]
@@ -33,7 +38,8 @@ androidx-fragment = "androidx.fragment:fragment-ktx:1.4.0"
 androidx-material = "com.google.android.material:material:1.5.0"
 androidx-constraintlayout = "androidx.constraintlayout:constraintlayout:2.1.3"
 
-airbnb-epoxy-core = "com.airbnb.android:epoxy:4.6.4"
+airbnb-epoxy-core = { module = "com.airbnb.android:epoxy", version.ref = "airbnb-epoxy" }
+airbnb-epoxy-processor = { module = "com.airbnb.android:epoxy-processor", version.ref = "airbnb-epoxy" }
 
 androidx-recyclerview = "androidx.recyclerview:recyclerview:1.2.1"
 androidx-viewpager = "androidx.viewpager:viewpager:1.0.0"
@@ -57,3 +63,10 @@ compose-material = { module = "androidx.compose.material:material", version.ref 
 
 coil-common = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+
+square-moshi = { module = "com.squareup.moshi:moshi", version.ref = "square-moshi" }
+square-moshi-adapters = { module = "com.squareup.moshi:moshi-adapters", version.ref = "square-moshi" }
+square-moshi-codegen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "square-moshi" }
+
+square-leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "square-leakcanary" }
+square-leakcanary-plumber = { module = "com.squareup.leakcanary:plumber-android", version.ref = "square-leakcanary" }

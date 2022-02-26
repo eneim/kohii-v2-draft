@@ -17,6 +17,7 @@
 package kohii.v2.demo.ads
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.CheckedTextView
@@ -70,7 +71,7 @@ class VideosWithAdsInRecyclerViewFragment : Fragment(R.layout.fragment_videos_wi
       .fromJson(demoApp.assets.open("media/media_with_ads.json").source().buffer())
       ?: AdSamples("No Ads", emptyList())
 
-    var latestBinding: RequestHandle?
+    var handle: RequestHandle?
 
     viewModel.selectedAd
       .onEach { (prevAd, selectedAd) ->
@@ -78,11 +79,13 @@ class VideosWithAdsInRecyclerViewFragment : Fragment(R.layout.fragment_videos_wi
 
         if (selectedAd != null) {
           binding.selectedAdTitle.text = selectedAd.name
-          latestBinding = engine.setUp(
+          handle = engine.setUp(
             data = selectedAd.toMediaItem(),
             tag = "$seed::${selectedAd.name}"
           )
             .bind(binding.videoContainer) {
+              addAdEventListener { Log.i("Kohii~Ad", "AdEvent: $it") }
+              addAdErrorListener { Log.w("Kohii~Ad", "AdError: $it") }
               addVideoAdPlayerCallback(object : DefaultVideoAdPlayerCallback {
                 override fun onAdProgress(
                   mediaInfo: AdMediaInfo,
@@ -93,8 +96,6 @@ class VideosWithAdsInRecyclerViewFragment : Fragment(R.layout.fragment_videos_wi
                 }
               })
             }
-
-          latestBinding?.result()?.onFailure { throw it }
         } else {
           binding.selectedAdTitle.text = "No ad selected."
         }
