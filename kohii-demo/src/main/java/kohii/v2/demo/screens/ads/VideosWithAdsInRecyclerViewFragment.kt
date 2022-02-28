@@ -35,11 +35,11 @@ import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
 import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.RequestHandle
+import kohii.v2.demo.DemoItemFragment
 import kohii.v2.demo.R
 import kohii.v2.demo.common.flowWithPrevious
 import kohii.v2.demo.databinding.FragmentVideosWithAdsBinding
 import kohii.v2.demo.demoApp
-import kohii.v2.demo.DemoItemFragment
 import kohii.v2.exoplayer.DefaultVideoAdPlayerCallback
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -69,11 +69,11 @@ class VideosWithAdsInRecyclerViewFragment : DemoItemFragment(R.layout.fragment_v
       .fromJson(demoApp.assets.open("media/media_with_ads.json").source().buffer())
       ?: AdSamples("No Ads", emptyList())
 
-    var handle: RequestHandle?
+    var handle: RequestHandle? = null
 
     viewModel.selectedAd
-      .onEach { (prevAd, selectedAd) ->
-        engine.home.cancel(prevAd?.name.orEmpty())
+      .onEach { (_, selectedAd) ->
+        handle?.cancel()
 
         if (selectedAd != null) {
           binding.selectedAdTitle.text = selectedAd.name

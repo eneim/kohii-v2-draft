@@ -18,7 +18,7 @@ package com.google.android.exoplayer2
 
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
-import com.google.android.exoplayer2.source.MediaSourceFactory
+import com.google.android.exoplayer2.source.MediaSource
 import kohii.v2.exoplayer.AudioParameters
 import kohii.v2.exoplayer.PlayerParameters
 import kohii.v2.exoplayer.StyledPlayerViewBridge
@@ -35,7 +35,7 @@ class ExoPlayerWrapper private constructor(
 
   private constructor(
     builder: ExoPlayer.Builder,
-    mediaSourceFactory: MediaSourceFactory,
+    mediaSourceFactory: MediaSource.Factory,
   ) : this(
     player = builder
       .setMediaSourceFactory(mediaSourceFactory)

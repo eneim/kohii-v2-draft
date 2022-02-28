@@ -1,7 +1,7 @@
 [versions]
 kotlin = "1.6.10"
 kotlinx-coroutines = "1.6.0"
-exoplayer = "2.16.1"
+exoplayer = "2.17.0"
 
 androidx-media2 = "1.2.0"
 androidx-media3 = "1.0.0-alpha01"

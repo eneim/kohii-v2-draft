@@ -21,7 +21,6 @@ import android.widget.FrameLayout
 import com.google.android.exoplayer2.MediaItem.AdsConfiguration
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
-import com.google.android.exoplayer2.source.DefaultMediaSourceFactory.AdsLoaderProvider
 import com.google.android.exoplayer2.source.ads.AdsLoader
 import com.google.android.exoplayer2.ui.AdOverlayInfo
 import com.google.android.exoplayer2.ui.AdViewProvider
@@ -29,7 +28,7 @@ import com.google.android.exoplayer2.ui.AdViewProvider
 internal class ImaSetupBundle(
   val adsLoader: ImaAdsLoader,
   val adViewGroup: FrameLayout,
-) : AdsLoaderProvider, AdViewProvider {
+) : AdsLoader.Provider, AdViewProvider {
 
   override fun getAdsLoader(adsConfiguration: AdsConfiguration): AdsLoader = adsLoader
   override fun getAdViewGroup(): ViewGroup = adViewGroup
