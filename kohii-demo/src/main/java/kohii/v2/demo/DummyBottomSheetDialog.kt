@@ -36,6 +36,7 @@ import kohii.v2.core.PlayerEventListener
 import kohii.v2.core.Request
 import kohii.v2.core.playbackManager
 import kohii.v2.demo.common.doOnStateChanged
+import kohii.v2.demo.common.viewBinding
 import kohii.v2.demo.databinding.FragmentDummySheetBinding
 import kohii.v2.exoplayer.StyledPlayerViewPlayableCreator
 import kohii.v2.exoplayer.getStyledPlayerViewProvider

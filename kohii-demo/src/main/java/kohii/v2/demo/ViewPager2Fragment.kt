@@ -25,6 +25,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.playbackManager
 import kohii.v2.demo.databinding.FragmentViewpager2Binding
+import kohii.v2.demo.screens.mixed.MixedVideosInRecyclerViewFragment
 
 class ViewPager2Fragment : Fragment(R.layout.fragment_viewpager_2) {
 
@@ -49,7 +50,7 @@ class ViewPager2Fragment : Fragment(R.layout.fragment_viewpager_2) {
         // VideosInRecyclerViewFragment.getInstance(position)
         // VideoInScrollViewFragment()
         // VideosInScrollViewFragment()
-        MixedVideosInRecyclerViewFragment.newInstance(initSeed = "$position")
+        MixedVideosInRecyclerViewFragment.newInstance(seed = "$position")
         // VideosWithAdsInRecyclerViewFragment.getInstance(position)
       } else {
         TextInScrollViewFragment()

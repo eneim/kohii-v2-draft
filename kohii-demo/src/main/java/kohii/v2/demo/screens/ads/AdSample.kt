@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo.ads
+package kohii.v2.demo.screens.ads
 
 import android.net.Uri
 import android.os.Parcelable

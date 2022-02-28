@@ -32,10 +32,12 @@
       tools:ignore="DataExtractionRules">
 
     <activity android:name=".MainActivity" />
+    <activity android:name=".home.HomeActivity" />
+    <activity android:name=".DemoHostActivity" />
 
     <activity-alias
         android:name="Launcher"
-        android:targetActivity=".MainActivity"
+        android:targetActivity=".home.HomeActivity"
         android:exported="true">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />

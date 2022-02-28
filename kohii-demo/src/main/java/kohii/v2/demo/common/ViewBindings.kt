@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Nam Nguyen, nam@ene.im
+ * Copyright (c) 2022. Nam Nguyen, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo
+package kohii.v2.demo.common
 
 import android.view.View
 import androidx.fragment.app.Fragment

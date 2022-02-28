@@ -47,4 +47,4 @@ class KohiiApp : Application() {
     .build()
 }
 
-val Fragment.demoApp: KohiiApp get() = requireActivity().application as KohiiApp
+internal val Fragment.demoApp: KohiiApp get() = requireActivity().application as KohiiApp

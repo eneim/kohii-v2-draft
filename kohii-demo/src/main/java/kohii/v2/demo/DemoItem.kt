@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo.ads
+package kohii.v2.demo
 
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-@JsonClass(generateAdapter = true)
-data class AdSamples(
-  @Json(name = "name")
-  val name: String,
-  @Json(name = "samples")
-  val samples: List<AdSample>,
-)
+@Parcelize
+data class DemoItem(
+  val title: String,
+  val description: String?,
+  val fragment: Class<out DemoItemFragment>,
+) : Parcelable

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo
+package kohii.v2.demo.screens.mixed
 
 import android.os.Bundle
 import android.util.Log
@@ -24,15 +24,16 @@ import com.airbnb.epoxy.SimpleEpoxyModel
 import kohii.v2.core.Engine
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.RequestHandle
-import kohii.v2.demo.common.BaseDemoFragment
+import kohii.v2.demo.R.layout
 import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.databinding.FragmentSimpleRecyclerViewBinding
 import kohii.v2.demo.databinding.HolderMultipleVideosContainerBinding
+import kohii.v2.demo.DemoItemFragment
 
 /**
  * A RecyclerView Fragment with 2 Videos in the same ViewHolder.
  */
-class MixedVideosInRecyclerViewFragment : BaseDemoFragment(R.layout.fragment_simple_recycler_view) {
+class MixedVideosInRecyclerViewFragment : DemoItemFragment(layout.fragment_simple_recycler_view) {
 
   override fun onViewCreated(
     view: View,
@@ -43,7 +44,7 @@ class MixedVideosInRecyclerViewFragment : BaseDemoFragment(R.layout.fragment_sim
     val engine: Engine = ExoPlayerEngine(binding.videos)
 
     binding.videos.withModels {
-      object : SimpleEpoxyModel(R.layout.holder_multiple_videos_container) {
+      object : SimpleEpoxyModel(layout.holder_multiple_videos_container) {
 
         private val requests = mutableListOf<RequestHandle>()
 
@@ -54,7 +55,7 @@ class MixedVideosInRecyclerViewFragment : BaseDemoFragment(R.layout.fragment_sim
 
           requests += engine.setUp(
             data = VideoUrls.MpdSample,
-            tag = "$initSeed::${VideoUrls.MpdSample}::FIRST"
+            tag = "$seed::${VideoUrls.MpdSample}::FIRST"
           )
             .withCallback { playback, request ->
               Log.i("Mixed", "Playback: $playback, Request: $request")
@@ -63,7 +64,7 @@ class MixedVideosInRecyclerViewFragment : BaseDemoFragment(R.layout.fragment_sim
 
           requests += engine.setUp(
             data = VideoUrls.LocalHevc,
-            tag = "$initSeed::${VideoUrls.LocalHevc}::SECOND"
+            tag = "$seed::${VideoUrls.LocalHevc}::SECOND"
           )
             .bind(container = holder.secondVideo)
         }
@@ -77,7 +78,7 @@ class MixedVideosInRecyclerViewFragment : BaseDemoFragment(R.layout.fragment_sim
         .addTo(this)
 
       (0 until 8).forEach { index ->
-        SimpleEpoxyModel(R.layout.holder_text)
+        SimpleEpoxyModel(layout.holder_text)
           .id(index + 100)
           .addTo(this)
       }
@@ -86,9 +87,9 @@ class MixedVideosInRecyclerViewFragment : BaseDemoFragment(R.layout.fragment_sim
 
   companion object {
 
-    fun newInstance(initSeed: String): MixedVideosInRecyclerViewFragment =
+    fun newInstance(seed: String): MixedVideosInRecyclerViewFragment =
       MixedVideosInRecyclerViewFragment().apply {
-        arguments = bundleOf(ARGS_INIT_SEED to initSeed)
+        arguments = bundleOf(KEY_SEED to seed)
       }
   }
 }

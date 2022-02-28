@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo.common
+package kohii.v2.demo.screens.ads
 
-import androidx.fragment.app.Fragment
-import kotlin.LazyThreadSafetyMode.NONE
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 
-abstract class BaseDemoFragment : Fragment {
-
-  constructor() : super()
-
-  constructor(contentLayoutId: Int) : super(contentLayoutId)
-
-  protected val initSeed: String by lazy(NONE) {
-    requireNotNull(requireArguments().getString(ARGS_INIT_SEED))
-  }
-
-  companion object {
-    const val ARGS_INIT_SEED = "ARGS_INIT_SEED"
-  }
-}
+@JsonClass(generateAdapter = true)
+data class AdSamples(
+  @Json(name = "name")
+  val name: String,
+  @Json(name = "samples")
+  val samples: List<AdSample>,
+)

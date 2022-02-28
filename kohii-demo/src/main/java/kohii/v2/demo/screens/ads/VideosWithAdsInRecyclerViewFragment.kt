@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo.ads
+package kohii.v2.demo.screens.ads
 
 import android.os.Bundle
 import android.util.Log
@@ -23,7 +23,6 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.CheckedTextView
 import androidx.core.os.bundleOf
 import androidx.core.view.updateLayoutParams
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
@@ -40,6 +39,7 @@ import kohii.v2.demo.R
 import kohii.v2.demo.common.flowWithPrevious
 import kohii.v2.demo.databinding.FragmentVideosWithAdsBinding
 import kohii.v2.demo.demoApp
+import kohii.v2.demo.DemoItemFragment
 import kohii.v2.exoplayer.DefaultVideoAdPlayerCallback
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -50,12 +50,10 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import okio.buffer
 import okio.source
-import kotlin.LazyThreadSafetyMode.NONE
 
-class VideosWithAdsInRecyclerViewFragment : Fragment(R.layout.fragment_videos_with_ads) {
+class VideosWithAdsInRecyclerViewFragment : DemoItemFragment(R.layout.fragment_videos_with_ads) {
 
   private val viewModel: VideoWithAdsViewModel by viewModels()
-  private val seed: String by lazy(NONE) { requireArguments().getString(KEY_SEED).orEmpty() }
 
   @OptIn(ExperimentalKohiiApi::class)
   override fun onViewCreated(
@@ -142,8 +140,6 @@ class VideosWithAdsInRecyclerViewFragment : Fragment(R.layout.fragment_videos_wi
   }
 
   companion object {
-    private const val KEY_SEED = "KEY_SEED"
-
     fun getInstance(position: Int): VideosWithAdsInRecyclerViewFragment =
       VideosWithAdsInRecyclerViewFragment().apply {
         arguments = bundleOf(KEY_SEED to "seed::$position")
