@@ -33,15 +33,11 @@ import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.Events
 import com.google.android.exoplayer2.TracksInfo
-import com.google.android.exoplayer2.TracksInfo.TrackGroupInfo
 import com.google.android.exoplayer2.analytics.PlaybackStatsListener
 import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
 import com.google.android.exoplayer2.mediacodec.MediaCodecRenderer.DecoderInitializationException
 import com.google.android.exoplayer2.mediacodec.MediaCodecUtil.DecoderQueryException
 import com.google.android.exoplayer2.parameters
-import com.google.android.exoplayer2.trackselection.TrackSelectionOverrides
-import com.google.android.exoplayer2.trackselection.TrackSelectionOverrides.TrackSelectionOverride
-import com.google.android.exoplayer2.trackselection.TrackSelectionParameters
 import com.google.android.exoplayer2.ui.AdOverlayInfo
 import com.google.android.exoplayer2.ui.AdOverlayInfo.Purpose
 import com.google.android.exoplayer2.ui.StyledPlayerView
@@ -64,6 +60,8 @@ import kohii.v2.internal.logInfo
  * A [Bridge] that works with [StyledPlayerView] and [ExoPlayer].
  *
  * Note: [ExoPlayer] is required rather than [Player] for Ad support and AnalyticsListener usage.
+ * This [Bridge] supports playing a list of [MediaItem] with ads that can be played by a single
+ * [ImaAdsLoader].
  */
 // TODO: when a video is paused manually, do not start the next one automatically :thinking:
 internal class StyledPlayerViewBridge(
@@ -162,8 +160,8 @@ internal class StyledPlayerViewBridge(
     set(value) {
       field = value
       lastSeenPlayerState = when (value) {
-        Initialized, Idle -> Player.STATE_IDLE
         Ended -> Player.STATE_ENDED
+        Initialized, Idle -> Player.STATE_IDLE
         is Active -> (value.extras as? ExoPlayerExtras)?.playerState ?: Player.STATE_IDLE
       }
 
@@ -181,10 +179,10 @@ internal class StyledPlayerViewBridge(
 
           player.player.parameters = playerState.playerParameters
           if (lastSeenTracksInfo !== TracksInfo.EMPTY) {
-            player.applyTrackSelectionParameters(playerState.trackSelectionParameters)
+            player.trackSelectionParameters = playerState.trackSelectionParameters
           } else {
             player.doOnTrackInfoChanged {
-              player.applyTrackSelectionParameters(playerState.trackSelectionParameters)
+              player.trackSelectionParameters = playerState.trackSelectionParameters
             }
           }
           lastSeenState = Active.DEFAULT
@@ -218,11 +216,11 @@ internal class StyledPlayerViewBridge(
 
   override fun ready() {
     preparePlayer()
-    renderer?.attachPlayer()
+    renderer?.player = internalPlayer
   }
 
   override fun play() {
-    // It can be skip if the Player/Playback was ended before.
+    // It can be skip if the Player/Playback has ended before.
     if (playerPrepared) {
       requireNotNull(internalPlayer).wrappedPlayer.play()
     }
@@ -253,8 +251,8 @@ internal class StyledPlayerViewBridge(
     internalPlayer?.let { player ->
       player.stop()
       player.clearMediaItems()
-      playerPool.putPlayer(player = player.wrappedPlayer)
       (player.wrappedPlayer as? ExoPlayerWrapper)?.releaseAdsBundle()
+      playerPool.putPlayer(player = player.wrappedPlayer)
     }
     internalPlayer = null
     playerPrepared = false
@@ -335,7 +333,7 @@ internal class StyledPlayerViewBridge(
     if (playerExtras !== ExoPlayerExtras.DEFAULT) {
       player.player.parameters = playerExtras.playerParameters
       player.doOnTrackInfoChanged {
-        applyTrackSelectionParameters(playerExtras.trackSelectionParameters)
+        trackSelectionParameters = playerExtras.trackSelectionParameters
       }
     }
 
@@ -349,6 +347,8 @@ internal class StyledPlayerViewBridge(
 
     if (!playerPrepared) {
       (player.wrappedPlayer as? ExoPlayerWrapper)?.prepareAdsBundle()
+      // After the next step, the MediaSource.Factory will also create AdsMediaSource if needed,
+      // and update the ImaAdsLoader.
       player.setMediaItems(
         /* mediaItems */ mediaItems,
         /* resetPosition */ !hasStartPosition
@@ -376,8 +376,7 @@ internal class StyledPlayerViewBridge(
   //region Ads support.
   @VisibleForTesting
   internal fun ExoPlayerWrapper.prepareAdsBundle() {
-    val hasAd = mediaItems.any { it.localConfiguration?.adsConfiguration != null }
-    mediaItems.takeIf { hasAd } ?: return
+    if (!mediaItems.hasAd) return
 
     val imaBundle = ImaSetupBundle(
       // TODO: API for clients to use their own ImaAdsLoader.Builder.
@@ -420,10 +419,6 @@ internal class StyledPlayerViewBridge(
   }
   //endregion
 
-  private fun StyledPlayerView.attachPlayer() {
-    if (this.player !== internalPlayer) this.player = internalPlayer
-  }
-
   // When this player is set to the [StyledPlayerView] and then its [StyledPlayerControlView], it
   // will redirect the call to [play()] and [pause()] to the `controller`. This is to centralize the
   // manual play and pause request to the Playback:
@@ -460,30 +455,7 @@ internal class StyledPlayerViewBridge(
   }
 }
 
-// Note: because TrackGroupArray finds the index of TrackGroup by comparing
-// reference, we need to swap the restored TrackGroups by the existing ones
-// (but are structural equal to the restored ones).
-// Ref: https://github.com/google/ExoPlayer/issues/9718
-@JvmSynthetic
-internal fun Player.applyTrackSelectionParameters(parameters: TrackSelectionParameters) {
-  val restoredOverrideGroups = parameters.trackSelectionOverrides
-    .asList()
-    .map(TrackSelectionOverride::trackGroup)
-
-  val swappedTrackSelectionOverride = currentTracksInfo.trackGroupInfos
-    .map(TrackGroupInfo::getTrackGroup)
-    .filter(restoredOverrideGroups::contains)
-    .map(TrackSelectionOverrides::TrackSelectionOverride)
-
-  val swappedTrackSelectionOverrides = TrackSelectionOverrides.Builder()
-    .apply {
-      for (trackSelectionOverride in swappedTrackSelectionOverride) {
-        addOverride(trackSelectionOverride)
-      }
-    }
-    .build()
-
-  trackSelectionParameters = parameters.buildUpon()
-    .setTrackSelectionOverrides(swappedTrackSelectionOverrides)
-    .build()
-}
+private val List<MediaItem>.hasAd: Boolean
+  get() = this.any {
+    it.localConfiguration?.adsConfiguration != null
+  }

@@ -25,6 +25,12 @@ import com.google.android.exoplayer2.source.ads.AdsLoader
 import com.google.android.exoplayer2.ui.AdOverlayInfo
 import com.google.android.exoplayer2.ui.AdViewProvider
 
+/**
+ * A helper class used by the [StyledPlayerViewBridge] to setup ads playback.
+ *
+ * This class uses a prebuilt [AdsLoader] but doesn't use the provided [AdsConfiguration] to
+ * create the [AdsLoader] instance.
+ */
 internal class ImaSetupBundle(
   val adsLoader: ImaAdsLoader,
   val adViewGroup: FrameLayout,
