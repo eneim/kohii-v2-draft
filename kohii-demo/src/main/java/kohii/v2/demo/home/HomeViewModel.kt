@@ -20,6 +20,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kohii.v2.demo.DemoItem
+import kohii.v2.demo.NoVideoInLandscapeScrollViewFragment
 import kohii.v2.demo.screens.ads.VideosWithAdsInRecyclerViewFragment
 import kohii.v2.demo.screens.chain.ChainedVideosInScrollViewFragment
 import kohii.v2.demo.screens.mixed.MixedVideosInRecyclerViewFragment
@@ -42,6 +43,11 @@ class HomeViewModel : ViewModel() {
         title = "Chained videos in NestedScrollView",
         description = "Demo using NestedScrollView with many videos in a chain.",
         fragment = ChainedVideosInScrollViewFragment::class.java,
+      ),
+      DemoItem(
+        title = "Portrait only video in NestedScrollView",
+        description = "Demo using NestedScrollView with videos exist in portrait mode only.",
+        fragment = NoVideoInLandscapeScrollViewFragment::class.java,
       ),
     )
   )

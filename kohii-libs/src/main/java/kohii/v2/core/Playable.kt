@@ -71,7 +71,7 @@ abstract class Playable(
    * The current [Playback] that is bound to this [Playable].
    */
   var playback: Playback? = null
-    internal set(value) {
+    @JvmSynthetic internal set(value) {
       val prev = field
       field = value
       if (value != null) manager = value.manager.playableManager
@@ -208,10 +208,20 @@ abstract class Playable(
 
   @CallSuper
   protected open fun onManagerChanged(
-    previous: PlayableManager?,
-    next: PlayableManager?,
+    previous: PlayableManager,
+    next: PlayableManager,
   ) {
     "Playable[${hexCode()}]_CHANGE_Manager [$previous → $next]".logWarn()
+  }
+
+  @JvmSynthetic
+  internal fun trySavePlayableState() {
+    manager.trySavePlayableState(this)
+  }
+
+  @JvmSynthetic
+  internal fun tryRestorePlayableState() {
+    manager.tryRestorePlayableState(this)
   }
 
   /**
@@ -304,15 +314,15 @@ abstract class Playable(
 
     override fun onCleared() {
       super.onCleared()
-      // TODO: update to avoid new allocation.
-      playables
-        .toMutableSet()
-        .onEach { playable ->
-          debugOnly { check(playable.manager === this) }
-          home.destroyPlayableDelayed(playable = playable, delayMillis = 0)
-        }
-        .clear()
-      playables.clear()
+      if (playables.isNotEmpty()) {
+        playables.toMutableSet()
+          .onEach { playable ->
+            debugOnly { check(playable.manager === this) }
+            home.destroyPlayableDelayed(playable = playable, delayMillis = 0)
+          }
+          .clear()
+        playables.clear()
+      }
     }
   }
 }

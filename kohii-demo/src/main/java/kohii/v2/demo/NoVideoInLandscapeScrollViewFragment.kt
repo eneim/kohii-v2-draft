@@ -19,19 +19,13 @@ package kohii.v2.demo
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import com.google.android.exoplayer2.ui.StyledPlayerView
 import kohii.v2.common.ExperimentalKohiiApi
-import kohii.v2.core.Engine
-import kohii.v2.core.Manager
-import kohii.v2.core.playbackManager
+import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.databinding.FragmentVideoInScrollViewPortraitOnlyBinding
-import kohii.v2.exoplayer.StyledPlayerViewPlayableCreator
-import kohii.v2.exoplayer.getStyledPlayerViewProvider
 
 class NoVideoInLandscapeScrollViewFragment :
-  Fragment(R.layout.fragment_video_in_scroll_view_portrait_only) {
+  DemoItemFragment(R.layout.fragment_video_in_scroll_view_portrait_only) {
 
   @OptIn(ExperimentalKohiiApi::class)
   override fun onViewCreated(
@@ -44,19 +38,10 @@ class NoVideoInLandscapeScrollViewFragment :
     val container = binding.videoContainer
     val bucketView = container?.parent as? ViewGroup
     if (container != null && bucketView != null) {
-      val manager: Manager = playbackManager()
-      manager.bucket(bucketView)
-      val engine = Engine.get<StyledPlayerView>(
-        manager = manager,
-        playableCreator = StyledPlayerViewPlayableCreator.getInstance(view.context),
-        rendererProvider = requireActivity().getStyledPlayerViewProvider(),
-      )
-
-      engine.setUp(data = VideoUrls.HlsSample, tag = VIDEO_TAG).bind(container = container)
+      val engine = ExoPlayerEngine(bucket = bucketView)
+      engine
+        .setUp(data = VideoUrls.LocalHevc, tag = VideoUrls.LocalHevc.toString())
+        .bind(container = container)
     }
-  }
-
-  companion object {
-    internal const val VIDEO_TAG = "VIDEO_TAG"
   }
 }

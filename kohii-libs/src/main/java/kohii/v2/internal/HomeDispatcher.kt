@@ -27,7 +27,12 @@ internal class HomeDispatcher(private val home: Home) : Handler(Looper.getMainLo
   fun dispatchDestroyPlayable(
     playable: Playable,
     delayMillis: Long = DEFAULT_DELAY,
-  ) = sendMessageDelayed(obtainMessage(MSG_DESTROY_PLAYABLE, playable), delayMillis)
+  ) = if (delayMillis == 0L) {
+    performDestroyPlayable(playable)
+    true
+  } else {
+    sendMessageDelayed(obtainMessage(MSG_DESTROY_PLAYABLE, playable), delayMillis)
+  }
 
   fun cancelPlayableDestroy(playable: Playable) = removeMessages(MSG_DESTROY_PLAYABLE, playable)
 
@@ -48,6 +53,7 @@ internal class HomeDispatcher(private val home: Home) : Handler(Looper.getMainLo
 
   private fun performDestroyPlayable(playable: Playable) {
     "Home[${home.hexCode()}]_DESTROY_Playable [PB=$playable]".logInfo()
+    playable.trySavePlayableState()
     playable.onPause()
     playable.onRelease()
     playable.onDestroy()

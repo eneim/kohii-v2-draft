@@ -44,7 +44,7 @@ internal class LifecycleCallbackDelegate(val playable: Playable) : LifecycleCall
 
   override fun onActivated(playback: Playback) {
     "CallbackDelegate[${hexCode()}]_ACTIVATED [PK=$playback]".logInfo()
-    playback.manager.playableManager.tryRestorePlayableState(playable)
+    playable.tryRestorePlayableState()
   }
 
   override fun onDeactivated(playback: Playback) {
@@ -61,7 +61,7 @@ internal class LifecycleCallbackDelegate(val playable: Playable) : LifecycleCall
       // If after the recreation, the Playable is not bound to a new Playback, it will be destroyed.
       !playback.manager.isChangingConfigurations
     ) {
-      playback.manager.playableManager.trySavePlayableState(playable)
+      playable.trySavePlayableState()
       playable.onRelease()
     }
   }
