@@ -16,16 +16,16 @@
 
 package kohii.v2.demo.common
 
-import com.google.android.exoplayer2.MediaItem
-
 object VideoUrls {
 
-  val HlsSample =
-    MediaItem.fromUri("https://bitmovin-a.akamaihd.net/content/sintel/hls/playlist.m3u8")
+  const val SINTEL_HLS = "https://bitmovin-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
 
   // Video sample with multiple Audios.
-  val MpdSample =
-    MediaItem.fromUri("https://bitmovin-a.akamaihd.net/content/sintel/sintel.mpd")
-  val LocalHevc =
-    MediaItem.fromUri("file:///android_asset/media/bbb_hevc_mp3_45s.mp4")
+  const val SINTEL_MPD = "https://bitmovin-a.akamaihd.net/content/sintel/sintel.mpd"
+
+  const val LLAMA_DRAMA_HLS = "https://content.jwplatform.com/manifests/Cl6EVHgQ.m3u8"
+
+  const val LLAMIGOS_MPD = "https://content.jwplatform.com/manifests/Dn90E0Ca.mpd"
+
+  const val LOCAL_BBB_HEVC = "file:///android_asset/media/bbb_hevc_mp3_45s.mp4"
 }

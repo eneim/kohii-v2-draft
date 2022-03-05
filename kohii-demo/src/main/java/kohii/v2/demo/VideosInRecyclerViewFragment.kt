@@ -54,8 +54,8 @@ class VideosInRecyclerViewFragment : Fragment(R.layout.fragment_videos_in_recycl
     )
 
     val binder = engine.setUp(
-      data = VideoUrls.LocalHevc,
-      tag = VIDEO_TAG
+      tag = VIDEO_TAG,
+      data = VideoUrls.LOCAL_BBB_HEVC,
     )
 
     binding.videos.withModels {

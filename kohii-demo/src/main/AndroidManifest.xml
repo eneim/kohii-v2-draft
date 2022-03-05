@@ -34,6 +34,9 @@
     <activity android:name=".MainActivity" />
     <activity android:name=".home.HomeActivity" />
     <activity android:name=".DemoHostActivity" />
+    <activity
+        android:name=".fullscreen.FullscreenPlayerActivity"
+        android:theme="@style/Kohii.Dialog.FullscreenPlayer" />
 
     <activity-alias
         android:name="Launcher"

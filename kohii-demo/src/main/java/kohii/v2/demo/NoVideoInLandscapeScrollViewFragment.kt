@@ -40,7 +40,7 @@ class NoVideoInLandscapeScrollViewFragment :
     if (container != null && bucketView != null) {
       val engine = ExoPlayerEngine(bucket = bucketView)
       engine
-        .setUp(data = VideoUrls.LocalHevc, tag = VideoUrls.LocalHevc.toString())
+        .setUp(tag = VideoUrls.LOCAL_BBB_HEVC, data = VideoUrls.LOCAL_BBB_HEVC)
         .bind(container = container)
     }
   }

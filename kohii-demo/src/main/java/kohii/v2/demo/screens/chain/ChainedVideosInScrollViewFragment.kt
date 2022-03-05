@@ -25,10 +25,10 @@ import kohii.v2.core.Chain.SelectScope.AVAILABLE_ONLY
 import kohii.v2.core.Engine
 import kohii.v2.core.Manager
 import kohii.v2.core.playbackManager
+import kohii.v2.demo.DemoItemFragment
 import kohii.v2.demo.R.layout
 import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.databinding.FragmentVideosInScrollViewBinding
-import kohii.v2.demo.DemoItemFragment
 import kohii.v2.exoplayer.StyledPlayerViewPlayableCreator
 import kohii.v2.exoplayer.getStyledPlayerViewProvider
 
@@ -50,7 +50,7 @@ class ChainedVideosInScrollViewFragment : DemoItemFragment(layout.fragment_video
       rendererProvider = requireActivity().getStyledPlayerViewProvider(),
     )
 
-    engine.setUp(data = VideoUrls.LocalHevc, tag = "Z").bind(binding.topVideo)
+    engine.setUp(tag = "Z", data = VideoUrls.LOCAL_BBB_HEVC).bind(binding.topVideo)
 
     bucket.chain(loop = true, selectScope = AVAILABLE_ONLY) {
       listOf(
@@ -62,7 +62,7 @@ class ChainedVideosInScrollViewFragment : DemoItemFragment(layout.fragment_video
           Triple(
             tag,
             container,
-            engine.setUp(data = VideoUrls.LocalHevc, tag = tag).bind(container)
+            engine.setUp(tag = tag, data = VideoUrls.LOCAL_BBB_HEVC).bind(container)
           )
         }
         .onEach { (_, container, handle) ->

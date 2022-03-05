@@ -17,13 +17,13 @@
 package kohii.v2.exoplayer
 
 import android.util.Range
-import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import kohii.v2.core.BasePlayable
 import kohii.v2.core.Bridge
 import kohii.v2.core.Home
 import kohii.v2.core.Playable
 import kohii.v2.core.PlayableManager
+import kohii.v2.core.RequestData
 
 /**
  * A [Playable] that uses [StyledPlayerView] as the renderer.
@@ -31,7 +31,7 @@ import kohii.v2.core.PlayableManager
 internal class StyledPlayerViewPlayable(
   home: Home,
   tag: String,
-  data: List<MediaItem>,
+  data: List<RequestData>,
   firstManager: PlayableManager,
   bridge: Bridge<StyledPlayerView>,
 ) : BasePlayable<StyledPlayerView>(

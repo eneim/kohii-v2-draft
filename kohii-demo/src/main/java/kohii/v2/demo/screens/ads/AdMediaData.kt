@@ -16,22 +16,25 @@
 
 package kohii.v2.demo.screens.ads
 
-import android.net.Uri
-import android.os.Parcelable
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.MediaItem.AdsConfiguration
 import kohii.v2.core.RequestData
 import kotlinx.parcelize.Parcelize
 
-@JsonClass(generateAdapter = true)
+/**
+ * A [RequestData] to support a [AdSample].
+ */
+@JvmInline
 @Parcelize
-data class AdSample(
-  @Json(name = "name")
-  val name: String,
-  @Json(name = "uri")
-  val contentUri: Uri,
-  @Json(name = "ad_tag_uri")
-  val adTagUri: Uri,
-) : Parcelable
+internal value class AdMediaData(val media: AdSample) : RequestData {
 
-internal fun AdSample.toRequestData(): RequestData = AdMediaData(this)
+  override fun toMediaItem(): MediaItem = MediaItem.Builder()
+    .setUri(media.contentUri)
+    .setTag(media.name)
+    .setAdsConfiguration(AdsConfiguration.Builder(media.adTagUri).build())
+    .build()
+
+  override fun isSame(other: RequestData): Boolean {
+    return other is AdMediaData && media == other.media
+  }
+}

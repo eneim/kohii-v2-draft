@@ -17,7 +17,6 @@
 package kohii.v2.core
 
 import androidx.annotation.CallSuper
-import com.google.android.exoplayer2.MediaItem
 import kohii.v2.core.PlayableState.Initialized
 import kohii.v2.internal.asString
 import kohii.v2.internal.hexCode
@@ -31,7 +30,7 @@ import kohii.v2.internal.logWarn
 abstract class AbstractPlayable(
   home: Home,
   tag: String,
-  data: List<MediaItem>,
+  data: List<RequestData>,
   rendererType: Class<*>,
   firstManager: PlayableManager,
 ) : Playable(

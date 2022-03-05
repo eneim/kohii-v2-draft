@@ -22,7 +22,6 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.Engine
@@ -40,8 +39,8 @@ import kotlin.LazyThreadSafetyMode.NONE
 class RebindPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
 
   private val seed: String by lazy(NONE) { requireArguments().getString(KEY_SEED).orEmpty() }
-  private val commonTag: String by lazy(NONE) { "$seed::${VideoUrls.LocalHevc}::Switch" }
-  private val commonData: MediaItem = VideoUrls.LocalHevc
+  private val commonTag: String by lazy(NONE) { "$seed::${VideoUrls.LOCAL_BBB_HEVC}::Switch" }
+  private val commonData = VideoUrls.LOCAL_BBB_HEVC
 
   private var playback: Playback? = null
 
@@ -80,8 +79,8 @@ class RebindPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
     }
 
     var binders = listOf(
-      engine.setUp(VideoUrls.LocalHevc, tag = "${VideoUrls.LocalHevc}"),
-      engine.setUp(VideoUrls.HlsSample, tag = "${VideoUrls.HlsSample}")
+      engine.setUp(tag = VideoUrls.LOCAL_BBB_HEVC, data = VideoUrls.LOCAL_BBB_HEVC),
+      engine.setUp(tag = VideoUrls.SINTEL_HLS, data = VideoUrls.SINTEL_HLS)
     )
 
     val containers = listOf(binding.videoTop, binding.videoBottom)

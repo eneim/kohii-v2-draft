@@ -22,7 +22,6 @@ import android.util.Range
 import androidx.annotation.CallSuper
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
-import com.google.android.exoplayer2.MediaItem
 import kohii.v2.core.Home.Companion.NO_TAG
 import kohii.v2.core.Manager.Companion.DEFAULT_DESTRUCTION_DELAY_MS
 import kohii.v2.core.Playback.Config
@@ -38,7 +37,7 @@ import java.util.concurrent.atomic.AtomicReference
 abstract class Playable(
   val home: Home,
   val tag: String,
-  val data: List<MediaItem>,
+  val data: List<RequestData>,
   val rendererType: Class<*>,
   initialManager: PlayableManager,
 ) {
@@ -299,9 +298,11 @@ abstract class Playable(
 
     override fun trySavePlayableState(playable: Playable) {
       "PlayableManager[${hexCode()}]_SAVE_Playable [PB=$playable]".logInfo()
+      if (stateHandle.contains(playable.stateKey)) return
       val playableState = playable.onSaveState()
       if (playableState != Bundle.EMPTY) {
         stateHandle[playable.stateKey] = playableState
+        "PlayableManager[${hexCode()}]_SAVED_Playable [PB=$playable] [state=$playableState]".logDebug()
       }
     }
 
@@ -321,7 +322,6 @@ abstract class Playable(
             home.destroyPlayableDelayed(playable = playable, delayMillis = 0)
           }
           .clear()
-        playables.clear()
       }
     }
   }

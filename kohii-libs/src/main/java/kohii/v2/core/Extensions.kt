@@ -20,6 +20,7 @@ import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import kohii.v2.exoplayer.StyledPlayerViewPlayableCreator
@@ -63,6 +64,17 @@ fun Fragment.ExoPlayerEngine(bucket: View): Engine {
   return Engine.get<StyledPlayerView>(
     manager = manager,
     playableCreator = StyledPlayerViewPlayableCreator.getInstance(requireContext()),
+    rendererProvider = StyledPlayerViewProvider(),
+  )
+}
+
+@Suppress("FunctionName")
+fun FragmentActivity.ExoPlayerEngine(bucket: View): Engine {
+  val manager = playbackManager()
+  manager.bucket(bucket)
+  return Engine.get<StyledPlayerView>(
+    manager = manager,
+    playableCreator = StyledPlayerViewPlayableCreator.getInstance(application),
     rendererProvider = StyledPlayerViewProvider(),
   )
 }

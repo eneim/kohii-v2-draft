@@ -18,7 +18,6 @@ package kohii.v2.exoplayer
 
 import android.content.Context
 import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import kohii.v2.common.Capsule
 import kohii.v2.core.Engine
@@ -28,6 +27,7 @@ import kohii.v2.core.Playable
 import kohii.v2.core.PlayableCreator
 import kohii.v2.core.PlayableManager
 import kohii.v2.core.PlayerPool
+import kohii.v2.core.RequestData
 import kotlin.LazyThreadSafetyMode.NONE
 
 /**
@@ -50,7 +50,7 @@ class StyledPlayerViewPlayableCreator private constructor(
 
   override fun createPlayable(
     playableManager: PlayableManager,
-    data: List<MediaItem>,
+    data: List<RequestData>,
     tag: String,
   ): Playable = StyledPlayerViewPlayable(
     home = home,
@@ -59,7 +59,7 @@ class StyledPlayerViewPlayableCreator private constructor(
     firstManager = playableManager,
     bridge = StyledPlayerViewBridge(
       context = home.application,
-      mediaItems = data,
+      mediaItems = data.map(RequestData::toMediaItem),
       playerPool = playerPool.value
     )
   )

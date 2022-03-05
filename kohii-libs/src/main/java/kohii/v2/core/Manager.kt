@@ -330,7 +330,8 @@ class Manager(
   @MainThread
   internal fun onContainerRemoved(container: Any) {
     checkMainThread()
-    playbacks[container]?.activePlayable?.playback = null
+    // playbacks[container]?.activePlayable?.playback = null
+    playbacks[container]?.let(::removePlayback)
   }
   //endregion
 

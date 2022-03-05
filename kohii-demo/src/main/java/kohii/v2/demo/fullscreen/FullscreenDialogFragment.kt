@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo.screens.ads
+package kohii.v2.demo.fullscreen
 
-import android.net.Uri
-import android.os.Parcelable
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
-import kohii.v2.core.RequestData
-import kotlinx.parcelize.Parcelize
+import androidx.appcompat.app.AppCompatDialogFragment
+import kohii.v2.demo.R
 
-@JsonClass(generateAdapter = true)
-@Parcelize
-data class AdSample(
-  @Json(name = "name")
-  val name: String,
-  @Json(name = "uri")
-  val contentUri: Uri,
-  @Json(name = "ad_tag_uri")
-  val adTagUri: Uri,
-) : Parcelable
+abstract class FullscreenDialogFragment : AppCompatDialogFragment {
+  constructor() : super()
+  constructor(contentLayoutId: Int) : super(contentLayoutId)
 
-internal fun AdSample.toRequestData(): RequestData = AdMediaData(this)
+  override fun getTheme(): Int = R.style.Kohii_Dialog_FullscreenPlayer
+}

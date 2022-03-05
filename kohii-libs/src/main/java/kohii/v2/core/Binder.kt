@@ -139,7 +139,7 @@ class Binder(
     val playableState: PlayableState? = existingPlayable?.currentState()
 
     if (existingPlayable != null) {
-      require(existingPlayable.data == request.data) {
+      require(existingPlayable.data.isSame(request.data)) {
         "A playable tag ${request.tag} is used by different inputs data: " +
           "${request.data} and ${existingPlayable.data}"
       }

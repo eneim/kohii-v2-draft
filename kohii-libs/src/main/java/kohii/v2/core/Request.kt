@@ -18,13 +18,12 @@ package kohii.v2.core
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.google.android.exoplayer2.MediaItem
 import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class Request(
-  val data: List<MediaItem>,
+  val data: List<RequestData>,
   val tag: String? = null,
 ) : Parcelable {
 
@@ -62,15 +61,15 @@ class Request(
       parcel: Parcel,
       flags: Int,
     ) {
-      parcel.writeList(data)
       tag?.let(parcel::writeString)
+      parcel.writeList(data)
     }
 
     override fun create(parcel: Parcel): Request = Request(
-      data = parcel.readArrayList(MediaItem::class.java.classLoader)
-        ?.filterIsInstance<MediaItem>()
-        ?: emptyList(),
       tag = parcel.readString(),
+      data = parcel.readArrayList(RequestData::class.java.classLoader)
+        ?.filterIsInstance<RequestData>()
+        ?: emptyList(),
     )
   }
 }

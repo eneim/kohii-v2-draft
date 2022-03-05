@@ -24,11 +24,11 @@ import com.airbnb.epoxy.SimpleEpoxyModel
 import kohii.v2.core.Engine
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.RequestHandle
+import kohii.v2.demo.DemoItemFragment
 import kohii.v2.demo.R.layout
 import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.databinding.FragmentSimpleRecyclerViewBinding
 import kohii.v2.demo.databinding.HolderMultipleVideosContainerBinding
-import kohii.v2.demo.DemoItemFragment
 
 /**
  * A RecyclerView Fragment with 2 Videos in the same ViewHolder.
@@ -54,19 +54,19 @@ class MixedVideosInRecyclerViewFragment : DemoItemFragment(layout.fragment_simpl
           requests.onEach(RequestHandle::cancel).clear()
 
           requests += engine.setUp(
-            data = VideoUrls.MpdSample,
-            tag = "$seed::${VideoUrls.MpdSample}::FIRST"
+            tag = "$seed::${VideoUrls.SINTEL_MPD}::FIRST",
+            data = VideoUrls.SINTEL_MPD,
           )
             .withCallback { playback, request ->
               Log.i("Mixed", "Playback: $playback, Request: $request")
             }
             .bind(container = holder.firstVideo)
 
-          requests += engine.setUp(
-            data = VideoUrls.LocalHevc,
-            tag = "$seed::${VideoUrls.LocalHevc}::SECOND"
+          /* requests += engine.setUp(
+            tag = "$seed::${VideoUrls.LOCAL_BBB_HEVC}::SECOND",
+            data = VideoUrls.LOCAL_BBB_HEVC,
           )
-            .bind(container = holder.secondVideo)
+            .bind(container = holder.secondVideo) */
         }
 
         override fun unbind(view: View) {
@@ -74,7 +74,7 @@ class MixedVideosInRecyclerViewFragment : DemoItemFragment(layout.fragment_simpl
           requests.onEach(RequestHandle::cancel).clear()
         }
       }
-        .id("${VideoUrls.MpdSample}, ${VideoUrls.LocalHevc}")
+        .id("${VideoUrls.SINTEL_MPD}, ${VideoUrls.LOCAL_BBB_HEVC}")
         .addTo(this)
 
       (0 until 8).forEach { index ->

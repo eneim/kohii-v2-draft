@@ -17,10 +17,15 @@
 package kohii.v2.demo.common
 
 import android.view.View
+import android.view.ViewGroup
+import android.view.Window
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.contains
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 
 inline fun BottomSheetBehavior<*>.doOnStateChanged(
@@ -53,4 +58,33 @@ fun <T : Any?> Flow<T>.flowWithPrevious(): Flow<Pair<T?, T>> = flow {
     previousValue = value
     emit(newPair)
   }
+}
+
+internal fun <V : View> ViewGroup.isAncestorOf(view: V): Boolean {
+  if (view === this || this.contains(view)) return true
+  var target: View = view
+  var parent = target.parent
+  while (parent != null && parent !== this && parent is View) {
+    target = parent
+    parent = target.parent
+  }
+  return parent === this
+}
+
+fun Window.hideSystemBars() {
+  val windowInsetsController = WindowCompat.getInsetsController(this, decorView) ?: return
+  // Configure the behavior of the hidden system bars
+  windowInsetsController.systemBarsBehavior =
+    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+  // Hide both the status bar and the navigation bar
+  windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+}
+
+fun Window.showSystemBars() {
+  val windowInsetsController = WindowCompat.getInsetsController(this, decorView) ?: return
+  // Configure the behavior of the hidden system bars
+  windowInsetsController.systemBarsBehavior =
+    WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+  // Hide both the status bar and the navigation bar
+  windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
 }

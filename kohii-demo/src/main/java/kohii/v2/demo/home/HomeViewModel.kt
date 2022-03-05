@@ -23,12 +23,18 @@ import kohii.v2.demo.DemoItem
 import kohii.v2.demo.NoVideoInLandscapeScrollViewFragment
 import kohii.v2.demo.screens.ads.VideosWithAdsInRecyclerViewFragment
 import kohii.v2.demo.screens.chain.ChainedVideosInScrollViewFragment
+import kohii.v2.demo.screens.interaction.VideoWithInteractionInScrollViewFragment
 import kohii.v2.demo.screens.mixed.MixedVideosInRecyclerViewFragment
 
 class HomeViewModel : ViewModel() {
 
   val demoItems: LiveData<List<DemoItem>> = MutableLiveData(
     listOf(
+      DemoItem(
+        title = "Video with interaction in NestedScrollView",
+        description = "Demo using NestedScrollView with a single video.\nClicking this video will open a dedicated player in a fullscreen dialog. It also force the Activity to landscape.",
+        fragment = VideoWithInteractionInScrollViewFragment::class.java,
+      ),
       DemoItem(
         title = "Many videos in one ViewHolder",
         description = "Demo using RecyclerView with one ViewHolder contains many videos.",
