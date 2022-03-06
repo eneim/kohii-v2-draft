@@ -35,13 +35,20 @@ interface RequestData : Parcelable {
   fun toMediaItem(): MediaItem
 
   /**
-   * Returns `true` if this instance is the same as `other`. This method is default to [equals].
-   * Client can provide custom behavior to tell about the similarity of two [RequestData]s.
+   * Returns `true` if this instance is the compatible with `other`. This method is default to
+   * [equals]. Compatible [RequestData]s can share the same [PlayableState]. Client can provide
+   * custom behavior to tell about the compatibility of two [RequestData]s.
    */
-  fun isSame(other: RequestData): Boolean = this == other
+  fun isCompatible(other: RequestData): Boolean = this == other
 }
 
-internal fun List<RequestData>.isSame(other: List<RequestData>): Boolean {
-  // Returns `false` if there is an item in this that doesn't belong to `other`, and vice versa.
-  return (this.size == other.size) && this.all(other::contains) && other.all(this::contains)
+@JvmSynthetic
+internal fun List<RequestData>.isCompatible(other: List<RequestData>): Boolean {
+  // Returns `false` if one list doesn't have a compatible item with an item on the another.
+  return (this.size == other.size) &&
+    this.all(other::hasCompatibleItem) &&
+    other.all(this::hasCompatibleItem)
 }
+
+private fun List<RequestData>.hasCompatibleItem(item: RequestData): Boolean =
+  any { it.isCompatible(item) }

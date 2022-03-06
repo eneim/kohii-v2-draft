@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo.screens.interaction
+package kohii.v2.demo.screens.multidata
 
 import android.app.Activity.RESULT_OK
 import android.os.Bundle
@@ -24,22 +24,25 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle.State
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.android.exoplayer2.video.VideoSize
 import kohii.v2.core.ExoPlayerEngine
+import kohii.v2.core.Playback
+import kohii.v2.core.PlayerEventListener
 import kohii.v2.demo.DemoItemFragment
 import kohii.v2.demo.R
 import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.common.isAncestorOf
 import kohii.v2.demo.databinding.FragmentVideoInScrollViewSimpleBinding
 import kohii.v2.demo.fullscreen.FullscreenPlayerActivity.Companion.ARGS_REQUEST
-import kohii.v2.demo.fullscreen.FullscreenPlayerActivity.Companion.newIntent
+import kohii.v2.demo.screens.multidata.MainVideoPlayerActivity.Companion.newIntent
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-class VideoWithInteractionInScrollViewFragment :
+class MultiUrisVideoInScrollViewFragment :
   DemoItemFragment(R.layout.fragment_video_in_scroll_view_simple) {
 
-  private val viewModel: VideoViewModel by viewModels()
+  private val viewModel: MultiUrisVideoViewModel by viewModels()
 
   private val startFullscreen = registerForActivityResult(StartActivityForResult()) {
     if (it.resultCode == RESULT_OK && it.data?.hasExtra(ARGS_REQUEST) == true) {
@@ -57,6 +60,7 @@ class VideoWithInteractionInScrollViewFragment :
     }
 
     val binding = FragmentVideoInScrollViewSimpleBinding.bind(view)
+    binding.longText1.text = "Preview video using 270p source."
 
     // Get the correct container as the bucket.
     val bucket = binding.content.takeIf { it.isAncestorOf(binding.video) }
@@ -64,37 +68,12 @@ class VideoWithInteractionInScrollViewFragment :
     val engine = ExoPlayerEngine(bucket = bucket)
 
     val requestTag = VideoUrls.LLAMA_DRAMA_HLS
-    val binder = engine.setUp(tag = requestTag, data = VideoUrls.LLAMA_DRAMA_HLS)
+    val requestData = PreviewVideoData(
+      previewUri = "https://content.jwplatform.com/videos/Cl6EVHgQ-AZtqUUiX.mp4", // 270p
+      mainUri = "https://content.jwplatform.com/videos/Cl6EVHgQ-TkIjsDEe.mp4" // 1080p
+    )
 
-    // Opening the video in fullscreen using a (fullscreen) Dialog
-    /* viewLifecycleOwner.lifecycleScope.launch {
-      viewLifecycleOwner.lifecycle.repeatOnLifecycle(State.RESUMED) {
-        viewModel.selectedVideoRequest
-          .onEach { request ->
-            // Remove the Player dialog to address the issue when programmatic orientation change
-            // happens: when we reset the Activity orientation back to the "base" one, for some
-            // reason the Player dialog is shown again, even if the selected request is null.
-            val fullscreenPlayer = childFragmentManager.findFragmentByTag(requestTag)
-            if (fullscreenPlayer != null) {
-              childFragmentManager.commitNow(allowStateLoss = true) {
-                remove(fullscreenPlayer)
-              }
-            }
-
-            // Note: use requireActivity().requestedOrientation if we want to force the fullscreen player
-            // in the landscape mode.
-            if (request != null) {
-              requireActivity().requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
-              FullscreenPlayerSheetDialog.newInstance(request, requestTag)
-                .show(childFragmentManager, requestTag)
-            } else {
-              requireActivity().requestedOrientation = viewModel.getBaseOrientation()
-              binder.bind(binding.video)
-            }
-          }
-          .collect()
-      }
-    } */
+    val binder = engine.setUp(tag = requestTag, data = requestData)
 
     // Opening the video in fullscreen using an Activity.
     //
@@ -112,7 +91,17 @@ class VideoWithInteractionInScrollViewFragment :
             if (request != null) {
               startFullscreen.launch(view.context.newIntent(request))
             } else {
-              binder.bind(binding.video)
+              binder.bind(binding.video) {
+                addPlayerEventListener(object : PlayerEventListener {
+                  override fun onVideoSizeChanged(
+                    playback: Playback,
+                    videoSize: VideoSize,
+                  ) {
+                    binding.longText1.text =
+                      "Preview video size: ${videoSize.width} × ${videoSize.height}"
+                  }
+                })
+              }
             }
           }
           .collect()

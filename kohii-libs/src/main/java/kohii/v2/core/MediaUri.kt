@@ -28,7 +28,7 @@ value class MediaUri(val value: String) : RequestData {
 
   override fun toMediaItem(): MediaItem = MediaItem.fromUri(value)
 
-  override fun isSame(other: RequestData): Boolean {
+  override fun isCompatible(other: RequestData): Boolean {
     return other is MediaUri && value == other.value
   }
 }

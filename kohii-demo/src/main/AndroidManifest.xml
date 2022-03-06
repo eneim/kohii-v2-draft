@@ -36,6 +36,11 @@
     <activity android:name=".DemoHostActivity" />
     <activity
         android:name=".fullscreen.FullscreenPlayerActivity"
+        android:screenOrientation="userLandscape"
+        android:theme="@style/Kohii.Dialog.FullscreenPlayer" />
+
+    <activity
+        android:name=".screens.multidata.MainVideoPlayerActivity"
         android:theme="@style/Kohii.Dialog.FullscreenPlayer" />
 
     <activity-alias

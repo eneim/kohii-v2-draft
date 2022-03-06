@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo.screens.interaction
+package kohii.v2.demo.screens.multidata
 
 import android.content.pm.ActivityInfo
 import androidx.lifecycle.SavedStateHandle
@@ -23,7 +23,7 @@ import kohii.v2.core.Request
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class VideoViewModel(
+class MultiUrisVideoViewModel(
   private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 

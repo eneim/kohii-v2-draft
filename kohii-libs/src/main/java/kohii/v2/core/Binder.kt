@@ -135,17 +135,23 @@ class Binder(
     val existingPlayable: Playable? = home.playables.entries
       .firstOrNull { (_, playableKey) -> playableKey !is Empty && playableKey.tag == request.tag }
       ?.key
-    // The state that can be used to transfer to the new Playable for the same tag.
-    val playableState: PlayableState? = existingPlayable?.currentState()
+
+    val isCompatibleData = existingPlayable?.data?.isCompatible(request.data) == true
+    val isSameData = existingPlayable?.data == request.data
+    val isSameRendererType = existingPlayable?.rendererType === engine.rendererType
+
+    // The state that can be used to transfer to the new Playable for the same tag. If the
+    // requested data is not compatible with the one used the same tag, it will be (re)initialized.
+    val playableState: PlayableState? = if (isCompatibleData) {
+      existingPlayable?.currentState()
+    } else {
+      Initialized
+    }
 
     if (existingPlayable != null) {
-      require(existingPlayable.data.isSame(request.data)) {
-        "A playable tag ${request.tag} is used by different inputs data: " +
-          "${request.data} and ${existingPlayable.data}"
-      }
-
-      if (existingPlayable.rendererType === engine.rendererType) {
-        return lazyOf(existingPlayable) // Playable is reused.
+      // Reuse the Playable only if isDataEqual and isSameRendererType are both true.
+      if (isSameData && isSameRendererType) {
+        return lazyOf(existingPlayable)
       } else {
         // Same request is executed by a different Engine --> unbind the Playback.
         // `existingPlayable` will also be released.

@@ -79,7 +79,7 @@ class FullscreenPlayerSheetDialog : FullscreenDialogFragment(R.layout.fragment_f
 
   companion object {
 
-    internal const val ARGS_REQUEST = "ARGS_BIND_BUILDER"
+    internal const val ARGS_REQUEST = "ARGS_REQUEST"
     internal const val ARGS_RESULT_KEY = "ARGS_RESULT_KEY"
 
     fun newInstance(

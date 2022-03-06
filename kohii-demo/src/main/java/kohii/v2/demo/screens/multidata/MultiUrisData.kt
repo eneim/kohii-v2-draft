@@ -14,27 +14,36 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo.screens.ads
+package kohii.v2.demo.screens.multidata
 
 import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.MediaItem.AdsConfiguration
 import kohii.v2.core.RequestData
 import kotlinx.parcelize.Parcelize
 
-/**
- * A [RequestData] to support a [AdSample].
- */
-@JvmInline
-@Parcelize
-internal value class AdMediaData(val media: AdSample) : RequestData {
-
-  override fun toMediaItem(): MediaItem = MediaItem.Builder()
-    .setUri(media.contentUri)
-    .setTag(media.name)
-    .setAdsConfiguration(AdsConfiguration.Builder(media.adTagUri).build())
-    .build()
+abstract class MultiUrisData(
+  open val previewUri: String,
+  open val mainUri: String,
+) : RequestData {
 
   override fun isCompatible(other: RequestData): Boolean {
-    return other is AdMediaData && media == other.media
+    return other is MultiUrisData && other.previewUri == previewUri && other.mainUri == mainUri
   }
+}
+
+@Parcelize
+data class PreviewVideoData(
+  override val previewUri: String,
+  override val mainUri: String,
+) : MultiUrisData(previewUri, mainUri) {
+
+  override fun toMediaItem(): MediaItem = MediaItem.fromUri(previewUri)
+}
+
+@Parcelize
+data class MainVideoData(
+  override val previewUri: String,
+  override val mainUri: String,
+) : MultiUrisData(previewUri, mainUri) {
+
+  override fun toMediaItem(): MediaItem = MediaItem.fromUri(mainUri)
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo.fullscreen
+package kohii.v2.demo.screens.multidata
 
 import android.content.Context
 import android.content.Intent
@@ -22,14 +22,15 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.video.VideoSize
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.Playback
 import kohii.v2.core.PlayerEventListener
 import kohii.v2.core.Request
 import kohii.v2.demo.common.hideSystemBars
-import kohii.v2.demo.databinding.FragmentFullscreenSheetBinding
+import kohii.v2.demo.databinding.ActivityFullscreenMainUriBinding
 
-class FullscreenPlayerActivity : AppCompatActivity() {
+class MainVideoPlayerActivity : AppCompatActivity() {
 
   // Note: this code is for demonstration purpose only. In practice, if an Activity is registered
   // as singleTop, `onNewIntent` might be called and and the request value is changed.
@@ -39,19 +40,38 @@ class FullscreenPlayerActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    val binding: FragmentFullscreenSheetBinding =
-      FragmentFullscreenSheetBinding.inflate(layoutInflater)
+    val binding: ActivityFullscreenMainUriBinding =
+      ActivityFullscreenMainUriBinding.inflate(layoutInflater)
     setContentView(binding.root)
     window.hideSystemBars()
 
+    binding.videoSizeInfo.text = "Playing main video."
+
     val engine = ExoPlayerEngine(bucket = binding.root)
-    engine.setUp(request).bind(container = binding.videoContainer) {
+    // Note: in practice, the caller must send the request for the main video data instead.
+    val requestData = request.data
+      .filterIsInstance<MultiUrisData>()
+      .map { data: MultiUrisData ->
+        MainVideoData(data.previewUri, data.mainUri)
+      }
+
+    engine.setUp(
+      tag = request.tag,
+      data = requestData.toTypedArray(),
+    ).bind(container = binding.videoContainer) {
       addPlayerEventListener(object : PlayerEventListener {
         override fun onStateChanged(
           playback: Playback,
           state: Int,
         ) {
           if (state == Player.STATE_ENDED) finish()
+        }
+
+        override fun onVideoSizeChanged(
+          playback: Playback,
+          videoSize: VideoSize,
+        ) {
+          binding.videoSizeInfo.text = "Main video size: ${videoSize.width} × ${videoSize.height}"
         }
       })
     }
@@ -66,7 +86,7 @@ class FullscreenPlayerActivity : AppCompatActivity() {
     const val ARGS_REQUEST = "ARGS_REQUEST"
 
     fun Context.newIntent(request: Request): Intent =
-      Intent(this, FullscreenPlayerActivity::class.java).apply {
+      Intent(this, MainVideoPlayerActivity::class.java).apply {
         putExtras(bundleOf(ARGS_REQUEST to request))
       }
   }

@@ -25,6 +25,7 @@ import kohii.v2.demo.screens.ads.VideosWithAdsInRecyclerViewFragment
 import kohii.v2.demo.screens.chain.ChainedVideosInScrollViewFragment
 import kohii.v2.demo.screens.interaction.VideoWithInteractionInScrollViewFragment
 import kohii.v2.demo.screens.mixed.MixedVideosInRecyclerViewFragment
+import kohii.v2.demo.screens.multidata.MultiUrisVideoInScrollViewFragment
 
 class HomeViewModel : ViewModel() {
 
@@ -32,7 +33,7 @@ class HomeViewModel : ViewModel() {
     listOf(
       DemoItem(
         title = "Video with interaction in NestedScrollView",
-        description = "Demo using NestedScrollView with a single video.\nClicking this video will open a dedicated player in a fullscreen dialog. It also force the Activity to landscape.",
+        description = "Demo using NestedScrollView with a single video. Clicking this video will open a dedicated player in a fullscreen dialog. It also force the Activity to landscape.",
         fragment = VideoWithInteractionInScrollViewFragment::class.java,
       ),
       DemoItem(
@@ -54,6 +55,11 @@ class HomeViewModel : ViewModel() {
         title = "Portrait only video in NestedScrollView",
         description = "Demo using NestedScrollView with videos exist in portrait mode only.",
         fragment = NoVideoInLandscapeScrollViewFragment::class.java,
+      ),
+      DemoItem(
+        title = "Video with multi Urls",
+        description = "Demo using a Video that uses a low-res preview url in the scroll view, and a high-res main url in the fullscreen player",
+        fragment = MultiUrisVideoInScrollViewFragment::class.java,
       ),
     )
   )
