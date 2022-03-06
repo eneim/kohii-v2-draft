@@ -1,0 +1,353 @@
+[
+  {
+    "title": "Caminandes 1:  Llama Drama",
+    "description": "Caminandes is a Creative Commons movie made by Pablo Vazquez, Beorn Leonard, and Francesco Siddi. Music and Sound by Jan Morgenstern.",
+    "kind": "Single Item",
+    "playlist": [
+      {
+        "title": "Caminandes 1:  Llama Drama",
+        "mediaid": "Cl6EVHgQ",
+        "link": "https://content.jwplatform.com/previews/Cl6EVHgQ",
+        "image": "https://content.jwplatform.com/v2/media/Cl6EVHgQ/poster.jpg?width=720",
+        "images": [
+          {
+            "src": "https://content.jwplatform.com/v2/media/Cl6EVHgQ/poster.jpg?width=320",
+            "width": 320,
+            "type": "image/jpeg"
+          },
+          {
+            "src": "https://content.jwplatform.com/v2/media/Cl6EVHgQ/poster.jpg?width=480",
+            "width": 480,
+            "type": "image/jpeg"
+          },
+          {
+            "src": "https://content.jwplatform.com/v2/media/Cl6EVHgQ/poster.jpg?width=640",
+            "width": 640,
+            "type": "image/jpeg"
+          },
+          {
+            "src": "https://content.jwplatform.com/v2/media/Cl6EVHgQ/poster.jpg?width=720",
+            "width": 720,
+            "type": "image/jpeg"
+          },
+          {
+            "src": "https://content.jwplatform.com/v2/media/Cl6EVHgQ/poster.jpg?width=1280",
+            "width": 1280,
+            "type": "image/jpeg"
+          },
+          {
+            "src": "https://content.jwplatform.com/v2/media/Cl6EVHgQ/poster.jpg?width=1920",
+            "width": 1920,
+            "type": "image/jpeg"
+          }
+        ],
+        "duration": 90,
+        "pubdate": 1333238400,
+        "description": "Caminandes is a Creative Commons movie made by Pablo Vazquez, Beorn Leonard, and Francesco Siddi. Music and Sound by Jan Morgenstern.",
+        "tags": "blender",
+        "sources": [
+          {
+            "file": "https://content.jwplatform.com/manifests/Cl6EVHgQ.mpd",
+            "type": "application/dash+xml",
+            "mediaTypes": [
+              "audio/webm; codecs=\"vorbis\"",
+              "video/webm; codecs=\"vp9\""
+            ]
+          },
+          {
+            "file": "https://content.jwplatform.com/manifests/Cl6EVHgQ.m3u8",
+            "type": "application/vnd.apple.mpegurl"
+          },
+          {
+            "file": "https://content.jwplatform.com/videos/Cl6EVHgQ-3gJZg1AH.mp4",
+            "type": "video/mp4",
+            "height": 180,
+            "width": 320,
+            "label": "180p",
+            "filesize": 2727514
+          },
+          {
+            "file": "https://content.jwplatform.com/videos/Cl6EVHgQ-AZtqUUiX.mp4",
+            "type": "video/mp4",
+            "height": 270,
+            "width": 480,
+            "label": "270p",
+            "filesize": 4024648
+          },
+          {
+            "file": "https://content.jwplatform.com/videos/Cl6EVHgQ-VJXGKLtY.mp4",
+            "type": "video/mp4",
+            "height": 406,
+            "width": 720,
+            "label": "406p",
+            "filesize": 5284291
+          },
+          {
+            "file": "https://content.jwplatform.com/videos/Cl6EVHgQ-oQOe5Prq.mp4",
+            "type": "video/mp4",
+            "height": 720,
+            "width": 1280,
+            "label": "720p",
+            "filesize": 12360127
+          },
+          {
+            "file": "https://content.jwplatform.com/videos/Cl6EVHgQ-mQKzw3z9.m4a",
+            "type": "audio/mp4",
+            "label": "AAC Audio",
+            "filesize": 1276924
+          },
+          {
+            "file": "https://content.jwplatform.com/videos/Cl6EVHgQ-TkIjsDEe.mp4",
+            "type": "video/mp4",
+            "height": 1080,
+            "width": 1920,
+            "label": "1080p",
+            "filesize": 27120683
+          }
+        ],
+        "tracks": [
+          {
+            "file": "https://content.jwplatform.com/strips/Cl6EVHgQ-120.vtt",
+            "kind": "thumbnails"
+          }
+        ],
+        "variations": {}
+      }
+    ],
+    "feed_instance_id": "0a3dd036-50ff-4d33-8e8f-723bdb1071a5"
+  },
+  {
+    "title": "Caminandes 2: Gran Dillama",
+    "description": "Caminandes: Episode 2 is an Open Movie produced by Blender Institute in Amsterdam, the Netherlands. You can support the makers and open source projects by purchasing the 8 GB USB card with all the movie data and tutorials.",
+    "kind": "Single Item",
+    "playlist": [
+      {
+        "title": "Caminandes 2: Gran Dillama",
+        "mediaid": "0G7vaSoF",
+        "link": "https://content.jwplatform.com/previews/0G7vaSoF",
+        "image": "https://content.jwplatform.com/v2/media/0G7vaSoF/poster.jpg?width=720",
+        "images": [
+          {
+            "src": "https://content.jwplatform.com/v2/media/0G7vaSoF/poster.jpg?width=320",
+            "width": 320,
+            "type": "image/jpeg"
+          },
+          {
+            "src": "https://content.jwplatform.com/v2/media/0G7vaSoF/poster.jpg?width=480",
+            "width": 480,
+            "type": "image/jpeg"
+          },
+          {
+            "src": "https://content.jwplatform.com/v2/media/0G7vaSoF/poster.jpg?width=640",
+            "width": 640,
+            "type": "image/jpeg"
+          },
+          {
+            "src": "https://content.jwplatform.com/v2/media/0G7vaSoF/poster.jpg?width=720",
+            "width": 720,
+            "type": "image/jpeg"
+          },
+          {
+            "src": "https://content.jwplatform.com/v2/media/0G7vaSoF/poster.jpg?width=1280",
+            "width": 1280,
+            "type": "image/jpeg"
+          },
+          {
+            "src": "https://content.jwplatform.com/v2/media/0G7vaSoF/poster.jpg?width=1920",
+            "width": 1920,
+            "type": "image/jpeg"
+          }
+        ],
+        "duration": 146,
+        "pubdate": 1380585600,
+        "description": "Caminandes: Episode 2 is an Open Movie produced by Blender Institute in Amsterdam, the Netherlands. You can support the makers and open source projects by purchasing the 8 GB USB card with all the movie data and tutorials.",
+        "tags": "blender",
+        "sources": [
+          {
+            "file": "https://content.jwplatform.com/manifests/0G7vaSoF.mpd",
+            "type": "application/dash+xml",
+            "mediaTypes": [
+              "audio/webm; codecs=\"vorbis\"",
+              "video/webm; codecs=\"vp9\""
+            ]
+          },
+          {
+            "file": "https://content.jwplatform.com/manifests/0G7vaSoF.m3u8",
+            "type": "application/vnd.apple.mpegurl"
+          },
+          {
+            "file": "https://content.jwplatform.com/videos/0G7vaSoF-3gJZg1AH.mp4",
+            "type": "video/mp4",
+            "height": 180,
+            "width": 320,
+            "label": "180p",
+            "filesize": 6282147
+          },
+          {
+            "file": "https://content.jwplatform.com/videos/0G7vaSoF-AZtqUUiX.mp4",
+            "type": "video/mp4",
+            "height": 270,
+            "width": 480,
+            "label": "270p",
+            "filesize": 9176933
+          },
+          {
+            "file": "https://content.jwplatform.com/videos/0G7vaSoF-VJXGKLtY.mp4",
+            "type": "video/mp4",
+            "height": 406,
+            "width": 720,
+            "label": "406p",
+            "filesize": 12750234
+          },
+          {
+            "file": "https://content.jwplatform.com/videos/0G7vaSoF-oQOe5Prq.mp4",
+            "type": "video/mp4",
+            "height": 720,
+            "width": 1280,
+            "label": "720p",
+            "filesize": 29666860
+          },
+          {
+            "file": "https://content.jwplatform.com/videos/0G7vaSoF-mQKzw3z9.m4a",
+            "type": "audio/mp4",
+            "label": "AAC Audio",
+            "filesize": 2071330
+          },
+          {
+            "file": "https://content.jwplatform.com/videos/0G7vaSoF-TkIjsDEe.mp4",
+            "type": "video/mp4",
+            "height": 1080,
+            "width": 1920,
+            "label": "1080p",
+            "filesize": 62601660
+          }
+        ],
+        "tracks": [
+          {
+            "file": "https://content.jwplatform.com/strips/0G7vaSoF-120.vtt",
+            "kind": "thumbnails"
+          }
+        ],
+        "variations": {}
+      }
+    ],
+    "feed_instance_id": "7f4515d6-68d6-4449-9114-c035a140b259"
+  },
+  {
+    "title": "Caminandes 3: Llamigos",
+    "description": "In this episode of the Caminandes cartoon series we get to know our hero Koro even better! It's winter in Patagonia, food is getting scarce. Koro the Llama engages with Oti the pesky penguin in an epic fight over that last tasty berry.",
+    "kind": "Single Item",
+    "playlist": [
+      {
+        "title": "Caminandes 3: Llamigos",
+        "mediaid": "Dn90E0Ca",
+        "link": "https://content.jwplatform.com/previews/Dn90E0Ca",
+        "image": "https://content.jwplatform.com/v2/media/Dn90E0Ca/poster.jpg?width=720",
+        "images": [
+          {
+            "src": "https://content.jwplatform.com/v2/media/Dn90E0Ca/poster.jpg?width=320",
+            "width": 320,
+            "type": "image/jpeg"
+          },
+          {
+            "src": "https://content.jwplatform.com/v2/media/Dn90E0Ca/poster.jpg?width=480",
+            "width": 480,
+            "type": "image/jpeg"
+          },
+          {
+            "src": "https://content.jwplatform.com/v2/media/Dn90E0Ca/poster.jpg?width=640",
+            "width": 640,
+            "type": "image/jpeg"
+          },
+          {
+            "src": "https://content.jwplatform.com/v2/media/Dn90E0Ca/poster.jpg?width=720",
+            "width": 720,
+            "type": "image/jpeg"
+          },
+          {
+            "src": "https://content.jwplatform.com/v2/media/Dn90E0Ca/poster.jpg?width=1280",
+            "width": 1280,
+            "type": "image/jpeg"
+          },
+          {
+            "src": "https://content.jwplatform.com/v2/media/Dn90E0Ca/poster.jpg?width=1920",
+            "width": 1920,
+            "type": "image/jpeg"
+          }
+        ],
+        "duration": 150,
+        "pubdate": 1467331200,
+        "description": "In this episode of the Caminandes cartoon series we get to know our hero Koro even better! It's winter in Patagonia, food is getting scarce. Koro the Llama engages with Oti the pesky penguin in an epic fight over that last tasty berry.",
+        "tags": "blender",
+        "sources": [
+          {
+            "file": "https://content.jwplatform.com/manifests/Dn90E0Ca.mpd",
+            "type": "application/dash+xml",
+            "mediaTypes": [
+              "audio/webm; codecs=\"vorbis\"",
+              "video/webm; codecs=\"vp9\""
+            ]
+          },
+          {
+            "file": "https://content.jwplatform.com/manifests/Dn90E0Ca.m3u8",
+            "type": "application/vnd.apple.mpegurl"
+          },
+          {
+            "file": "https://content.jwplatform.com/videos/Dn90E0Ca-3gJZg1AH.mp4",
+            "type": "video/mp4",
+            "height": 180,
+            "width": 320,
+            "label": "180p",
+            "filesize": 6542799
+          },
+          {
+            "file": "https://content.jwplatform.com/videos/Dn90E0Ca-AZtqUUiX.mp4",
+            "type": "video/mp4",
+            "height": 270,
+            "width": 480,
+            "label": "270p",
+            "filesize": 9451828
+          },
+          {
+            "file": "https://content.jwplatform.com/videos/Dn90E0Ca-VJXGKLtY.mp4",
+            "type": "video/mp4",
+            "height": 406,
+            "width": 720,
+            "label": "406p",
+            "filesize": 13710121
+          },
+          {
+            "file": "https://content.jwplatform.com/videos/Dn90E0Ca-oQOe5Prq.mp4",
+            "type": "video/mp4",
+            "height": 720,
+            "width": 1280,
+            "label": "720p",
+            "filesize": 30809909
+          },
+          {
+            "file": "https://content.jwplatform.com/videos/Dn90E0Ca-mQKzw3z9.m4a",
+            "type": "audio/mp4",
+            "label": "AAC Audio",
+            "filesize": 2128935
+          },
+          {
+            "file": "https://content.jwplatform.com/videos/Dn90E0Ca-TkIjsDEe.mp4",
+            "type": "video/mp4",
+            "height": 1080,
+            "width": 1920,
+            "label": "1080p",
+            "filesize": 64154127
+          }
+        ],
+        "tracks": [
+          {
+            "file": "https://content.jwplatform.com/strips/Dn90E0Ca-120.vtt",
+            "kind": "thumbnails"
+          }
+        ],
+        "variations": {}
+      }
+    ],
+    "feed_instance_id": "920aaf4d-e1e4-4ec6-8f12-26525922d75f"
+  }
+]
