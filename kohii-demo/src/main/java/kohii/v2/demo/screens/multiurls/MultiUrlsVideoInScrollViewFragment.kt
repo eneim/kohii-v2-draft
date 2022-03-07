@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo.screens.multidata
+package kohii.v2.demo.screens.multiurls
 
 import android.app.Activity.RESULT_OK
 import android.os.Bundle
@@ -34,15 +34,15 @@ import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.common.isAncestorOf
 import kohii.v2.demo.databinding.FragmentVideoInScrollViewSimpleBinding
 import kohii.v2.demo.fullscreen.FullscreenPlayerActivity.Companion.ARGS_REQUEST
-import kohii.v2.demo.screens.multidata.MainVideoPlayerActivity.Companion.newIntent
+import kohii.v2.demo.screens.multiurls.MainVideoPlayerActivity.Companion.newIntent
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-class MultiUrisVideoInScrollViewFragment :
+class MultiUrlsVideoInScrollViewFragment :
   DemoItemFragment(R.layout.fragment_video_in_scroll_view_simple) {
 
-  private val viewModel: MultiUrisVideoViewModel by viewModels()
+  private val viewModel: MultiUrlsVideoViewModel by viewModels()
 
   private val startFullscreen = registerForActivityResult(StartActivityForResult()) {
     if (it.resultCode == RESULT_OK && it.data?.hasExtra(ARGS_REQUEST) == true) {
@@ -68,12 +68,18 @@ class MultiUrisVideoInScrollViewFragment :
     val engine = ExoPlayerEngine(bucket = bucket)
 
     val requestTag = VideoUrls.LLAMA_DRAMA_HLS
-    val requestData = PreviewVideoData(
-      previewUri = "https://content.jwplatform.com/videos/Cl6EVHgQ-AZtqUUiX.mp4", // 270p
-      mainUri = "https://content.jwplatform.com/videos/Cl6EVHgQ-TkIjsDEe.mp4" // 1080p
+    val previewData = PreviewVideoData(
+      previewUrl = "https://content.jwplatform.com/videos/Cl6EVHgQ-AZtqUUiX.mp4", // 270p
+      mainUrl = "https://content.jwplatform.com/videos/Cl6EVHgQ-TkIjsDEe.mp4" // 1080p
     )
 
-    val binder = engine.setUp(tag = requestTag, data = requestData)
+    val mainData = MainVideoData(
+      previewUrl = "https://content.jwplatform.com/videos/Cl6EVHgQ-AZtqUUiX.mp4", // 270p
+      mainUrl = "https://content.jwplatform.com/videos/Cl6EVHgQ-TkIjsDEe.mp4" // 1080p
+    )
+
+    val previewBinder = engine.setUp(tag = requestTag, data = previewData)
+    val mainBinder = engine.setUp(tag = requestTag, data = mainData)
 
     // Opening the video in fullscreen using an Activity.
     //
@@ -91,7 +97,7 @@ class MultiUrisVideoInScrollViewFragment :
             if (request != null) {
               startFullscreen.launch(view.context.newIntent(request))
             } else {
-              binder.bind(binding.video) {
+              previewBinder.bind(binding.video) {
                 addPlayerEventListener(object : PlayerEventListener {
                   override fun onVideoSizeChanged(
                     playback: Playback,
@@ -108,12 +114,8 @@ class MultiUrisVideoInScrollViewFragment :
       }
     }
 
-    childFragmentManager.setFragmentResultListener(requestTag, viewLifecycleOwner) { _, _ ->
-      viewModel.setSelectedRequest(null)
-    }
-
     binding.video.setOnClickListener {
-      viewModel.setSelectedRequest(binder.request)
+      viewModel.setSelectedRequest(mainBinder.request)
     }
   }
 }

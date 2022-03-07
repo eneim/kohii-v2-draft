@@ -25,7 +25,7 @@ import kohii.v2.demo.screens.ads.VideosWithAdsInRecyclerViewFragment
 import kohii.v2.demo.screens.chain.ChainedVideosInScrollViewFragment
 import kohii.v2.demo.screens.interaction.VideoWithInteractionInScrollViewFragment
 import kohii.v2.demo.screens.mixed.MixedVideosInRecyclerViewFragment
-import kohii.v2.demo.screens.multidata.MultiUrisVideoInScrollViewFragment
+import kohii.v2.demo.screens.multiurls.MultiUrlsVideoInScrollViewFragment
 
 class HomeViewModel : ViewModel() {
 
@@ -59,7 +59,7 @@ class HomeViewModel : ViewModel() {
       DemoItem(
         title = "Video with multi Urls",
         description = "Demo using a Video that uses a low-res preview url in the scroll view, and a high-res main url in the fullscreen player",
-        fragment = MultiUrisVideoInScrollViewFragment::class.java,
+        fragment = MultiUrlsVideoInScrollViewFragment::class.java,
       ),
     )
   )

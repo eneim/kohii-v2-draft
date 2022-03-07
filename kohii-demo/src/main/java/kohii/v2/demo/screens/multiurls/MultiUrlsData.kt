@@ -14,36 +14,36 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo.screens.multidata
+package kohii.v2.demo.screens.multiurls
 
 import com.google.android.exoplayer2.MediaItem
 import kohii.v2.core.RequestData
 import kotlinx.parcelize.Parcelize
 
-abstract class MultiUrisData(
-  open val previewUri: String,
-  open val mainUri: String,
+abstract class MultiUrlsData(
+  open val previewUrl: String,
+  open val mainUrl: String,
 ) : RequestData {
 
   override fun isCompatible(other: RequestData): Boolean {
-    return other is MultiUrisData && other.previewUri == previewUri && other.mainUri == mainUri
+    return other is MultiUrlsData && other.previewUrl == previewUrl && other.mainUrl == mainUrl
   }
 }
 
 @Parcelize
 data class PreviewVideoData(
-  override val previewUri: String,
-  override val mainUri: String,
-) : MultiUrisData(previewUri, mainUri) {
+  override val previewUrl: String,
+  override val mainUrl: String,
+) : MultiUrlsData(previewUrl, mainUrl) {
 
-  override fun toMediaItem(): MediaItem = MediaItem.fromUri(previewUri)
+  override fun toMediaItem(): MediaItem = MediaItem.fromUri(previewUrl)
 }
 
 @Parcelize
 data class MainVideoData(
-  override val previewUri: String,
-  override val mainUri: String,
-) : MultiUrisData(previewUri, mainUri) {
+  override val previewUrl: String,
+  override val mainUrl: String,
+) : MultiUrlsData(previewUrl, mainUrl) {
 
-  override fun toMediaItem(): MediaItem = MediaItem.fromUri(mainUri)
+  override fun toMediaItem(): MediaItem = MediaItem.fromUri(mainUrl)
 }

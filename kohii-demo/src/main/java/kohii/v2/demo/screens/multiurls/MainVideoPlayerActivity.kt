@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo.screens.multidata
+package kohii.v2.demo.screens.multiurls
 
 import android.content.Context
 import android.content.Intent
@@ -48,17 +48,7 @@ class MainVideoPlayerActivity : AppCompatActivity() {
     binding.videoSizeInfo.text = "Playing main video."
 
     val engine = ExoPlayerEngine(bucket = binding.root)
-    // Note: in practice, the caller must send the request for the main video data instead.
-    val requestData = request.data
-      .filterIsInstance<MultiUrisData>()
-      .map { data: MultiUrisData ->
-        MainVideoData(data.previewUri, data.mainUri)
-      }
-
-    engine.setUp(
-      tag = request.tag,
-      data = requestData.toTypedArray(),
-    ).bind(container = binding.videoContainer) {
+    engine.setUp(request).bind(container = binding.videoContainer) {
       addPlayerEventListener(object : PlayerEventListener {
         override fun onStateChanged(
           playback: Playback,
