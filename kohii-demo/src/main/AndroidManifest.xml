@@ -31,9 +31,8 @@
       android:fullBackupContent="false"
       tools:ignore="DataExtractionRules">
 
-    <activity android:name=".MainActivity" />
     <activity android:name=".home.HomeActivity" />
-    <activity android:name=".DemoHostActivity" />
+    <activity android:name=".home.DemoHostActivity" />
     <activity
         android:name=".fullscreen.FullscreenPlayerActivity"
         android:screenOrientation="userLandscape"
@@ -49,7 +48,6 @@
         android:exported="true">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
-
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity-alias>

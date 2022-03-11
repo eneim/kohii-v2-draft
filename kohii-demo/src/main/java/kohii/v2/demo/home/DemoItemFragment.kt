@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo.fullscreen
+package kohii.v2.demo.home
 
-import androidx.appcompat.app.AppCompatDialogFragment
-import kohii.v2.demo.R
+import androidx.fragment.app.Fragment
+import kotlin.LazyThreadSafetyMode.NONE
 
-abstract class FullscreenDialogFragment : AppCompatDialogFragment {
+abstract class DemoItemFragment : Fragment {
+
+  protected val seed: String by lazy(NONE) { requireArguments().getString(KEY_SEED).orEmpty() }
+
   constructor() : super()
   constructor(contentLayoutId: Int) : super(contentLayoutId)
 
-  override fun getTheme(): Int = R.style.Kohii_Dialog_FullscreenPlayer
+  companion object {
+    const val KEY_SEED = "KEY_SEED"
+  }
 }

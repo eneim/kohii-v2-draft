@@ -25,7 +25,6 @@ import kohii.v2.demo.R
 import kohii.v2.demo.common.ViewBindingHolder
 import kohii.v2.demo.databinding.HolderDemoItemBinding
 import kohii.v2.demo.home.DemoItemModel.Holder
-import kohii.v2.demo.DemoItem
 
 @EpoxyModelClass
 abstract class DemoItemModel : EpoxyModelWithHolder<Holder>() {

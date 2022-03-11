@@ -28,8 +28,8 @@ import kohii.v2.core.Playback
 import kohii.v2.core.PlayerEventListener
 import kohii.v2.core.Request
 import kohii.v2.demo.R
+import kohii.v2.demo.common.FullscreenDialogFragment
 import kohii.v2.demo.common.hideSystemBars
-import kohii.v2.demo.common.showSystemBars
 import kohii.v2.demo.databinding.FragmentFullscreenSheetBinding
 import kotlin.LazyThreadSafetyMode.NONE
 

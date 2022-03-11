@@ -24,7 +24,7 @@ import com.airbnb.epoxy.SimpleEpoxyModel
 import kohii.v2.core.Engine
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.RequestHandle
-import kohii.v2.demo.DemoItemFragment
+import kohii.v2.demo.home.DemoItemFragment
 import kohii.v2.demo.R.layout
 import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.databinding.FragmentSimpleRecyclerViewBinding

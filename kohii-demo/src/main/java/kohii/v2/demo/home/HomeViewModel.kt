@@ -19,7 +19,6 @@ package kohii.v2.demo.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import kohii.v2.demo.DemoItem
 import kohii.v2.demo.NoVideoInLandscapeScrollViewFragment
 import kohii.v2.demo.screens.ads.VideosWithAdsInRecyclerViewFragment
 import kohii.v2.demo.screens.chain.ChainedVideosInScrollViewFragment

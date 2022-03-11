@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo
+package kohii.v2.demo.common
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
+import androidx.appcompat.app.AppCompatDialogFragment
+import kohii.v2.demo.R
 
-@Parcelize
-data class DemoItem(
-  val title: String,
-  val description: String?,
-  val fragment: Class<out DemoItemFragment>,
-) : Parcelable
+abstract class FullscreenDialogFragment : AppCompatDialogFragment {
+  constructor() : super()
+  constructor(contentLayoutId: Int) : super(contentLayoutId)
+
+  override fun getTheme(): Int = R.style.Kohii_Dialog_FullscreenPlayer
+}

@@ -16,17 +16,15 @@
 
 package kohii.v2.demo.screens.ads
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.CheckedTextView
-import androidx.core.os.bundleOf
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.epoxy.SimpleEpoxyModel
@@ -35,19 +33,13 @@ import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
 import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.RequestHandle
-import kohii.v2.demo.DemoItemFragment
 import kohii.v2.demo.R
-import kohii.v2.demo.common.flowWithPrevious
 import kohii.v2.demo.databinding.FragmentVideosWithAdsBinding
 import kohii.v2.demo.demoApp
+import kohii.v2.demo.home.DemoItemFragment
 import kohii.v2.exoplayer.DefaultVideoAdPlayerCallback
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
 import okio.buffer
 import okio.source
 
@@ -55,6 +47,7 @@ class VideosWithAdsInRecyclerViewFragment : DemoItemFragment(R.layout.fragment_v
 
   private val viewModel: VideoWithAdsViewModel by viewModels()
 
+  @SuppressLint("SetTextI18n")
   @OptIn(ExperimentalKohiiApi::class)
   override fun onViewCreated(
     view: View,
@@ -71,7 +64,7 @@ class VideosWithAdsInRecyclerViewFragment : DemoItemFragment(R.layout.fragment_v
 
     var handle: RequestHandle? = null
 
-    viewModel.selectedAd
+    viewModel.selectedItem
       .onEach { (_, selectedAd) ->
         handle?.cancel()
 
@@ -104,6 +97,7 @@ class VideosWithAdsInRecyclerViewFragment : DemoItemFragment(R.layout.fragment_v
 
     val itemMinHeight = resources.getDimensionPixelSize(R.dimen.text_item_min_height)
 
+    // This part uses the Epoxy library for quick setup.
     binding.videos.withModels {
       adsSamples.samples.forEachIndexed { _, adSample: AdSample ->
         object : SimpleEpoxyModel(android.R.layout.simple_list_item_single_choice) {
@@ -112,9 +106,9 @@ class VideosWithAdsInRecyclerViewFragment : DemoItemFragment(R.layout.fragment_v
             view.minimumHeight = itemMinHeight
             view.updateLayoutParams { height = WRAP_CONTENT }
 
-            val itemSelected = (viewModel.selectedAd.value.second == adSample)
+            val isSelected = (viewModel.selectedItem.value.second == adSample)
             (view as CheckedTextView).apply {
-              isChecked = itemSelected
+              isChecked = isSelected
               text = adSample.name
             }
           }
@@ -125,7 +119,7 @@ class VideosWithAdsInRecyclerViewFragment : DemoItemFragment(R.layout.fragment_v
           }
         }
           .onClick {
-            val currentSelection = viewModel.selectedAd.value
+            val currentSelection = viewModel.selectedItem.value
             if (currentSelection.second != adSample) {
               viewModel.setSelection(adSample)
             } else {
@@ -138,29 +132,5 @@ class VideosWithAdsInRecyclerViewFragment : DemoItemFragment(R.layout.fragment_v
       }
     }
   }
-
-  companion object {
-    fun getInstance(position: Int): VideosWithAdsInRecyclerViewFragment =
-      VideosWithAdsInRecyclerViewFragment().apply {
-        arguments = bundleOf(KEY_SEED to "seed::$position")
-      }
-  }
 }
 
-internal class VideoWithAdsViewModel : ViewModel() {
-
-  private val _selectedAd = MutableStateFlow<AdSample?>(null)
-
-  val selectedAd: StateFlow<Pair<AdSample?, AdSample?>> = _selectedAd
-    .flowWithPrevious()
-    .drop(1)
-    .stateIn(
-      scope = viewModelScope,
-      started = SharingStarted.WhileSubscribed(),
-      initialValue = Pair(null, null)
-    )
-
-  fun setSelection(adSample: AdSample?) {
-    _selectedAd.value = adSample
-  }
-}

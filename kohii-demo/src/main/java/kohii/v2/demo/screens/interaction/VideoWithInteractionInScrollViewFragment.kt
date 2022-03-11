@@ -25,7 +25,7 @@ import androidx.lifecycle.Lifecycle.State
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kohii.v2.core.ExoPlayerEngine
-import kohii.v2.demo.DemoItemFragment
+import kohii.v2.demo.home.DemoItemFragment
 import kohii.v2.demo.R
 import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.common.isAncestorOf

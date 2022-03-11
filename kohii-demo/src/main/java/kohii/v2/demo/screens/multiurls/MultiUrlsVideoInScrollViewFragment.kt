@@ -16,6 +16,7 @@
 
 package kohii.v2.demo.screens.multiurls
 
+import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.os.Bundle
 import android.view.View
@@ -28,7 +29,7 @@ import com.google.android.exoplayer2.video.VideoSize
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.Playback
 import kohii.v2.core.PlayerEventListener
-import kohii.v2.demo.DemoItemFragment
+import kohii.v2.demo.home.DemoItemFragment
 import kohii.v2.demo.R
 import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.common.isAncestorOf
@@ -50,6 +51,7 @@ class MultiUrlsVideoInScrollViewFragment :
     }
   }
 
+  @SuppressLint("SetTextI18n")
   override fun onViewCreated(
     view: View,
     savedInstanceState: Bundle?,
@@ -63,8 +65,7 @@ class MultiUrlsVideoInScrollViewFragment :
     binding.longText1.text = "Preview video using 270p source."
 
     // Get the correct container as the bucket.
-    val bucket = binding.content.takeIf { it.isAncestorOf(binding.video) }
-      ?: binding.container
+    val bucket = binding.content.takeIf { it.isAncestorOf(binding.video) } ?: binding.container
     val engine = ExoPlayerEngine(bucket = bucket)
 
     val requestTag = VideoUrls.LLAMA_DRAMA_HLS
@@ -72,7 +73,6 @@ class MultiUrlsVideoInScrollViewFragment :
       previewUrl = "https://content.jwplatform.com/videos/Cl6EVHgQ-AZtqUUiX.mp4", // 270p
       mainUrl = "https://content.jwplatform.com/videos/Cl6EVHgQ-TkIjsDEe.mp4" // 1080p
     )
-
     val mainData = MainVideoData(
       previewUrl = "https://content.jwplatform.com/videos/Cl6EVHgQ-AZtqUUiX.mp4", // 270p
       mainUrl = "https://content.jwplatform.com/videos/Cl6EVHgQ-TkIjsDEe.mp4" // 1080p

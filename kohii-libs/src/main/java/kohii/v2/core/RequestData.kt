@@ -35,7 +35,7 @@ interface RequestData : Parcelable {
   fun toMediaItem(): MediaItem
 
   /**
-   * Returns `true` if this instance is the compatible with `other`. This method is default to
+   * Returns `true` if this instance is compatible with `other`. This method is default to
    * [equals]. Compatible [RequestData]s can share the same [PlayableState]. Client can provide
    * custom behavior to tell about the compatibility of two [RequestData]s.
    */

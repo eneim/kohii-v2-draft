@@ -25,7 +25,7 @@ import kohii.v2.core.Chain.SelectScope.AVAILABLE_ONLY
 import kohii.v2.core.Engine
 import kohii.v2.core.Manager
 import kohii.v2.core.playbackManager
-import kohii.v2.demo.DemoItemFragment
+import kohii.v2.demo.home.DemoItemFragment
 import kohii.v2.demo.R.layout
 import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.databinding.FragmentVideosInScrollViewBinding

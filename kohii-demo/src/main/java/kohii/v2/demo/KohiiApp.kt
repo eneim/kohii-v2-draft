@@ -17,33 +17,14 @@
 package kohii.v2.demo
 
 import android.app.Application
-import android.net.Uri
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import com.squareup.moshi.FromJson
-import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonReader
-import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.ToJson
+import kohii.v2.demo.common.UriJsonAdapter
 
 class KohiiApp : Application() {
 
   internal val moshi: Moshi = Moshi.Builder()
-    .add(object : JsonAdapter<Uri>() {
-      @FromJson
-      override fun fromJson(reader: JsonReader): Uri = reader.nextString().toUri()
-
-      @ToJson
-      override fun toJson(
-        writer: JsonWriter,
-        value: Uri?,
-      ) {
-        writer.value(value.toString())
-      }
-
-      override fun toString(): String = "JsonAdapter(Uri)"
-    })
+    .add(UriJsonAdapter)
     .build()
 }
 

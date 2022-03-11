@@ -20,9 +20,8 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.airbnb.epoxy.EpoxyRecyclerView
-import kohii.v2.demo.DemoHostActivity.Companion.createIntent
+import kohii.v2.demo.home.DemoHostActivity.Companion.createIntent
 import kohii.v2.demo.databinding.ActivityHomeBinding
-import kohii.v2.demo.DemoItem
 
 class HomeActivity : AppCompatActivity() {
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo
+package kohii.v2.demo.home
 
 import android.content.Context
 import android.content.Intent
@@ -22,7 +22,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.commit
-import kohii.v2.demo.DemoItemFragment.Companion.KEY_SEED
+import kohii.v2.demo.home.DemoItemFragment.Companion.KEY_SEED
 import kotlin.LazyThreadSafetyMode.NONE
 
 class DemoHostActivity : AppCompatActivity() {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Nam Nguyen, nam@ene.im
+ * Copyright (c) 2022. Nam Nguyen, nam@ene.im
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo
+package kohii.v2.demo.home
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import kohii.v2.demo.databinding.ActivityMainBinding
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-class MainActivity : AppCompatActivity() {
-
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    val binding: ActivityMainBinding = ActivityMainBinding.inflate(layoutInflater)
-    setContentView(binding.root)
-
-    val title = this.title.toString()
-    setTitle(title + " #${Integer.toHexString(hashCode())}")
-  }
-}
+@Parcelize
+data class DemoItem(
+  val title: String,
+  val description: String?,
+  val fragment: Class<out DemoItemFragment>,
+) : Parcelable
