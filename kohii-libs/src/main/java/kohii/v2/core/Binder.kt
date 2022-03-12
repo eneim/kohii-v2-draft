@@ -142,11 +142,9 @@ class Binder(
 
     // The state that can be used to transfer to the new Playable for the same tag. If the
     // requested data is not compatible with the one used the same tag, it will be (re)initialized.
-    val playableState: PlayableState? = if (isCompatibleData) {
-      existingPlayable?.currentState()
-    } else {
-      Initialized
-    }
+    val reusablePlayableState: PlayableState? = existingPlayable
+      ?.currentState()
+      ?.takeIf { isCompatibleData }
 
     if (existingPlayable != null) {
       // Reuse the Playable only if isDataEqual and isSameRendererType are both true.
@@ -168,7 +166,7 @@ class Binder(
       )
 
       playable.onCreate(
-        initialState = playableState?.toBundle() // Transferred state.
+        initialState = reusablePlayableState?.toBundle() // Transferred state.
           ?: playableManager.getPlayableState(playable) // PlayableManager managed state.
           ?: Initialized.toBundle() // Default initial state.
       )

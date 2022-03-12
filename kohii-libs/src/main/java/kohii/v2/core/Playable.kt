@@ -283,7 +283,7 @@ abstract class Playable(
       playable: Playable,
       clearState: Boolean,
     ): Bundle? {
-      "PlayableManager[${hexCode()}]_REMOVE_Playable [PB=$playable]".logInfo()
+      "PlayableManager[${hexCode()}]_REMOVE_Playable [PB=$playable, clearState=$clearState]".logInfo()
       return if (playables.remove(playable)) {
         "PlayableManager[${hexCode()}]_REMOVED_Playable [PB=$playable]".logDebug()
         if (clearState) stateHandle.remove<Bundle>(playable.stateKey) else null

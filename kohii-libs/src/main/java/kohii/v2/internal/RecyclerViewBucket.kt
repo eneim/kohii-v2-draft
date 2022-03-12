@@ -26,9 +26,9 @@ import kohii.v2.core.Axis.UNKNOWN
 import kohii.v2.core.Axis.VERTICAL
 import kohii.v2.core.Manager
 import kohii.v2.core.ViewBucket
-import kohii.v2.core.fetchContainersTag
-import kohii.v2.core.getContainersTag
-import kohii.v2.core.removeContainersTag
+import kohii.v2.core.fetchContainers
+import kohii.v2.core.getContainers
+import kohii.v2.core.removeContainers
 
 internal class RecyclerViewBucket(
   manager: Manager,
@@ -62,14 +62,14 @@ internal class RecyclerViewBucket(
 
   private val recyclerListener = RecyclerView.RecyclerListener { holder ->
     "Recycle: holder=$holder".logInfo()
-    holder.itemView.fetchContainersTag()
+    holder.itemView.fetchContainers()
       ?.iterator()
       ?.onRemoveEach { container ->
         "Recycle: container=$container".logDebug()
         removeContainer(container)
       }
 
-    holder.itemView.removeContainersTag()
+    holder.itemView.removeContainers()
   }
 
   override fun onAdd() {
@@ -88,7 +88,7 @@ internal class RecyclerViewBucket(
     super.addContainer(container)
     if (container is View) {
       rootView.findContainingItemView(container)
-        ?.getContainersTag()
+        ?.getContainers()
         ?.add(container)
     }
   }
@@ -97,7 +97,7 @@ internal class RecyclerViewBucket(
     super.removeContainer(container)
     if (container is View) {
       rootView.findContainingItemView(container)
-        ?.fetchContainersTag()
+        ?.fetchContainers()
         ?.remove(container)
     }
   }

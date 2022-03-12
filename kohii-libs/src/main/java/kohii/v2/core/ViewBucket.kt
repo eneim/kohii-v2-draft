@@ -151,10 +151,10 @@ abstract class ViewBucket(
   }
 }
 
-internal fun View.fetchContainersTag(): MutableList<View>? =
+internal fun View.fetchContainers(): MutableList<View>? =
   getTypedTag(R.id.container_recycler_item_views)
 
-internal fun View.getContainersTag(): MutableList<View> =
+internal fun View.getContainers(): MutableList<View> =
   getTagOrPut(R.id.container_recycler_item_views) { mutableListOf() }
 
-internal fun View.removeContainersTag(): Unit = setTag(R.id.container_recycler_item_views, null)
+internal fun View.removeContainers(): Unit = setTag(R.id.container_recycler_item_views, null)
