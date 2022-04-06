@@ -22,4 +22,5 @@
     app:resize_mode="zoom"
     app:show_buffering="always"
     app:use_controller="true"
+    app:keep_content_on_player_reset="true"
     />

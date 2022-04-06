@@ -16,6 +16,7 @@
 
 package kohii.v2.demo.common
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -88,3 +89,5 @@ fun Window.showSystemBars() {
   // Hide both the status bar and the navigation bar
   windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
 }
+
+val ViewGroup.layoutInflater: LayoutInflater get() = LayoutInflater.from(context)

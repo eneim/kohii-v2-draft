@@ -16,6 +16,7 @@
 
 package kohii.v2.core
 
+import android.view.View
 import androidx.annotation.CallSuper
 import androidx.annotation.MainThread
 import androidx.collection.arraySetOf
@@ -264,7 +265,8 @@ abstract class Playback(
   }
 
   /**
-   * Called by the [Manager] to perform stopping this Playback.
+   * Called by the [Manager] to perform detaching this Playback. This is called when the [View]
+   * container is detached from the Window, or as part of the removal of this Playback.
    *
    * This method will call [onDetach], its state will be changed: [ATTACHED]->[ADDED]->[onDetach].
    */

@@ -4,18 +4,18 @@ kotlinx-coroutines = "1.6.0"
 exoplayer = "2.17.1"
 
 androidx-media2 = "1.2.0"
-androidx-media3 = "1.0.0-alpha01"
-androidx-lifecycle = "2.4.0"
+androidx-media3 = "1.0.0-alpha03"
+androidx-lifecycle = "2.4.1"
 
-jetpack-compose = "1.1.0"
-jetpack-compose-compiler = "1.1.0"
+jetpack-compose = "1.1.1"
+jetpack-compose-compiler = "1.1.1"
 
 square-moshi = "1.13.0"
 square-leakcanary = "2.8.1"
 
 airbnb-epoxy = "4.6.4"
 
-coil = "2.0.0-alpha09"
+coil = "2.0.0-rc02"
 
 [libraries]
 android-exoplayer = { module = "com.google.android.exoplayer:exoplayer", version.ref = "exoplayer" }

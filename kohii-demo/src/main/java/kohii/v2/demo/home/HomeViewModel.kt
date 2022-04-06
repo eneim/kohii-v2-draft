@@ -25,6 +25,8 @@ import kohii.v2.demo.screens.chain.ChainedVideosInScrollViewFragment
 import kohii.v2.demo.screens.interaction.VideoWithInteractionInScrollViewFragment
 import kohii.v2.demo.screens.mixed.MixedVideosInRecyclerViewFragment
 import kohii.v2.demo.screens.multiurls.MultiUrlsVideoInScrollViewFragment
+import kohii.v2.demo.screens.nested.RecyclerViewInScrollViewFragment
+import kohii.v2.demo.screens.recyclerview.VideosInRecyclerViewFragment
 
 class HomeViewModel : ViewModel() {
 
@@ -36,9 +38,19 @@ class HomeViewModel : ViewModel() {
         fragment = VideoWithInteractionInScrollViewFragment::class.java,
       ),
       DemoItem(
+        title = "Videos in RecyclerView",
+        description = "Demo using RecyclerView with many videos.",
+        fragment = VideosInRecyclerViewFragment::class.java,
+      ),
+      DemoItem(
         title = "Many videos in one ViewHolder",
         description = "Demo using RecyclerView with one ViewHolder contains many videos.",
         fragment = MixedVideosInRecyclerViewFragment::class.java,
+      ),
+      DemoItem(
+        title = "Nested RecyclerView",
+        description = "Demo with videos inside a RecyclerView that is inside a NestedScrollView.",
+        fragment = RecyclerViewInScrollViewFragment::class.java,
       ),
       DemoItem(
         title = "Videos with Ads (ExoPlayer + IMA)",

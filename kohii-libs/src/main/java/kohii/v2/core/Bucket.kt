@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView
 import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.Chain.SelectScope
 import kohii.v2.core.Chain.SelectScope.ALL
-import kohii.v2.core.Playable.Command.PAUSED_BY_USER
 import kohii.v2.core.Playable.Command.STARTED_BY_USER
 import kohii.v2.internal.asString
 import kohii.v2.internal.checkMainThread
@@ -138,7 +137,6 @@ abstract class Bucket(
       ?: candidates
 
     val selected = selectToPlayInternal(finalCandidates)
-      .filter { playback -> playback.playable.command.get() != PAUSED_BY_USER }
 
     return selected.groupBy { it.chain ?: Unit }
       .flatMap { (key, playbacks) ->

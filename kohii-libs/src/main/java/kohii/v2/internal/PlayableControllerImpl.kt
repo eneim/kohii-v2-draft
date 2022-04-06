@@ -34,6 +34,10 @@ internal class PlayableControllerImpl(
 
   private fun setPlayableCommand(value: Command?) {
     check(playback.isAdded) { "Playback $playback is not available." }
+    val current = playback.playable.command.get()
+    if (current == value) return
+
+    // TODO: consider different scenarios, such as a manual START after a manual PAUSE.
     playback.playable.command.set(value)
     playback.manager.refresh()
   }

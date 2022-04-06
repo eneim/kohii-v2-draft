@@ -20,6 +20,7 @@ import android.os.Handler
 import android.os.Looper
 import android.os.Message
 import kohii.v2.core.Group
+import kohii.v2.core.Playable.Command.PAUSED_BY_USER
 import kohii.v2.core.Playback
 import kotlin.system.measureNanoTime
 
@@ -38,13 +39,17 @@ internal class GroupDispatcher(
     delay: Long = 0,
   ) {
     removeMessages(MSG_START_PLAYBACK, playback)
-    if (delay <= 0) {
-      obtainMessage(MSG_START_PLAYBACK, playback).sendToTarget()
+    if (playback.playable.command.get() == PAUSED_BY_USER) {
+      pausePlayback(playback)
     } else {
-      sendMessageDelayed(
-        obtainMessage(MSG_START_PLAYBACK, playback),
-        delay
-      )
+      if (delay <= 0) {
+        obtainMessage(MSG_START_PLAYBACK, playback).sendToTarget()
+      } else {
+        sendMessageDelayed(
+          obtainMessage(MSG_START_PLAYBACK, playback),
+          delay
+        )
+      }
     }
   }
 
