@@ -29,6 +29,16 @@ androidx-media2-exoplayer = { module = "androidx.media2:media2-exoplayer", versi
 androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "androidx-media3" }
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "androidx-media3" }
 androidx-media3-exoplayer-ima = { module = "androidx.media3:media3-exoplayer-ima", version.ref = "androidx-media3" }
+androidx-media3-exoplayer-dash = { module = "androidx.media3:media3-exoplayer-dash", version.ref = "androidx-media3" }
+androidx-media3-exoplayer-hls = { module = "androidx.media3:media3-exoplayer-hls", version.ref = "androidx-media3" }
+androidx-media3-exoplayer-rtsp = { module = "androidx.media3:media3-exoplayer-rtsp", version.ref = "androidx-media3" }
+androidx-media3-extractor = { module = "androidx.media3:media3-extractor", version.ref = "androidx-media3" }
+
+androidx-media3-exoplayer-workmanager = { module = "androidx.media3:media3-exoplayer-workmanager", version.ref = "androidx-media3" }
+androidx-media3-database = { module = "androidx.media3:media3-database", version.ref = "androidx-media3" }
+androidx-media3-decoder = { module = "androidx.media3:media3-decoder", version.ref = "androidx-media3" }
+androidx-media3-datasource = { module = "androidx.media3:media3-datasource", version.ref = "androidx-media3" }
+androidx-media3-common = { module = "androidx.media3:media3-common", version.ref = "androidx-media3" }
 
 androidx-core = "androidx.core:core-ktx:1.7.0"
 androidx-appcompat = "androidx.appcompat:appcompat:1.4.0"

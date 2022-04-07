@@ -64,8 +64,9 @@ android {
 }
 
 dependencies {
-  implementation(libs.android.exoplayer)
-  implementation(libs.android.exoplayer.ima)
+  implementation(libs.androidx.media3.ui)
+  implementation(libs.androidx.media3.exoplayer)
+  implementation(libs.androidx.media3.exoplayer.ima)
 
   implementation(libs.androidx.core)
   implementation(libs.androidx.appcompat)

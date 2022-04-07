@@ -17,7 +17,7 @@
 package kohii.v2.core
 
 import android.os.Parcelable
-import com.google.android.exoplayer2.C
+import androidx.media3.common.C
 import kotlinx.parcelize.Parcelize
 
 /**

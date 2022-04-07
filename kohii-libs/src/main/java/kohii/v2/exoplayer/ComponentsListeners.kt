@@ -16,30 +16,33 @@
 
 package kohii.v2.exoplayer
 
+import androidx.annotation.OptIn
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.DeviceInfo
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.Metadata
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.PlaybackParameters
+import androidx.media3.common.Player
+import androidx.media3.common.Player.Commands
+import androidx.media3.common.Player.Events
+import androidx.media3.common.Player.PositionInfo
+import androidx.media3.common.Timeline
+import androidx.media3.common.TracksInfo
+import androidx.media3.common.VideoSize
+import androidx.media3.common.text.Cue
+import androidx.media3.common.util.UnstableApi
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdEvent
 import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
-import com.google.android.exoplayer2.DeviceInfo
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.MediaMetadata
-import com.google.android.exoplayer2.PlaybackException
-import com.google.android.exoplayer2.PlaybackParameters
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.Player.Commands
-import com.google.android.exoplayer2.Player.Events
-import com.google.android.exoplayer2.Player.PositionInfo
-import com.google.android.exoplayer2.Timeline
-import com.google.android.exoplayer2.TracksInfo
-import com.google.android.exoplayer2.audio.AudioAttributes
-import com.google.android.exoplayer2.metadata.Metadata
-import com.google.android.exoplayer2.text.Cue
-import com.google.android.exoplayer2.video.VideoSize
 import java.util.concurrent.CopyOnWriteArraySet
 
 /**
  * A [ComponentsListener] which is also a [MutableSet] of the [ComponentsListener].
  */
+@OptIn(UnstableApi::class)
 class ComponentsListeners internal constructor(
   listeners: MutableSet<ComponentsListener>,
 ) : ComponentsListener, MutableSet<ComponentsListener> by listeners {

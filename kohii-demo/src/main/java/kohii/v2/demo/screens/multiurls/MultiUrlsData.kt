@@ -16,7 +16,7 @@
 
 package kohii.v2.demo.screens.multiurls
 
-import com.google.android.exoplayer2.MediaItem
+import androidx.media3.common.MediaItem
 import kohii.v2.core.RequestData
 import kotlinx.parcelize.Parcelize
 

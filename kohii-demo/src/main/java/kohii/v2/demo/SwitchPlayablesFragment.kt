@@ -21,8 +21,9 @@ import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.google.android.exoplayer2.ui.StyledPlayerControlView.OnFullScreenModeChangedListener
-import com.google.android.exoplayer2.ui.StyledPlayerView
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.ui.PlayerControlView
+import androidx.media3.ui.PlayerView
 import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.Engine
 import kohii.v2.core.Manager
@@ -32,14 +33,15 @@ import kohii.v2.core.playbackManager
 import kohii.v2.demo.DummyBottomSheetDialog.Companion.ARGS_REQUEST
 import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.databinding.FragmentSwitchPlayablesBinding
-import kohii.v2.exoplayer.StyledPlayerViewPlayableCreator
-import kohii.v2.exoplayer.getStyledPlayerViewProvider
+import kohii.v2.exoplayer.PlayerViewPlayableCreator
+import kohii.v2.exoplayer.getPlayerViewProvider
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.LazyThreadSafetyMode.NONE
 
+@UnstableApi
 @ExperimentalKohiiApi
 class SwitchPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
 
@@ -59,10 +61,10 @@ class SwitchPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
     val binding: FragmentSwitchPlayablesBinding = FragmentSwitchPlayablesBinding.bind(view)
     manager.bucket(binding.videos)
 
-    val engine = Engine.get<StyledPlayerView>(
+    val engine = Engine.get<PlayerView>(
       manager = manager,
-      playableCreator = StyledPlayerViewPlayableCreator.getInstance(requireContext()),
-      rendererProvider = requireActivity().getStyledPlayerViewProvider(),
+      playableCreator = PlayerViewPlayableCreator.getInstance(requireContext()),
+      rendererProvider = requireActivity().getPlayerViewProvider(),
     )
 
     // Example: observing Playback flows of a specific tag.
@@ -91,7 +93,7 @@ class SwitchPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
     val binder = engine.setUp(tag = commonTag, data = commonData)
     val containers = listOf(binding.videoTop, binding.videoBottom)
 
-    val fullScreenListener = OnFullScreenModeChangedListener { isFullScreen ->
+    val fullScreenListener = PlayerControlView.OnFullScreenModeChangedListener { isFullScreen ->
       if (isFullScreen) {
         DummyBottomSheetDialog.newInstance(binder.request, commonTag)
           .show(childFragmentManager, commonTag)

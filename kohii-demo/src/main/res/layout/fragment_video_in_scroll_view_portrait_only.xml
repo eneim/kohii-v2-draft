@@ -40,7 +40,7 @@
         android:clipChildren="false"
         >
 
-      <com.google.android.exoplayer2.ui.StyledPlayerView
+      <androidx.media3.ui.PlayerView
           android:id="@+id/video_container"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintEnd_toEndOf="parent"

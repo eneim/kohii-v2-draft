@@ -17,7 +17,8 @@
 package kohii.v2.exoplayer
 
 import android.util.Range
-import com.google.android.exoplayer2.ui.StyledPlayerView
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.ui.PlayerView
 import kohii.v2.core.BasePlayable
 import kohii.v2.core.Bridge
 import kohii.v2.core.Home
@@ -26,30 +27,31 @@ import kohii.v2.core.PlayableManager
 import kohii.v2.core.RequestData
 
 /**
- * A [Playable] that uses [StyledPlayerView] as the renderer.
+ * A [Playable] that uses [PlayerView] as the renderer.
  */
-internal class StyledPlayerViewPlayable(
+@UnstableApi
+internal class PlayerViewPlayable(
   home: Home,
   tag: String,
   data: List<RequestData>,
   firstManager: PlayableManager,
-  bridge: Bridge<StyledPlayerView>,
-) : BasePlayable<StyledPlayerView>(
+  bridge: Bridge<PlayerView>,
+) : BasePlayable<PlayerView>(
   home = home,
   tag = tag,
   data = data,
   bridge = bridge,
-  rendererType = StyledPlayerView::class.java,
+  rendererType = PlayerView::class.java,
   firstManager = firstManager
 ) {
 
   override val triggerRange: Range<Float> = Range(0.0f, 1.0f)
 
-  // TODO: the StyledPlayerView controller is not disappearing sometime ...
+  // TODO: the PlayerView controller is not disappearing sometime ...
   override fun onRendererAttached(renderer: Any?) {
     super.onRendererAttached(renderer)
     if (renderer != null) {
-      require(renderer is StyledPlayerView) { "$renderer is not a StyledPlayerView." }
+      require(renderer is PlayerView) { "$renderer is not a PlayerView." }
       bridge.renderer = renderer
     } else {
       bridge.renderer = null

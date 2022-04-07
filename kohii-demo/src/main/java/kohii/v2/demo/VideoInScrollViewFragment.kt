@@ -22,7 +22,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.clearFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
-import com.google.android.exoplayer2.ui.StyledPlayerView
+import androidx.media3.ui.PlayerView
 import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.Engine
 import kohii.v2.core.Manager
@@ -31,8 +31,8 @@ import kohii.v2.core.playbackManager
 import kohii.v2.demo.DummyBottomSheetDialog.Companion.ARGS_REQUEST
 import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.databinding.FragmentVideoInScrollViewBinding
-import kohii.v2.exoplayer.StyledPlayerViewPlayableCreator
-import kohii.v2.exoplayer.getStyledPlayerViewProvider
+import kohii.v2.exoplayer.PlayerViewPlayableCreator
+import kohii.v2.exoplayer.getPlayerViewProvider
 
 class VideoInScrollViewFragment : Fragment(R.layout.fragment_video_in_scroll_view) {
 
@@ -53,10 +53,10 @@ class VideoInScrollViewFragment : Fragment(R.layout.fragment_video_in_scroll_vie
     //endregion
 
     //region Setup the Engine
-    val engine = Engine.get<StyledPlayerView>(
+    val engine = Engine.get<PlayerView>(
       manager = manager,
-      playableCreator = StyledPlayerViewPlayableCreator.getInstance(view.context),
-      rendererProvider = requireActivity().getStyledPlayerViewProvider(),
+      playableCreator = PlayerViewPlayableCreator.getInstance(view.context),
+      rendererProvider = requireActivity().getPlayerViewProvider(),
     )
     //endregion
 

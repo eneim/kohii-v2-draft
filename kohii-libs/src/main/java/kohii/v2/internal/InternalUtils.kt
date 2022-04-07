@@ -23,8 +23,8 @@ import androidx.annotation.MainThread
 import androidx.annotation.RestrictTo
 import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX
 import androidx.core.util.Pools.Pool
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.TracksInfo
+import androidx.media3.common.Player
+import androidx.media3.common.TracksInfo
 import kohii.v2.BuildConfig
 
 internal fun checkMainThread() = check(Looper.myLooper() == Looper.getMainLooper()) {

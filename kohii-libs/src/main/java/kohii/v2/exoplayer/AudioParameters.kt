@@ -18,8 +18,8 @@ package kohii.v2.exoplayer
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.audio.AudioAttributes
+import androidx.media3.common.AudioAttributes
+import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize
 

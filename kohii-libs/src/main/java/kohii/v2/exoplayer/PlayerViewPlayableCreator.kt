@@ -17,8 +17,10 @@
 package kohii.v2.exoplayer
 
 import android.content.Context
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.ui.StyledPlayerView
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 import kohii.v2.common.Capsule
 import kohii.v2.core.Engine
 import kohii.v2.core.Home
@@ -31,14 +33,15 @@ import kohii.v2.core.RequestData
 import kotlin.LazyThreadSafetyMode.NONE
 
 /**
- * A [PlayableCreator] that supports [ExoPlayer] as playback backend, and [StyledPlayerView] as the
+ * A [PlayableCreator] that supports [ExoPlayer] as playback backend, and [PlayerView] as the
  * playback frontend. Instance of this class is used to initialize the [Engine] object. Resource of
  * this class will be cleared by [onClear] automatically when there is no active [Manager] that is
  * using it.
  *
- * Using [StyledPlayerViewPlayableCreator.getInstance] to obtain an instance of this class.
+ * Using [PlayerViewPlayableCreator.getInstance] to obtain an instance of this class.
  */
-class StyledPlayerViewPlayableCreator private constructor(
+@OptIn(UnstableApi::class)
+class PlayerViewPlayableCreator private constructor(
   private val home: Home,
   private val playerPool: Lazy<PlayerPool<ExoPlayer>>,
 ) : PlayableCreator() {
@@ -52,12 +55,12 @@ class StyledPlayerViewPlayableCreator private constructor(
     playableManager: PlayableManager,
     data: List<RequestData>,
     tag: String,
-  ): Playable = StyledPlayerViewPlayable(
+  ): Playable = PlayerViewPlayable(
     home = home,
     tag = tag,
     data = data,
     firstManager = playableManager,
-    bridge = StyledPlayerViewBridge(
+    bridge = PlayerViewBridge(
       context = home.application,
       mediaItems = data.map(RequestData::toMediaItem),
       playerPool = playerPool.value
@@ -73,7 +76,7 @@ class StyledPlayerViewPlayableCreator private constructor(
 
   companion object {
 
-    private val singleton = Capsule<PlayableCreator, Context>(::StyledPlayerViewPlayableCreator)
+    private val singleton = Capsule<PlayableCreator, Context>(::PlayerViewPlayableCreator)
 
     fun getInstance(context: Context): PlayableCreator = singleton.get(context.applicationContext)
   }

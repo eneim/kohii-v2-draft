@@ -21,27 +21,28 @@ import android.util.Pair
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.annotation.VisibleForTesting
+import androidx.media3.common.AdOverlayInfo
+import androidx.media3.common.AdOverlayInfo.Purpose
+import androidx.media3.common.C
+import androidx.media3.common.ErrorMessageProvider
+import androidx.media3.common.ForwardingPlayer
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.common.Player.Events
+import androidx.media3.common.TracksInfo
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.ExoPlayerWrapper
+import androidx.media3.exoplayer.analytics.PlaybackStatsListener
+import androidx.media3.exoplayer.ima.ImaAdsLoader
+import androidx.media3.exoplayer.mediacodec.MediaCodecRenderer.DecoderInitializationException
+import androidx.media3.exoplayer.mediacodec.MediaCodecUtil.DecoderQueryException
+import androidx.media3.exoplayer.parameters
+import androidx.media3.ui.PlayerView
 import com.google.ads.interactivemedia.v3.api.FriendlyObstruction
 import com.google.ads.interactivemedia.v3.api.FriendlyObstructionPurpose
 import com.google.ads.interactivemedia.v3.api.ImaSdkFactory
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.ExoPlayerWrapper
-import com.google.android.exoplayer2.ForwardingPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.PlaybackException
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.Player.Events
-import com.google.android.exoplayer2.TracksInfo
-import com.google.android.exoplayer2.analytics.PlaybackStatsListener
-import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
-import com.google.android.exoplayer2.mediacodec.MediaCodecRenderer.DecoderInitializationException
-import com.google.android.exoplayer2.mediacodec.MediaCodecUtil.DecoderQueryException
-import com.google.android.exoplayer2.parameters
-import com.google.android.exoplayer2.ui.AdOverlayInfo
-import com.google.android.exoplayer2.ui.AdOverlayInfo.Purpose
-import com.google.android.exoplayer2.ui.StyledPlayerView
-import com.google.android.exoplayer2.util.ErrorMessageProvider
 import kohii.v2.R
 import kohii.v2.core.AbstractBridge
 import kohii.v2.core.Bridge
@@ -57,18 +58,19 @@ import kohii.v2.internal.hexCode
 import kohii.v2.internal.logInfo
 
 /**
- * A [Bridge] that works with [StyledPlayerView] and [ExoPlayer].
+ * A [Bridge] that works with [PlayerView] and [ExoPlayer].
  *
  * Note: [ExoPlayer] is required rather than [Player] for Ad support and AnalyticsListener usage.
  * This [Bridge] supports playing a list of [MediaItem] with ads that can be played by a single
  * [ImaAdsLoader].
  */
 // TODO: when a video is paused manually, do not start the next one automatically :thinking:
-internal class StyledPlayerViewBridge(
+@UnstableApi
+internal class PlayerViewBridge(
   context: Context,
   private val mediaItems: List<MediaItem>,
   private val playerPool: PlayerPool<ExoPlayer>,
-) : AbstractBridge<StyledPlayerView>(), Player.Listener, ErrorMessageProvider<Throwable> {
+) : AbstractBridge<PlayerView>(), Player.Listener, ErrorMessageProvider<Throwable> {
 
   private val appContext: Context = context.applicationContext
   private val playbackStatsListener = PlaybackStatsListener(false, null)
@@ -94,7 +96,7 @@ internal class StyledPlayerViewBridge(
   // A temporary data for restoration only. It will be cleared after the restoration.
   private var lastSeenState: Active = Active.DEFAULT
 
-  override var renderer: StyledPlayerView? = null
+  override var renderer: PlayerView? = null
     set(value) {
       if (field === value) return
 
@@ -110,7 +112,7 @@ internal class StyledPlayerViewBridge(
       }
 
       internalPlayer?.let { player ->
-        StyledPlayerView.switchTargetView(player, field, value)
+        PlayerView.switchTargetView(player, field, value)
       }
 
       if (value != null) {
@@ -419,7 +421,7 @@ internal class StyledPlayerViewBridge(
   }
   //endregion
 
-  // When this player is set to the [StyledPlayerView] and then its [StyledPlayerControlView], it
+  // When this player is set to the [PlayerView] and then its [PlayerControlView], it
   // will redirect the call to [play()] and [pause()] to the `controller`. This is to centralize the
   // manual play and pause request to the Playback:
   // - A call to [play()] will set a special flag to the [Playable], indicate that the Playback is

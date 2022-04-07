@@ -22,7 +22,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.google.android.exoplayer2.ui.StyledPlayerView
+import androidx.media3.ui.PlayerView
 import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.Engine
 import kohii.v2.core.Manager
@@ -30,21 +30,17 @@ import kohii.v2.core.Playback
 import kohii.v2.core.playbackManager
 import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.databinding.FragmentSwitchPlayablesBinding
-import kohii.v2.exoplayer.StyledPlayerViewPlayableCreator
-import kohii.v2.exoplayer.getStyledPlayerViewProvider
-import kotlinx.coroutines.FlowPreview
+import kohii.v2.exoplayer.PlayerViewPlayableCreator
+import kohii.v2.exoplayer.getPlayerViewProvider
 import kotlin.LazyThreadSafetyMode.NONE
 
 @ExperimentalKohiiApi
 class RebindPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
 
   private val seed: String by lazy(NONE) { requireArguments().getString(KEY_SEED).orEmpty() }
-  private val commonTag: String by lazy(NONE) { "$seed::${VideoUrls.LOCAL_BBB_HEVC}::Switch" }
-  private val commonData = VideoUrls.LOCAL_BBB_HEVC
 
   private var playback: Playback? = null
 
-  @OptIn(FlowPreview::class, kotlinx.coroutines.ExperimentalCoroutinesApi::class)
   override fun onViewCreated(
     view: View,
     savedInstanceState: Bundle?,
@@ -56,10 +52,10 @@ class RebindPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
 
     manager.bucket(binding.videos)
 
-    val engine = Engine.get<StyledPlayerView>(
+    val engine = Engine.get<PlayerView>(
       manager = manager,
-      playableCreator = StyledPlayerViewPlayableCreator.getInstance(requireContext()),
-      rendererProvider = requireActivity().getStyledPlayerViewProvider(),
+      playableCreator = PlayerViewPlayableCreator.getInstance(requireContext()),
+      rendererProvider = requireActivity().getPlayerViewProvider(),
     )
 
     // Example: observing Playback flows of a specific tag.

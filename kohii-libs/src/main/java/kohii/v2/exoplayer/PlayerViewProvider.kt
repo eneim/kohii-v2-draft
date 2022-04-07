@@ -18,14 +18,17 @@ package kohii.v2.exoplayer
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
-import com.google.android.exoplayer2.ui.StyledPlayerView
+import androidx.annotation.OptIn
+import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.ui.AspectRatioFrameLayout
+import androidx.media3.ui.PlayerView
 import kohii.v2.R
 import kohii.v2.core.Playback
 import kohii.v2.core.RecycledRendererProvider
 
-class StyledPlayerViewProvider : RecycledRendererProvider() {
+@OptIn(UnstableApi::class)
+class PlayerViewProvider : RecycledRendererProvider() {
 
   override fun getRendererType(
     container: Any,
@@ -51,12 +54,12 @@ class StyledPlayerViewProvider : RecycledRendererProvider() {
   ): Any {
     val container = playback.container as ViewGroup
     return LayoutInflater.from(container.context)
-      .inflate(rendererType, container, false) as StyledPlayerView
+      .inflate(rendererType, container, false) as PlayerView
   }
 
   override fun recycleRenderer(renderer: Any) {
     // View must be removed from its parent before this call.
-    require(renderer is StyledPlayerView && renderer.parent == null && !renderer.isAttachedToWindow)
+    require(renderer is PlayerView && renderer.parent == null && !renderer.isAttachedToWindow)
     renderer.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM // Default
     renderer.setAspectRatioListener(null)
     renderer.setControllerOnFullScreenModeChangedListener(null)

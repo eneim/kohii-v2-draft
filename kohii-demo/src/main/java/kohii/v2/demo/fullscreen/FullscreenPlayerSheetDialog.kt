@@ -22,7 +22,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
-import com.google.android.exoplayer2.Player
+import androidx.media3.common.Player
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.Playback
 import kohii.v2.core.PlayerEventListener

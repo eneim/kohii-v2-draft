@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.google.android.exoplayer2
+package androidx.media3.exoplayer
 
-import com.google.android.exoplayer2.audio.AudioAttributes
-import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
-import com.google.android.exoplayer2.source.MediaSource
+import androidx.media3.common.AudioAttributes
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.source.MediaSource
 import kohii.v2.exoplayer.AudioParameters
 import kohii.v2.exoplayer.PlayerParameters
-import kohii.v2.exoplayer.StyledPlayerViewBridge
+import kohii.v2.exoplayer.PlayerViewBridge
 
 /**
  * A wrapper for [ExoPlayer] that also exposes the [DefaultMediaSourceFactory] instance if it is use
- * to create the player instance. This is used by the [StyledPlayerViewBridge] to setup for Ad
+ * to create the player instance. This is used by the [PlayerViewBridge] to setup for Ad
  * playback.
  */
 class ExoPlayerWrapper private constructor(

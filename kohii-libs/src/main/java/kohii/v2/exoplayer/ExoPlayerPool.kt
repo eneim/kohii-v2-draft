@@ -17,20 +17,23 @@
 package kohii.v2.exoplayer
 
 import android.content.Context
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.ExoPlayerWrapper
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.parameters
-import com.google.android.exoplayer2.trackselection.TrackSelectionParameters
+import androidx.annotation.OptIn
+import androidx.media3.common.MediaItem
+import androidx.media3.common.TrackSelectionParameters
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.ExoPlayer.Builder
+import androidx.media3.exoplayer.ExoPlayerWrapper
+import androidx.media3.exoplayer.parameters
 import kohii.v2.core.PlayerPool
 
 /**
- * A [PlayerPool] that manages instances of [Player]s.
+ * A [PlayerPool] that manages instances of [ExoPlayer]s.
  */
+@OptIn(UnstableApi::class)
 class ExoPlayerPool(
   context: Context,
-  private val builder: ExoPlayer.Builder.() -> Unit = {},
+  private val builder: Builder.() -> Unit = {},
 ) : PlayerPool<ExoPlayer>() {
 
   private val app: Context = context.applicationContext
@@ -41,7 +44,7 @@ class ExoPlayerPool(
   }
 
   override fun createPlayer(mediaData: Any): ExoPlayer =
-    ExoPlayerWrapper(ExoPlayer.Builder(app).apply(builder))
+    ExoPlayerWrapper(Builder(app).apply(builder))
 
   override fun resetPlayer(player: ExoPlayer) {
     player.stop()

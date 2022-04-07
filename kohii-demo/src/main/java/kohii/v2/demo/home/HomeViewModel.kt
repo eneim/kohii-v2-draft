@@ -58,7 +58,7 @@ class HomeViewModel : ViewModel() {
         fragment = VideosWithAdsInRecyclerViewFragment::class.java,
       ),
       DemoItem(
-        title = "Chained videos in NestedScrollView",
+        title = "(Experiment) Chained videos in NestedScrollView",
         description = "Demo using NestedScrollView with many videos in a chain.",
         fragment = ChainedVideosInScrollViewFragment::class.java,
       ),

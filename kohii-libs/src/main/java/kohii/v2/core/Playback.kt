@@ -22,11 +22,11 @@ import androidx.annotation.MainThread
 import androidx.collection.arraySetOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Lifecycle.State.STARTED
+import androidx.media3.common.Player
+import androidx.media3.common.VideoSize
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
 import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.video.VideoSize
 import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.Playable.Controller
 import kohii.v2.core.Playback.State.ACTIVATED

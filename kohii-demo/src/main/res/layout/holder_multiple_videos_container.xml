@@ -22,7 +22,7 @@
     android:clipChildren="false"
     >
 
-  <com.google.android.exoplayer2.ui.StyledPlayerView
+  <androidx.media3.ui.PlayerView
       android:id="@+id/first_video"
       android:layout_width="0dp"
       android:layout_height="0dp"

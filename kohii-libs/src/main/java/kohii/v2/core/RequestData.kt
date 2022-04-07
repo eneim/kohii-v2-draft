@@ -18,7 +18,7 @@ package kohii.v2.core
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.google.android.exoplayer2.MediaItem
+import androidx.media3.common.MediaItem
 
 /**
  * A class that needs to be a [Parcelable] and knows how to build a [MediaItem]. Client can

@@ -19,18 +19,18 @@ package kohii.v2.demo.screens.chain
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.lifecycleScope
-import com.google.android.exoplayer2.ui.StyledPlayerView
+import androidx.media3.ui.PlayerView
 import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.Chain.SelectScope.AVAILABLE_ONLY
 import kohii.v2.core.Engine
 import kohii.v2.core.Manager
 import kohii.v2.core.playbackManager
-import kohii.v2.demo.home.DemoItemFragment
 import kohii.v2.demo.R.layout
 import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.databinding.FragmentVideosInScrollViewBinding
-import kohii.v2.exoplayer.StyledPlayerViewPlayableCreator
-import kohii.v2.exoplayer.getStyledPlayerViewProvider
+import kohii.v2.demo.home.DemoItemFragment
+import kohii.v2.exoplayer.PlayerViewPlayableCreator
+import kohii.v2.exoplayer.getPlayerViewProvider
 
 class ChainedVideosInScrollViewFragment : DemoItemFragment(layout.fragment_videos_in_scroll_view) {
 
@@ -44,10 +44,10 @@ class ChainedVideosInScrollViewFragment : DemoItemFragment(layout.fragment_video
     val binding = FragmentVideosInScrollViewBinding.bind(view)
     val bucket = manager.bucket(binding.videos)
 
-    val engine = Engine.get<StyledPlayerView>(
+    val engine = Engine.get<PlayerView>(
       manager = manager,
-      playableCreator = StyledPlayerViewPlayableCreator.getInstance(view.context),
-      rendererProvider = requireActivity().getStyledPlayerViewProvider(),
+      playableCreator = PlayerViewPlayableCreator.getInstance(view.context),
+      rendererProvider = requireActivity().getPlayerViewProvider(),
     )
 
     engine.setUp(tag = "Z", data = VideoUrls.LOCAL_BBB_HEVC).bind(binding.topVideo)
