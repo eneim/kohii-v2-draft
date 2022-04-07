@@ -86,8 +86,12 @@ android {
 
 dependencies {
   implementation(project(mapOf("path" to ":kohii-libs")))
-  implementation(libs.android.exoplayer)
-  implementation(libs.android.exoplayer.ima)
+  implementation(libs.androidx.media3.ui)
+  implementation(libs.androidx.media3.exoplayer)
+  implementation(libs.androidx.media3.exoplayer.ima)
+  implementation(libs.androidx.media3.exoplayer.dash)
+  implementation(libs.androidx.media3.exoplayer.hls)
+  implementation(libs.androidx.media3.exoplayer.rtsp)
 
   implementation(libs.androidx.core)
   implementation(libs.androidx.appcompat)
@@ -110,28 +114,6 @@ dependencies {
   implementation(libs.androidx.lifecycle.java8)
   implementation(libs.androidx.lifecycle.service)
   implementation(libs.androidx.lifecycle.process)
-
-  // val media3Version = "1.0.0-alpha01"
-  // implementation("androidx.media3:media3-common:$media3Version")
-  // implementation("androidx.media3:media3-ui:$media3Version")
-  // implementation("androidx.media3:media3-exoplayer:$media3Version")
-  // implementation("androidx.media3:media3-exoplayer-dash:$media3Version")
-  // implementation("androidx.media3:media3-exoplayer-hls:$media3Version")
-  // implementation("androidx.media3:media3-exoplayer-rtsp:$media3Version")
-  // implementation("androidx.media3:media3-exoplayer-smoothstreaming:$media3Version")
-  // implementation("androidx.media3:media3-exoplayer-ima:$media3Version")
-  // implementation("androidx.media3:media3-datasource-cronet:$media3Version")
-  // implementation("androidx.media3:media3-datasource-okhttp:$media3Version")
-  // implementation("androidx.media3:media3-datasource-rtmp:$media3Version")
-  // implementation("androidx.media3:media3-ui-leanback:$media3Version")
-  // implementation("androidx.media3:media3-session:$media3Version")
-  // implementation("androidx.media3:media3-extractor:$media3Version")
-  // implementation("androidx.media3:media3-cast:$media3Version")
-  // implementation("androidx.media3:media3-exoplayer-workmanager:$media3Version")
-  // implementation("androidx.media3:media3-transformer:$media3Version")
-  // implementation("androidx.media3:media3-database:$media3Version")
-  // implementation("androidx.media3:media3-decoder:$media3Version")
-  // implementation("androidx.media3:media3-datasource:$media3Version")
 
   implementation(libs.airbnb.epoxy.core)
   kapt(libs.airbnb.epoxy.processor)

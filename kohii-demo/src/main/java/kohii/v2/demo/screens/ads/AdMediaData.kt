@@ -16,8 +16,8 @@
 
 package kohii.v2.demo.screens.ads
 
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.MediaItem.AdsConfiguration
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaItem.AdsConfiguration
 import kohii.v2.core.RequestData
 import kotlinx.parcelize.Parcelize
 

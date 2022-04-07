@@ -22,9 +22,9 @@ import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
-import com.google.android.exoplayer2.ui.StyledPlayerView
-import kohii.v2.exoplayer.StyledPlayerViewPlayableCreator
-import kohii.v2.exoplayer.StyledPlayerViewProvider
+import androidx.media3.ui.PlayerView
+import kohii.v2.exoplayer.PlayerViewPlayableCreator
+import kohii.v2.exoplayer.PlayerViewProvider
 
 fun Fragment.playbackManager(): Manager = Home[requireContext()].registerManagerInternal(
   owner = this,
@@ -47,10 +47,10 @@ fun Fragment.ExoPlayerEngine(vararg buckets: View): Engine {
   for (bucket in buckets) {
     manager.bucket(bucket)
   }
-  return Engine.get<StyledPlayerView>(
+  return Engine.get<PlayerView>(
     manager = manager,
-    playableCreator = StyledPlayerViewPlayableCreator.getInstance(requireContext()),
-    rendererProvider = StyledPlayerViewProvider(),
+    playableCreator = PlayerViewPlayableCreator.getInstance(requireContext()),
+    rendererProvider = PlayerViewProvider(),
   )
 }
 
@@ -61,10 +61,10 @@ fun Fragment.ExoPlayerEngine(vararg buckets: View): Engine {
 fun Fragment.ExoPlayerEngine(bucket: View): Engine {
   val manager = playbackManager()
   manager.bucket(bucket)
-  return Engine.get<StyledPlayerView>(
+  return Engine.get<PlayerView>(
     manager = manager,
-    playableCreator = StyledPlayerViewPlayableCreator.getInstance(requireContext()),
-    rendererProvider = StyledPlayerViewProvider(),
+    playableCreator = PlayerViewPlayableCreator.getInstance(requireContext()),
+    rendererProvider = PlayerViewProvider(),
   )
 }
 
@@ -72,9 +72,9 @@ fun Fragment.ExoPlayerEngine(bucket: View): Engine {
 fun FragmentActivity.ExoPlayerEngine(bucket: View): Engine {
   val manager = playbackManager()
   manager.bucket(bucket)
-  return Engine.get<StyledPlayerView>(
+  return Engine.get<PlayerView>(
     manager = manager,
-    playableCreator = StyledPlayerViewPlayableCreator.getInstance(application),
-    rendererProvider = StyledPlayerViewProvider(),
+    playableCreator = PlayerViewPlayableCreator.getInstance(application),
+    rendererProvider = PlayerViewProvider(),
   )
 }

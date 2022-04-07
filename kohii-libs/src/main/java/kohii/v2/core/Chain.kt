@@ -16,10 +16,12 @@
 
 package kohii.v2.core
 
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.source.ShuffleOrder
-import com.google.android.exoplayer2.source.ShuffleOrder.UnshuffledShuffleOrder
+import androidx.annotation.OptIn
+import androidx.media3.common.C
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.source.ShuffleOrder
+import androidx.media3.exoplayer.source.ShuffleOrder.UnshuffledShuffleOrder
 import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.Chain.SelectScope.ALL
 import kohii.v2.core.Chain.SelectScope.AVAILABLE_ONLY
@@ -43,6 +45,7 @@ import java.util.concurrent.atomic.AtomicInteger
  *
  * A [Chain] can be constructed using the [Bucket.chain] method.
  */
+@OptIn(UnstableApi::class)
 @ExperimentalKohiiApi
 class Chain private constructor(
   private val bucket: Bucket,

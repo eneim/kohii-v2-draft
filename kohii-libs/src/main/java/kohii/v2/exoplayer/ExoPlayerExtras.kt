@@ -18,15 +18,18 @@ package kohii.v2.exoplayer
 
 import android.os.Parcel
 import android.os.Parcelable
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.trackselection.TrackSelectionParameters
+import androidx.annotation.OptIn
+import androidx.media3.common.Player
+import androidx.media3.common.TrackSelectionParameters
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize
 
 /**
  * Information that is used to restore an [ExoPlayer] instance.
  */
+@OptIn(UnstableApi::class)
 @Parcelize
 class ExoPlayerExtras(
   @Player.State val playerState: Int,

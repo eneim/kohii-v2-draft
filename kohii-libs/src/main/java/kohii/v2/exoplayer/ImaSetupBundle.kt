@@ -18,15 +18,15 @@ package kohii.v2.exoplayer
 
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import com.google.android.exoplayer2.MediaItem.AdsConfiguration
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ext.ima.ImaAdsLoader
-import com.google.android.exoplayer2.source.ads.AdsLoader
-import com.google.android.exoplayer2.ui.AdOverlayInfo
-import com.google.android.exoplayer2.ui.AdViewProvider
+import androidx.media3.common.AdOverlayInfo
+import androidx.media3.common.AdViewProvider
+import androidx.media3.common.MediaItem.AdsConfiguration
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ima.ImaAdsLoader
+import androidx.media3.exoplayer.source.ads.AdsLoader
 
 /**
- * A helper class used by the [StyledPlayerViewBridge] to setup ads playback.
+ * A helper class used by the [PlayerViewBridge] to setup ads playback.
  *
  * This class uses a prebuilt [AdsLoader] but doesn't use the provided [AdsConfiguration] to
  * create the [AdsLoader] instance.

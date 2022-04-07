@@ -16,9 +16,9 @@
 
 package kohii.v2.core
 
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.Player.State
-import com.google.android.exoplayer2.video.VideoSize
+import androidx.media3.common.Player
+import androidx.media3.common.Player.State
+import androidx.media3.common.VideoSize
 
 /**
  * Derived from [Player.Listener].

@@ -24,15 +24,15 @@ import kohii.v2.core.RendererProvider
 import kohii.v2.internal.getTagOrPut
 
 /**
- * Returns a [StyledPlayerViewProvider] that is managed by the Activity.
+ * Returns a [PlayerViewProvider] that is managed by the Activity.
  */
 @MainThread
-fun Activity.getStyledPlayerViewProvider(): RendererProvider {
+fun Activity.getPlayerViewProvider(): RendererProvider {
   val rootView: View = checkNotNull(window.peekDecorView()) {
     "Activity's decorView must be available. Please call this method after Activity.onCreate()."
   }
 
   return rootView.getTagOrPut(R.id.tag_styled_player_view_provider) {
-    StyledPlayerViewProvider()
+    PlayerViewProvider()
   }
 }

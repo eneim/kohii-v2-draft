@@ -17,7 +17,7 @@
 package kohii.v2.core
 
 import android.net.Uri
-import com.google.android.exoplayer2.MediaItem
+import androidx.media3.common.MediaItem
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

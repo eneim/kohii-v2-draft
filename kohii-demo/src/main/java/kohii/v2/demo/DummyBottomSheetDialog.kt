@@ -23,8 +23,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ui.StyledPlayerView
+import androidx.media3.common.Player
+import androidx.media3.ui.PlayerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -38,8 +38,8 @@ import kohii.v2.core.playbackManager
 import kohii.v2.demo.common.doOnStateChanged
 import kohii.v2.demo.common.viewBinding
 import kohii.v2.demo.databinding.FragmentDummySheetBinding
-import kohii.v2.exoplayer.StyledPlayerViewPlayableCreator
-import kohii.v2.exoplayer.getStyledPlayerViewProvider
+import kohii.v2.exoplayer.PlayerViewPlayableCreator
+import kohii.v2.exoplayer.getPlayerViewProvider
 import kotlin.LazyThreadSafetyMode.NONE
 
 class DummyBottomSheetDialog : BottomSheetDialogFragment() {
@@ -71,10 +71,10 @@ class DummyBottomSheetDialog : BottomSheetDialogFragment() {
     val manager: Manager = playbackManager()
     manager.bucket(binding.root)
 
-    val engine = Engine.get<StyledPlayerView>(
+    val engine = Engine.get<PlayerView>(
       manager = manager,
-      playableCreator = StyledPlayerViewPlayableCreator.getInstance(view.context),
-      rendererProvider = requireActivity().getStyledPlayerViewProvider(),
+      playableCreator = PlayerViewPlayableCreator.getInstance(view.context),
+      rendererProvider = requireActivity().getPlayerViewProvider(),
     )
 
     engine.setUp(request).bind(container = binding.videoContainer) {
