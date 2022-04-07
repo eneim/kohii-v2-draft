@@ -65,7 +65,7 @@ class FullscreenPlayerActivity : AppCompatActivity() {
   companion object {
     const val ARGS_REQUEST = "ARGS_REQUEST"
 
-    fun Context.newIntent(request: Request): Intent =
+    fun Context.newPlayerIntent(request: Request): Intent =
       Intent(this, FullscreenPlayerActivity::class.java).apply {
         putExtras(bundleOf(ARGS_REQUEST to request))
       }

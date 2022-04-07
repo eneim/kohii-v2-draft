@@ -31,7 +31,7 @@ import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.common.isAncestorOf
 import kohii.v2.demo.databinding.FragmentVideoInScrollViewSimpleBinding
 import kohii.v2.demo.fullscreen.FullscreenPlayerActivity.Companion.ARGS_REQUEST
-import kohii.v2.demo.fullscreen.FullscreenPlayerActivity.Companion.newIntent
+import kohii.v2.demo.fullscreen.FullscreenPlayerActivity.Companion.newPlayerIntent
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -110,7 +110,7 @@ class VideoWithInteractionInScrollViewFragment :
         viewModel.selectedVideoRequest
           .onEach { request ->
             if (request != null) {
-              startFullscreen.launch(view.context.newIntent(request))
+              startFullscreen.launch(view.context.newPlayerIntent(request))
             } else {
               binder.bind(binding.video)
             }
