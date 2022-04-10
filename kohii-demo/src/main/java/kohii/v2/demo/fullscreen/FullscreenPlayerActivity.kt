@@ -44,7 +44,8 @@ class FullscreenPlayerActivity : AppCompatActivity() {
     setContentView(binding.root)
     window.hideSystemBars()
 
-    val engine = ExoPlayerEngine(bucket = binding.root)
+    val engine = ExoPlayerEngine()
+    engine.useBucket(binding.root)
     engine.setUp(request).bind(container = binding.videoContainer) {
       addPlayerEventListener(object : PlayerEventListener {
         override fun onStateChanged(

@@ -25,13 +25,13 @@ import androidx.lifecycle.Lifecycle.State
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import kohii.v2.core.ExoPlayerEngine
-import kohii.v2.demo.home.DemoItemFragment
 import kohii.v2.demo.R
 import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.common.isAncestorOf
 import kohii.v2.demo.databinding.FragmentVideoInScrollViewSimpleBinding
 import kohii.v2.demo.fullscreen.FullscreenPlayerActivity.Companion.ARGS_REQUEST
 import kohii.v2.demo.fullscreen.FullscreenPlayerActivity.Companion.newPlayerIntent
+import kohii.v2.demo.home.DemoItemFragment
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -61,7 +61,8 @@ class VideoWithInteractionInScrollViewFragment :
     // Get the correct container as the bucket.
     val bucket = binding.content.takeIf { it.isAncestorOf(binding.video) }
       ?: binding.container
-    val engine = ExoPlayerEngine(bucket = bucket)
+    val engine = ExoPlayerEngine()
+    engine.useBucket(bucket)
 
     val requestTag = VideoUrls.LLAMA_DRAMA_HLS
     val binder = engine.setUp(tag = requestTag, data = VideoUrls.LLAMA_DRAMA_HLS)

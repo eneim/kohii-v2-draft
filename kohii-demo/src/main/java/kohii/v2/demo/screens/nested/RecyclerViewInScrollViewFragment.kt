@@ -43,7 +43,8 @@ class RecyclerViewInScrollViewFragment :
     })
 
     val binding = FragmentCarouselInScrollviewBinding.bind(view)
-    val engine = ExoPlayerEngine(
+    val engine = ExoPlayerEngine()
+    engine.useBuckets(
       binding.container,
       binding.firstCarousel,
       binding.secondCarousel

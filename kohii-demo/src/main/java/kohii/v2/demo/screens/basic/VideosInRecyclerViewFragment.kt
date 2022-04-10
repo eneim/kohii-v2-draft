@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo.screens.recyclerview
+package kohii.v2.demo.screens.basic
 
 import android.os.Bundle
 import android.view.View
@@ -33,7 +33,8 @@ class VideosInRecyclerViewFragment : DemoItemFragment(layout.fragment_videos_in_
   ) {
     super.onViewCreated(view, savedInstanceState)
     val binding = FragmentVideosInRecyclerViewBinding.bind(view)
-    val engine = ExoPlayerEngine(binding.videos)
+    val engine = ExoPlayerEngine()
+    engine.useBucket(binding.videos)
 
     val binder = engine.setUp(
       tag = VIDEO_TAG,

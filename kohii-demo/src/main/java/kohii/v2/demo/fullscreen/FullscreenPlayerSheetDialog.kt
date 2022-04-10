@@ -52,7 +52,8 @@ class FullscreenPlayerSheetDialog : FullscreenDialogFragment(R.layout.fragment_f
     dialog?.window?.hideSystemBars()
 
     val binding: FragmentFullscreenSheetBinding = FragmentFullscreenSheetBinding.bind(view)
-    val engine = ExoPlayerEngine(bucket = binding.root)
+    val engine = ExoPlayerEngine()
+    engine.useBucket(binding.root)
 
     engine.setUp(request).bind(container = binding.videoContainer) {
       addPlayerEventListener(object : PlayerEventListener {

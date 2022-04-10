@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.RecyclerView.Adapter
 import kohii.v2.core.Binder
 import kohii.v2.demo.common.layoutInflater
 import kohii.v2.demo.databinding.HolderVideoBinding
-import kohii.v2.demo.screens.recyclerview.SimpleVideoViewHolder
+import kohii.v2.demo.screens.basic.SimpleVideoViewHolder
 
 class VideoPagerAdapter(
   private val binder: Binder,

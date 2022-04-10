@@ -47,7 +47,8 @@ class MainVideoPlayerActivity : AppCompatActivity() {
 
     binding.videoSizeInfo.text = "Playing main video."
 
-    val engine = ExoPlayerEngine(bucket = binding.root)
+    val engine = ExoPlayerEngine()
+    engine.useBucket(binding.root)
     engine.setUp(request).bind(container = binding.videoContainer) {
       addPlayerEventListener(object : PlayerEventListener {
         override fun onStateChanged(

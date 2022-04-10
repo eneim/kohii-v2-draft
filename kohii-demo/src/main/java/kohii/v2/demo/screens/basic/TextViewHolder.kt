@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo.screens.recyclerview
+package kohii.v2.demo.screens.basic
 
 import kohii.v2.demo.common.CommonViewHolder
 import kohii.v2.demo.databinding.HolderTextBinding

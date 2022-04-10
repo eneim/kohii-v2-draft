@@ -16,7 +16,6 @@
 
 package kohii.v2.core
 
-import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
@@ -25,6 +24,7 @@ import androidx.fragment.app.viewModels
 import androidx.media3.ui.PlayerView
 import kohii.v2.exoplayer.PlayerViewPlayableCreator
 import kohii.v2.exoplayer.PlayerViewProvider
+import kohii.v2.exoplayer.getPlayerViewProvider
 
 fun Fragment.playbackManager(): Manager = Home[requireContext()].registerManagerInternal(
   owner = this,
@@ -39,14 +39,11 @@ fun ComponentActivity.playbackManager(): Manager = Home[this].registerManagerInt
 )
 
 /**
- * Creates a new [Engine] that supports the ExoPlayer stack.
+ * Creates a new [Engine] that supports the ExoPlayer stack for this [Fragment].
  */
 @Suppress("FunctionName")
-fun Fragment.ExoPlayerEngine(vararg buckets: View): Engine {
+fun Fragment.ExoPlayerEngine(): Engine {
   val manager = playbackManager()
-  for (bucket in buckets) {
-    manager.bucket(bucket)
-  }
   return Engine.get<PlayerView>(
     manager = manager,
     playableCreator = PlayerViewPlayableCreator.getInstance(requireContext()),
@@ -55,26 +52,14 @@ fun Fragment.ExoPlayerEngine(vararg buckets: View): Engine {
 }
 
 /**
- * Creates a new [Engine] that supports the ExoPlayer stack.
+ * Creates a new [Engine] that supports the ExoPlayer stack for this [FragmentActivity].
  */
 @Suppress("FunctionName")
-fun Fragment.ExoPlayerEngine(bucket: View): Engine {
+fun ComponentActivity.ExoPlayerEngine(): Engine {
   val manager = playbackManager()
-  manager.bucket(bucket)
-  return Engine.get<PlayerView>(
-    manager = manager,
-    playableCreator = PlayerViewPlayableCreator.getInstance(requireContext()),
-    rendererProvider = PlayerViewProvider(),
-  )
-}
-
-@Suppress("FunctionName")
-fun FragmentActivity.ExoPlayerEngine(bucket: View): Engine {
-  val manager = playbackManager()
-  manager.bucket(bucket)
   return Engine.get<PlayerView>(
     manager = manager,
     playableCreator = PlayerViewPlayableCreator.getInstance(application),
-    rendererProvider = PlayerViewProvider(),
+    rendererProvider = getPlayerViewProvider(),
   )
 }

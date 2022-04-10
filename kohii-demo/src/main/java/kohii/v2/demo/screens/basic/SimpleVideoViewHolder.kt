@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo.screens.recyclerview
+package kohii.v2.demo.screens.basic
 
 import kohii.v2.core.Binder
 import kohii.v2.core.RequestHandle

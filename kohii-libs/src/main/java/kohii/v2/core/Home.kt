@@ -75,6 +75,10 @@ class Home private constructor(context: Context) {
     managerLifecycleOwner: LifecycleOwner,
     managerViewModel: Lazy<PlayableManager>,
   ): Manager {
+    check(managerLifecycleOwner.lifecycle.currentState > DESTROYED) {
+      "The manager $managerLifecycleOwner is already destroyed"
+    }
+
     val groupLifecycleOwner = when (owner) {
       is ComponentActivity -> owner
       is Fragment -> owner.requireActivity()
@@ -83,9 +87,6 @@ class Home private constructor(context: Context) {
 
     check(groupLifecycleOwner.lifecycle.currentState > DESTROYED) {
       "The group $groupLifecycleOwner is already destroyed"
-    }
-    check(managerLifecycleOwner.lifecycle.currentState > DESTROYED) {
-      "The manager $managerLifecycleOwner is already destroyed"
     }
 
     val group: Group = groups
@@ -97,7 +98,7 @@ class Home private constructor(context: Context) {
         }
 
     return group.managers
-      .find { it.lifecycleOwner === managerLifecycleOwner }
+      .find { it.lifecycleOwner === managerLifecycleOwner && it.owner == owner }
       ?: Manager(
         home = this,
         owner = owner,

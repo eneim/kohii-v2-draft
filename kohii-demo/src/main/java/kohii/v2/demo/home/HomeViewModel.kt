@@ -21,12 +21,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kohii.v2.demo.NoVideoInLandscapeScrollViewFragment
 import kohii.v2.demo.screens.ads.VideosWithAdsInRecyclerViewFragment
+import kohii.v2.demo.screens.basic.VideosInRecyclerViewFragment
 import kohii.v2.demo.screens.chain.ChainedVideosInScrollViewFragment
 import kohii.v2.demo.screens.interaction.VideoWithInteractionInScrollViewFragment
 import kohii.v2.demo.screens.mixed.MixedVideosInRecyclerViewFragment
 import kohii.v2.demo.screens.multiurls.MultiUrlsVideoInScrollViewFragment
 import kohii.v2.demo.screens.nested.RecyclerViewInScrollViewFragment
-import kohii.v2.demo.screens.recyclerview.VideosInRecyclerViewFragment
 
 class HomeViewModel : ViewModel() {
 

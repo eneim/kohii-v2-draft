@@ -66,7 +66,8 @@ class MultiUrlsVideoInScrollViewFragment :
 
     // Get the correct container as the bucket.
     val bucket = binding.content.takeIf { it.isAncestorOf(binding.video) } ?: binding.container
-    val engine = ExoPlayerEngine(bucket = bucket)
+    val engine = ExoPlayerEngine()
+    engine.useBucket(bucket)
 
     val requestTag = VideoUrls.LLAMA_DRAMA_HLS
     val previewData = PreviewVideoData(

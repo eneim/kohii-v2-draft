@@ -37,9 +37,10 @@ class NoVideoInLandscapeScrollViewFragment :
     val binding = FragmentVideoInScrollViewPortraitOnlyBinding.bind(view)
 
     val container = binding.videoContainer
-    val bucketView = container?.parent as? ViewGroup
-    if (container != null && bucketView != null) {
-      val engine = ExoPlayerEngine(bucket = bucketView)
+    val bucket = container?.parent as? ViewGroup
+    if (container != null && bucket != null) {
+      val engine = ExoPlayerEngine()
+      engine.useBucket(bucket)
       engine
         .setUp(tag = VideoUrls.LOCAL_BBB_HEVC, data = VideoUrls.LOCAL_BBB_HEVC)
         .bind(container = container)

@@ -102,6 +102,16 @@ class Engine constructor(
    */
   fun setUp(request: Request): Binder = setUpInternal(tag = request.tag, data = request.data)
 
+  /**
+   * Registers the [root] as a [Bucket] of the [manager].
+   */
+  fun useBucket(root: Any): Bucket = manager.bucket(root)
+
+  /**
+   * Registers multiple [Bucket] roots.
+   */
+  fun useBuckets(vararg roots: Any): List<Bucket> = roots.map(manager::bucket)
+
   companion object {
 
     /**

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kohii.v2.demo.screens.recyclerview
+package kohii.v2.demo.screens.basic
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.Adapter

@@ -21,14 +21,13 @@ import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
 import com.airbnb.epoxy.SimpleEpoxyModel
-import kohii.v2.core.Engine
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.RequestHandle
-import kohii.v2.demo.home.DemoItemFragment
 import kohii.v2.demo.R.layout
 import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.databinding.FragmentSimpleRecyclerViewBinding
 import kohii.v2.demo.databinding.HolderMultipleVideosContainerBinding
+import kohii.v2.demo.home.DemoItemFragment
 
 /**
  * A RecyclerView Fragment with 2 Videos in the same ViewHolder.
@@ -41,7 +40,8 @@ class MixedVideosInRecyclerViewFragment : DemoItemFragment(layout.fragment_simpl
   ) {
     super.onViewCreated(view, savedInstanceState)
     val binding: FragmentSimpleRecyclerViewBinding = FragmentSimpleRecyclerViewBinding.bind(view)
-    val engine: Engine = ExoPlayerEngine(binding.videos)
+    val engine = ExoPlayerEngine()
+    engine.useBucket(binding.videos)
 
     binding.videos.withModels {
       object : SimpleEpoxyModel(layout.holder_multiple_videos_container) {

@@ -55,7 +55,8 @@ class VideosWithAdsInRecyclerViewFragment : DemoItemFragment(R.layout.fragment_v
   ) {
     super.onViewCreated(view, savedInstanceState)
     val binding = FragmentVideosWithAdsBinding.bind(view)
-    val engine = ExoPlayerEngine(binding.videoContainer)
+    val engine = ExoPlayerEngine()
+    engine.useBucket(binding.videoContainer)
 
     val adsSamples = demoApp.moshi
       .adapter(AdSamples::class.java)

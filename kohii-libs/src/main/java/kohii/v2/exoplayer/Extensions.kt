@@ -32,7 +32,5 @@ fun Activity.getPlayerViewProvider(): RendererProvider {
     "Activity's decorView must be available. Please call this method after Activity.onCreate()."
   }
 
-  return rootView.getTagOrPut(R.id.tag_styled_player_view_provider) {
-    PlayerViewProvider()
-  }
+  return rootView.getTagOrPut(R.id.tag_styled_player_view_provider, ::PlayerViewProvider)
 }
