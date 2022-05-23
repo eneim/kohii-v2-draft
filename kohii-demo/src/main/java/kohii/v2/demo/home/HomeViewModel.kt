@@ -33,14 +33,14 @@ class HomeViewModel : ViewModel() {
   val demoItems: LiveData<List<DemoItem>> = MutableLiveData(
     listOf(
       DemoItem(
-        title = "Video with interaction in NestedScrollView",
-        description = "Demo using NestedScrollView with a single video. Clicking this video will open a dedicated player in a fullscreen dialog. It also force the Activity to landscape.",
-        fragment = VideoWithInteractionInScrollViewFragment::class.java,
-      ),
-      DemoItem(
         title = "Videos in RecyclerView",
         description = "Demo using RecyclerView with many videos.",
         fragment = VideosInRecyclerViewFragment::class.java,
+      ),
+      DemoItem(
+        title = "Video with interaction in NestedScrollView",
+        description = "Demo using NestedScrollView with a single video. Clicking this video will open a dedicated player in a fullscreen dialog. It also force the Activity to landscape.",
+        fragment = VideoWithInteractionInScrollViewFragment::class.java,
       ),
       DemoItem(
         title = "Many videos in one ViewHolder",

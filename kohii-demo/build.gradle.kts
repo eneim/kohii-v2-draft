@@ -22,12 +22,12 @@ plugins {
 }
 
 android {
-  compileSdk = 31
+  compileSdk = 32
 
   defaultConfig {
     applicationId = "kohii.v2.demo"
     minSdk = 21
-    targetSdk = 31
+    targetSdk = 32
     versionCode = 1
     versionName = "1.0"
 
@@ -76,7 +76,7 @@ android {
   kotlinOptions {
     jvmTarget = "1.8"
     @Suppress("SuspiciousCollectionReassignment")
-    freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+    freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
   }
 
   buildFeatures {

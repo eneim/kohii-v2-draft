@@ -21,7 +21,7 @@ plugins {
 }
 
 android {
-  compileSdk = 31
+  compileSdk = 32
 
   testOptions {
     unitTests.isIncludeAndroidResources = true
@@ -29,7 +29,7 @@ android {
 
   defaultConfig {
     minSdk = 21
-    targetSdk = 31
+    targetSdk = 32
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     consumerProguardFiles("consumer-rules.pro")
@@ -50,7 +50,7 @@ android {
   kotlinOptions {
     jvmTarget = "1.8"
     @Suppress("SuspiciousCollectionReassignment")
-    freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
+    freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
   }
 
   buildFeatures {

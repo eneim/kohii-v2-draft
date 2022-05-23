@@ -22,8 +22,8 @@ import androidx.lifecycle.LifecycleOwner
 /**
  * [Engine] instance should have the same lifecycle as the [Manager] instance.
  *
- * If the [RendererProvider] provides [android.view.View]s objects, it is recommended to reuse an
- * instance within the same Activity.
+ * If the [rendererProvider] provides [android.view.View]s objects, it is recommended to reuse the
+ * same instance for the same Activity.
  */
 class Engine constructor(
   internal val rendererType: Class<*>,
