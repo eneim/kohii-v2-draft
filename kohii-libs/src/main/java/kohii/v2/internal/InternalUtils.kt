@@ -24,7 +24,7 @@ import androidx.annotation.RestrictTo
 import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX
 import androidx.core.util.Pools.Pool
 import androidx.media3.common.Player
-import androidx.media3.common.TracksInfo
+import androidx.media3.common.Tracks
 import kohii.v2.BuildConfig
 
 internal fun checkMainThread() = check(Looper.myLooper() == Looper.getMainLooper()) {
@@ -126,10 +126,10 @@ internal inline fun <reified T : Any> View.getTagOrPut(
 internal inline fun <reified T : Any> View.getTypedTag(key: Int): T? = getTag(key) as? T
 
 internal inline fun Player.doOnTrackInfoChanged(
-  crossinline action: Player.(TracksInfo) -> Unit,
+  crossinline action: Player.(Tracks) -> Unit,
 ) = addListener(object : Player.Listener {
-  override fun onTracksInfoChanged(tracksInfo: TracksInfo) {
+  override fun onTracksChanged(tracks: Tracks) {
     removeListener(this)
-    action(tracksInfo)
+    action(tracks)
   }
 })

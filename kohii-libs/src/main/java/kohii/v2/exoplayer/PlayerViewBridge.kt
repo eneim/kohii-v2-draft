@@ -30,7 +30,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Player.Events
-import androidx.media3.common.TracksInfo
+import androidx.media3.common.Tracks
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.ExoPlayerWrapper
@@ -90,7 +90,7 @@ internal class PlayerViewBridge(
 
   @get:Player.State
   private var lastSeenPlayerState: Int = Player.STATE_IDLE
-  private var lastSeenTracksInfo: TracksInfo = TracksInfo.EMPTY
+  private var lastSeenTracks: Tracks = Tracks.EMPTY
   private var playerPrepared = false
 
   // A temporary data for restoration only. It will be cleared after the restoration.
@@ -180,7 +180,7 @@ internal class PlayerViewBridge(
           }
 
           player.player.parameters = playerState.playerParameters
-          if (lastSeenTracksInfo !== TracksInfo.EMPTY) {
+          if (lastSeenTracks !== Tracks.EMPTY) {
             player.trackSelectionParameters = playerState.trackSelectionParameters
           } else {
             player.doOnTrackInfoChanged {
@@ -308,15 +308,19 @@ internal class PlayerViewBridge(
     }
   }
 
-  override fun onTracksInfoChanged(tracksInfo: TracksInfo) {
-    if (tracksInfo != lastSeenTracksInfo) {
-      if (!tracksInfo.isTypeSupportedOrEmpty(C.TRACK_TYPE_VIDEO)) {
+  override fun onTracksChanged(tracks: Tracks) {
+    if (tracks != lastSeenTracks) {
+      if (tracks.containsType(C.TRACK_TYPE_VIDEO) &&
+        !tracks.isTypeSupported(C.TRACK_TYPE_VIDEO, /* allowExceedsCapabilities = */ true)
+      ) {
         Toast.makeText(appContext, R.string.error_unsupported_video, Toast.LENGTH_LONG).show()
       }
-      if (!tracksInfo.isTypeSupportedOrEmpty(C.TRACK_TYPE_AUDIO)) {
+      if (tracks.containsType(C.TRACK_TYPE_AUDIO) &&
+        !tracks.isTypeSupported(C.TRACK_TYPE_AUDIO, /* allowExceedsCapabilities = */ true)
+      ) {
         Toast.makeText(appContext, R.string.error_unsupported_audio, Toast.LENGTH_LONG).show()
       }
-      lastSeenTracksInfo = tracksInfo
+      lastSeenTracks = tracks
     }
   }
   //endregion
@@ -394,8 +398,10 @@ internal class PlayerViewBridge(
       "To support MediaItem with Ad, client needs to use a DefaultMediaSourceFactory."
     }
       .apply {
-        setAdsLoaderProvider(imaBundle)
-        setAdViewProvider(imaBundle)
+        setLocalAdInsertionComponents(
+          /* adsLoaderProvider = */ imaBundle,
+          /* adViewProvider = */imaBundle
+        )
       }
     imaBundle.ready(this)
     imaSetupBundle = imaBundle
@@ -403,19 +409,13 @@ internal class PlayerViewBridge(
 
   @VisibleForTesting
   internal fun ExoPlayerWrapper.resetAdsBundle() {
-    mediaSourceFactory?.apply {
-      setAdsLoaderProvider(null)
-      setAdViewProvider(null)
-    }
+    mediaSourceFactory?.clearLocalAdInsertionComponents()
     imaSetupBundle?.reset()
   }
 
   @VisibleForTesting
   internal fun ExoPlayerWrapper.releaseAdsBundle() {
-    mediaSourceFactory?.apply {
-      setAdsLoaderProvider(null)
-      setAdViewProvider(null)
-    }
+    mediaSourceFactory?.clearLocalAdInsertionComponents()
     imaSetupBundle?.release()
     imaSetupBundle = null
   }

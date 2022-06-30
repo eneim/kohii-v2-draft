@@ -24,6 +24,7 @@ import kohii.v2.core.Playback
 import kohii.v2.core.Playback.Config
 import kohii.v2.core.PlaybackCreator
 
+// Static View Playback is Playback whose container is also the renderer.
 internal class StaticViewPlaybackCreator(manager: Manager) : PlaybackCreator(manager) {
 
   override fun accept(

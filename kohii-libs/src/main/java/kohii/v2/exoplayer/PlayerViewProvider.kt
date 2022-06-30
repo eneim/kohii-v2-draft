@@ -23,6 +23,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
+import androidx.media3.ui.PlayerView.ControllerVisibilityListener
 import kohii.v2.R
 import kohii.v2.core.Playback
 import kohii.v2.core.RecycledRendererProvider
@@ -62,9 +63,9 @@ class PlayerViewProvider : RecycledRendererProvider() {
     require(renderer is PlayerView && renderer.parent == null && !renderer.isAttachedToWindow)
     renderer.resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM // Default
     renderer.setAspectRatioListener(null)
-    renderer.setControllerOnFullScreenModeChangedListener(null)
+    renderer.setFullscreenButtonClickListener(null)
     renderer.setErrorMessageProvider(null)
-    renderer.setControllerVisibilityListener(null)
+    renderer.setControllerVisibilityListener(null as ControllerVisibilityListener?)
     renderer.adViewGroup.removeAllViews()
   }
 

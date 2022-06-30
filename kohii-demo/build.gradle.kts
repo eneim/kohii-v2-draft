@@ -115,6 +115,10 @@ dependencies {
   implementation(libs.androidx.lifecycle.service)
   implementation(libs.androidx.lifecycle.process)
 
+  implementation(libs.compose.foundation)
+  implementation(libs.compose.ui)
+  implementation(libs.compose.material)
+
   implementation(libs.airbnb.epoxy.core)
   kapt(libs.airbnb.epoxy.processor)
 

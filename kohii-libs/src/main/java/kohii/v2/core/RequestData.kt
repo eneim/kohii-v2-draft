@@ -30,7 +30,7 @@ interface RequestData : Parcelable {
 
   /**
    * An idempotent method that builds a [MediaItem]. That is, even if this class is serialized to
-   * [Parcel] and deserialized back, this method must returns the equaled instance.
+   * [Parcel] and deserialized back, this method must returns the similar instance.
    */
   fun toMediaItem(): MediaItem
 
@@ -51,4 +51,4 @@ internal fun List<RequestData>.isCompatible(other: List<RequestData>): Boolean {
 }
 
 private fun List<RequestData>.hasCompatibleItem(item: RequestData): Boolean =
-  any { it.isCompatible(item) }
+  any(item::isCompatible)

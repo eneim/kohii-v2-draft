@@ -30,6 +30,9 @@ import kohii.v2.core.Request
 import kohii.v2.demo.common.hideSystemBars
 import kohii.v2.demo.databinding.ActivityFullscreenMainUriBinding
 
+/**
+ * A fullscreen Activity that plays the main Video of a multi-urls request.
+ */
 class MainVideoPlayerActivity : AppCompatActivity() {
 
   // Note: this code is for demonstration purpose only. In practice, if an Activity is registered

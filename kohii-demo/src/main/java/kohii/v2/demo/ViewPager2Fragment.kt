@@ -22,7 +22,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.playbackManager
 import kohii.v2.demo.databinding.FragmentViewpager2Binding
 import kohii.v2.demo.screens.mixed.MixedVideosInRecyclerViewFragment
@@ -35,7 +34,6 @@ class ViewPager2Fragment : Fragment(R.layout.fragment_viewpager_2) {
   ) : FragmentStateAdapter(fragmentManager, lifecycle) {
     override fun getItemCount(): Int = 20
 
-    @OptIn(ExperimentalKohiiApi::class)
     override fun createFragment(position: Int): Fragment {
       /* return when {
         position % 4 == 0 -> SwitchPlayablesFragment.getInstance(position = position)

@@ -28,9 +28,10 @@ import androidx.media3.common.Player.Commands
 import androidx.media3.common.Player.Events
 import androidx.media3.common.Player.PositionInfo
 import androidx.media3.common.Timeline
-import androidx.media3.common.TracksInfo
+import androidx.media3.common.TrackSelectionParameters
+import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
-import androidx.media3.common.text.Cue
+import androidx.media3.common.text.CueGroup
 import androidx.media3.common.util.UnstableApi
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
@@ -115,8 +116,7 @@ internal fun ComponentsListener(
     reason: Int,
   ) = playerListener.onMediaItemTransition(mediaItem, reason)
 
-  override fun onTracksInfoChanged(tracksInfo: TracksInfo) =
-    playerListener.onTracksInfoChanged(tracksInfo)
+  override fun onTracksChanged(tracks: Tracks) = playerListener.onTracksChanged(tracks)
 
   override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) =
     playerListener.onMediaMetadataChanged(mediaMetadata)
@@ -191,8 +191,14 @@ internal fun ComponentsListener(
     height: Int,
   ) = playerListener.onSurfaceSizeChanged(width, height)
 
+  override fun onTrackSelectionParametersChanged(parameters: TrackSelectionParameters) =
+    playerListener.onTrackSelectionParametersChanged(parameters)
+
+  override fun onMaxSeekToPreviousPositionChanged(maxSeekToPreviousPositionMs: Long) =
+    playerListener.onMaxSeekToPreviousPositionChanged(maxSeekToPreviousPositionMs)
+
   override fun onRenderedFirstFrame() = playerListener.onRenderedFirstFrame()
-  override fun onCues(cues: MutableList<Cue>) = playerListener.onCues(cues)
+  override fun onCues(cueGroup: CueGroup) = playerListener.onCues(cueGroup)
   override fun onMetadata(metadata: Metadata) = playerListener.onMetadata(metadata)
   override fun onIsLoadingChanged(isLoading: Boolean) = playerListener.onIsLoadingChanged(isLoading)
   override fun onIsPlayingChanged(isPlaying: Boolean) = playerListener.onIsPlayingChanged(isPlaying)

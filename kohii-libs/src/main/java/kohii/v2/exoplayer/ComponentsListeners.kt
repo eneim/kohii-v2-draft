@@ -29,9 +29,10 @@ import androidx.media3.common.Player.Commands
 import androidx.media3.common.Player.Events
 import androidx.media3.common.Player.PositionInfo
 import androidx.media3.common.Timeline
-import androidx.media3.common.TracksInfo
+import androidx.media3.common.TrackSelectionParameters
+import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
-import androidx.media3.common.text.Cue
+import androidx.media3.common.text.CueGroup
 import androidx.media3.common.util.UnstableApi
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdEvent
@@ -100,7 +101,7 @@ class ComponentsListeners internal constructor(
   override fun onSkipSilenceEnabledChanged(skipSilenceEnabled: Boolean): Unit =
     forEach { it.onSkipSilenceEnabledChanged(skipSilenceEnabled) }
 
-  override fun onCues(cues: MutableList<Cue>): Unit = forEach { it.onCues(cues) }
+  override fun onCues(cueGroup: CueGroup): Unit = forEach { it.onCues(cueGroup) }
   override fun onMetadata(metadata: Metadata): Unit = forEach { it.onMetadata(metadata) }
 
   override fun onDeviceInfoChanged(deviceInfo: DeviceInfo): Unit =
@@ -121,8 +122,8 @@ class ComponentsListeners internal constructor(
     reason: Int,
   ): Unit = forEach { it.onMediaItemTransition(mediaItem, reason) }
 
-  override fun onTracksInfoChanged(tracksInfo: TracksInfo): Unit =
-    forEach { it.onTracksInfoChanged(tracksInfo) }
+  override fun onTracksChanged(tracks: Tracks): Unit =
+    forEach { it.onTracksChanged(tracks) }
 
   override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata): Unit =
     forEach { it.onMediaMetadataChanged(mediaMetadata) }
@@ -180,5 +181,11 @@ class ComponentsListeners internal constructor(
     player: Player,
     events: Events,
   ): Unit = forEach { it.onEvents(player, events) }
+
+  override fun onTrackSelectionParametersChanged(parameters: TrackSelectionParameters): Unit =
+    forEach { it.onTrackSelectionParametersChanged(parameters) }
+
+  override fun onMaxSeekToPreviousPositionChanged(maxSeekToPreviousPositionMs: Long): Unit =
+    forEach { it.onMaxSeekToPreviousPositionChanged(maxSeekToPreviousPositionMs) }
   //endregion
 }
