@@ -33,7 +33,7 @@ import androidx.media3.exoplayer.source.ads.AdsLoader
  */
 internal class ImaSetupBundle(
   val adsLoader: ImaAdsLoader,
-  val adViewGroup: FrameLayout,
+  private val adViewGroup: FrameLayout,
 ) : AdsLoader.Provider, AdViewProvider {
 
   override fun getAdsLoader(adsConfiguration: AdsConfiguration): AdsLoader = adsLoader

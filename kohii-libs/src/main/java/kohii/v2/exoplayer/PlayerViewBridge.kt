@@ -397,12 +397,10 @@ internal class PlayerViewBridge(
     requireNotNull(mediaSourceFactory) {
       "To support MediaItem with Ad, client needs to use a DefaultMediaSourceFactory."
     }
-      .apply {
-        setLocalAdInsertionComponents(
-          /* adsLoaderProvider = */ imaBundle,
-          /* adViewProvider = */imaBundle
-        )
-      }
+      .setLocalAdInsertionComponents(
+        /* adsLoaderProvider = */ imaBundle,
+        /* adViewProvider = */ imaBundle
+      )
     imaBundle.ready(this)
     imaSetupBundle = imaBundle
   }
