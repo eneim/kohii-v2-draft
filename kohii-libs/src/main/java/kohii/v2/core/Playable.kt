@@ -27,9 +27,7 @@ import kohii.v2.core.Manager.Companion.DEFAULT_DESTRUCTION_DELAY_MS
 import kohii.v2.core.Playback.Config
 import kohii.v2.internal.debugOnly
 import kohii.v2.internal.hexCode
-import kohii.v2.internal.logDebug
-import kohii.v2.internal.logInfo
-import kohii.v2.internal.logWarn
+import kohii.v2.internal.logStackTrace
 import kohii.v2.internal.playbackLifecycleCallback
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
@@ -91,10 +89,8 @@ abstract class Playable(
   private val lifecycleCallback: LifecycleCallback by playbackLifecycleCallback()
 
   init {
-    "Playable[${hexCode()}]_CREATED".logInfo()
+    "Playable[${hexCode()}] is created.".logStackTrace()
   }
-
-  override fun toString(): String = "PB[${hexCode()}, ${rendererType.simpleName}, t=$tag, d=$data]"
 
   /**
    * Called when a new [Playable] instance is created.
@@ -153,25 +149,19 @@ abstract class Playable(
   abstract fun currentState(): PlayableState
 
   @CallSuper
-  open fun onPrepare(preload: Boolean) {
-    "Playable[${hexCode()}]_PREPARE [preload=$preload]".logInfo()
-  }
+  open fun onPrepare(preload: Boolean) = Unit
 
   @CallSuper
-  open fun onReady() {
-    "Playable[${hexCode()}]_READY".logInfo()
-  }
+  open fun onReady() = Unit
 
   @CallSuper
   open fun onStart() {
-    "Playable[${hexCode()}]_START".logInfo()
     playback?.onStarted()
   }
 
   @CallSuper
   open fun onPause() {
     playback?.onPaused()
-    "Playable[${hexCode()}]_PAUSE".logInfo()
   }
 
   /**
@@ -200,7 +190,6 @@ abstract class Playable(
     previous: Playback?,
     next: Playback?,
   ) {
-    "Playable[${hexCode()}]_CHANGE_Playback [$previous → $next]".logWarn()
     previous?.removeLifecycleCallback(lifecycleCallback)
     next?.addLifecycleCallback(lifecycleCallback)
   }
@@ -210,7 +199,7 @@ abstract class Playable(
     previous: PlayableManager,
     next: PlayableManager,
   ) {
-    "Playable[${hexCode()}]_CHANGE_Manager [$previous → $next]".logWarn()
+    "Playable[${hexCode()}]_CHANGE_Manager [$previous → $next]".logStackTrace()
   }
 
   @JvmSynthetic
@@ -264,15 +253,11 @@ abstract class Playable(
      */
     private val playables = mutableSetOf<Playable>()
 
-    override fun toString(): String = "PM@${hexCode()}"
-
     override fun addPlayable(
       playable: Playable,
       state: Bundle?,
     ) {
-      "PlayableManager[${hexCode()}]_ADD_Playable [PB=$playable]".logInfo()
       if (playables.add(playable)) {
-        "PlayableManager[${hexCode()}]_ADDED_Playable [PB=$playable]".logDebug()
         if (state != null) {
           stateHandle[playable.stateKey] = state
         }
@@ -283,9 +268,7 @@ abstract class Playable(
       playable: Playable,
       clearState: Boolean,
     ): Bundle? {
-      "PlayableManager[${hexCode()}]_REMOVE_Playable [PB=$playable, clearState=$clearState]".logInfo()
       return if (playables.remove(playable)) {
-        "PlayableManager[${hexCode()}]_REMOVED_Playable [PB=$playable]".logDebug()
         if (clearState) stateHandle.remove<Bundle>(playable.stateKey) else null
       } else {
         null
@@ -297,20 +280,16 @@ abstract class Playable(
     }
 
     override fun trySavePlayableState(playable: Playable) {
-      "PlayableManager[${hexCode()}]_SAVE_Playable [PB=$playable]".logInfo()
       if (stateHandle.contains(playable.stateKey)) return
       val playableState = playable.onSaveState()
       if (playableState != Bundle.EMPTY) {
         stateHandle[playable.stateKey] = playableState
-        "PlayableManager[${hexCode()}]_SAVED_Playable [PB=$playable] [state=$playableState]".logDebug()
       }
     }
 
     override fun tryRestorePlayableState(playable: Playable) {
-      "PlayableManager[${hexCode()}]_RESTORE_Playable [PB=$playable]".logInfo()
       val savedState: Bundle? = stateHandle.remove<Bundle>(playable.stateKey)
       savedState?.let(playable::onRestoreState)
-      "PlayableManager[${hexCode()}]_RESTORED_Playable [PB=$playable] [state=$savedState]".logDebug()
     }
 
     override fun onCleared() {
@@ -334,4 +313,4 @@ internal sealed class PlayableKey(val tag: String) {
   class Data(tag: String) : PlayableKey(tag = tag)
 }
 
-private val Playable.stateKey: String get() = tag.takeIf { it.isNotEmpty() } ?: internalId
+private val Playable.stateKey: String get() = tag.takeIf(String::isNotEmpty) ?: internalId

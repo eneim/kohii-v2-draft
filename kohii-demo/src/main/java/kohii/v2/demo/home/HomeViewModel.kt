@@ -39,7 +39,10 @@ class HomeViewModel : ViewModel() {
       ),
       DemoItem(
         title = "Video with interaction in NestedScrollView",
-        description = "Demo using NestedScrollView with a single video. Clicking this video will open a dedicated player in a fullscreen dialog. It also force the Activity to landscape.",
+        description = """
+          Demo using NestedScrollView with a single video. Clicking this video will open a dedicated 
+          player in a fullscreen dialog. It also force the Activity to landscape.
+        """.trimIndent(),
         fragment = VideoWithInteractionInScrollViewFragment::class.java,
       ),
       DemoItem(
@@ -69,7 +72,10 @@ class HomeViewModel : ViewModel() {
       ),
       DemoItem(
         title = "Video with multi Urls",
-        description = "Demo using a Video that uses a low-res preview url in the scroll view, and a high-res main url in the fullscreen player",
+        description = """
+          Demo using a Video that uses a low-res preview url in the scroll view, and a high-res 
+          main url in the fullscreen player.
+        """.trimIndent(),
         fragment = MultiUrlsVideoInScrollViewFragment::class.java,
       ),
     )

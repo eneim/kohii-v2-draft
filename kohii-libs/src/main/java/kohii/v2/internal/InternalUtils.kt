@@ -81,6 +81,13 @@ internal fun String.logError(tag: String = "${BuildConfig.LIBRARY_PACKAGE_NAME}.
   }
 }
 
+@RestrictTo(LIBRARY_GROUP_PREFIX)
+internal fun String.logStackTrace(tag: String = "${BuildConfig.LIBRARY_PACKAGE_NAME}.log") {
+  if (BuildConfig.DEBUG) {
+    Log.w(tag, Log.getStackTraceString(Throwable(this)))
+  }
+}
+
 internal inline fun debugOnly(action: () -> Unit) {
   if (BuildConfig.DEBUG) action()
 }

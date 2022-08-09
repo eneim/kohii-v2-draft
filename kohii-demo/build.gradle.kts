@@ -22,6 +22,7 @@ plugins {
 }
 
 android {
+  namespace = "kohii.v2.demo"
   compileSdk = 32
 
   defaultConfig {
