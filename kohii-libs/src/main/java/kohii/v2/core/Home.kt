@@ -33,8 +33,8 @@ import kohii.v2.internal.asString
 import kohii.v2.internal.awaitStarted
 import kohii.v2.internal.debugOnly
 import kohii.v2.internal.hexCode
-import kohii.v2.internal.logDebug
 import kohii.v2.internal.logInfo
+import kohii.v2.internal.logStackTrace
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -122,7 +122,7 @@ class Home private constructor(context: Context) {
   }
 
   internal fun cancelPlayableDestruction(playable: Playable) {
-    "Home[${hexCode()}]_CANCEL_DESTRUCTION_Playable [PB=$playable]".logDebug()
+    "Home[${hexCode()}] cancels [PB=$playable] destruction".logStackTrace()
     dispatcher.cancelPlayableDestroy(playable)
   }
 
@@ -130,7 +130,7 @@ class Home private constructor(context: Context) {
     playable: Playable,
     delayMillis: Long,
   ) {
-    "Home[${hexCode()}]_DESTROY_DELAYED_Playable [PB=$playable, delay=$delayMillis]".logDebug()
+    "Home[${hexCode()}] destroys [PB=$playable, delay=$delayMillis]".logStackTrace()
     cancelPlayableDestruction(playable)
     dispatcher.dispatchDestroyPlayable(playable, delayMillis)
   }

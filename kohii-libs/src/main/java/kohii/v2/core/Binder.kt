@@ -117,13 +117,12 @@ class Binder(
     }
 
     val bindRequest = BindRequest(
-      home = home,
       manager = engine.manager,
       request = request,
       callback = callback,
       playableKey = request.tag?.let(::Data) ?: Empty,
       container = container,
-      payload = preparePayload(),
+      payload = preparePlayable(),
       config = config
     )
 
@@ -131,23 +130,16 @@ class Binder(
   }
 
   @OptIn(ExperimentalKohiiApi::class)
-  private fun preparePayload(): Lazy<Playable> {
+  private fun preparePlayable(): Lazy<Playable> {
     val existingPlayable: Playable? = home.playables.entries
       .firstOrNull { (_, playableKey) -> playableKey !is Empty && playableKey.tag == request.tag }
       ?.key
 
-    val isCompatibleData = existingPlayable?.data?.isCompatible(request.data) == true
     val isSameData = existingPlayable?.data == request.data
     val isSameRendererType = existingPlayable?.rendererType === engine.rendererType
 
-    // The state that can be used to transfer to the new Playable for the same tag. If the
-    // requested data is not compatible with the one used the same tag, it will be (re)initialized.
-    val reusablePlayableState: PlayableState? = existingPlayable
-      ?.currentState()
-      ?.takeIf { isCompatibleData }
-
     if (existingPlayable != null) {
-      // Reuse the Playable only if isDataEqual and isSameRendererType are both true.
+      // Reuse the Playable only if isSameData and isSameRendererType are both true.
       if (isSameData && isSameRendererType) {
         return lazyOf(existingPlayable)
       } else {
@@ -164,6 +156,13 @@ class Binder(
         data = request.data,
         tag = request.tag ?: Home.NO_TAG,
       )
+
+      val isCompatibleData = existingPlayable?.data?.isCompatible(request.data) == true
+      // The state that can be used to transfer to the new Playable for the same tag. If the
+      // requested data is not compatible with the one used the same tag, it will be (re)initialized.
+      val reusablePlayableState: PlayableState? = existingPlayable
+        ?.currentState()
+        ?.takeIf { isCompatibleData }
 
       playable.onCreate(
         initialState = reusablePlayableState?.toBundle() // Transferred state.

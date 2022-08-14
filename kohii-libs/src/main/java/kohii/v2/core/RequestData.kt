@@ -21,10 +21,11 @@ import android.os.Parcelable
 import androidx.media3.common.MediaItem
 
 /**
- * A class that needs to be a [Parcelable] and knows how to build a [MediaItem]. Client can
- * implement this class to provide a custom behavior, such as to retain the full data of a
- * [MediaItem] after configuration change. Note that, the default behavior of a [MediaItem] ignores
- * the [MediaItem.localConfiguration] across serializations.
+ * A class that needs to be a [Parcelable] and knows how to build a [MediaItem].
+ *
+ * Client can implement this class to provide a custom behavior, such as to retain the full data of
+ * a [MediaItem] after configuration change. Note that, the default behavior of a [MediaItem]
+ * ignores the [MediaItem.localConfiguration] across serializations.
  */
 interface RequestData : Parcelable {
 
@@ -38,17 +39,19 @@ interface RequestData : Parcelable {
    * Returns `true` if this instance is compatible with `other`. This method is default to
    * [equals]. Compatible [RequestData]s can share the same [PlayableState]. Client can provide
    * custom behavior to tell about the compatibility of two [RequestData]s.
+   *
+   * Implementation requirement: given [RequestData]s A and B, A.isCompatible(B) returns `true` if
+   * and only if B.isCompatible(A) returns `true`.
    */
   fun isCompatible(other: RequestData): Boolean = this == other
 }
 
+/**
+ * Checks the compatibility of 2 [RequestData] list. It returns `true` if and only if 2 lists have
+ * the same size and 2 items of the same index are compatible to each other.
+ */
 @JvmSynthetic
 internal fun List<RequestData>.isCompatible(other: List<RequestData>): Boolean {
-  // Returns `false` if one list doesn't have a compatible item with an item on the another.
   return (this.size == other.size) &&
-    this.all(other::hasCompatibleItem) &&
-    other.all(this::hasCompatibleItem)
+    this.asSequence().zip(other.asSequence()).all { (left, right) -> left.isCompatible(right) }
 }
-
-private fun List<RequestData>.hasCompatibleItem(item: RequestData): Boolean =
-  any(item::isCompatible)

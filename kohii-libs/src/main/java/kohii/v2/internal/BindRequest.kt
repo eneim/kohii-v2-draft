@@ -29,7 +29,6 @@ import kohii.v2.core.Playback.Config
 import kohii.v2.core.Request
 
 internal class BindRequest(
-  val home: Home,
   val manager: Manager,
   val request: Request,
   val callback: Callback?,
@@ -40,10 +39,10 @@ internal class BindRequest(
 ) {
 
   internal val lifecycle: Lifecycle = manager.lifecycleOwner.lifecycle
+  internal val home: Home = manager.home
 
   @Throws(IllegalArgumentException::class)
   internal suspend fun onBind(): Playback {
-    "Home_Request[${hexCode()}]_BIND_Begin".logDebug()
     if (container is View) {
       container.awaitAttached()
     } else {
@@ -51,7 +50,7 @@ internal class BindRequest(
       requireNotNull(container as LifecycleOwner).lifecycle.awaitStarted()
     }
 
-    // TODO: check the order for the case multiple Buckets can accept the container?
+    // TODO: check the order for the case multiple Buckets can accept the same container?
     val bucket = manager.requireBucket(container)
     val playable = payload.value
     home.cancelPlayableDestruction(playable)
@@ -71,16 +70,11 @@ internal class BindRequest(
     val sameContainer: Playback? = manager.findPlaybackForContainer(container)
     val samePlayable: Playback? = playable.playback
 
-    "Home_Request[${hexCode()}]_BIND: SC=$sameContainer, SP=$samePlayable".logDebug()
+    val (boundPlayback: Playback, changed: Boolean) =
+      BindingType(playable, samePlayable, sameContainer)
+        .performBind(createNewPlayback)
 
-    val boundPlayback: Playback = BindingType
-      .get(playable, samePlayable, sameContainer)
-      .performBind(createNewPlayback)
-
-    manager.refresh() // Kick it.
-    "Request[${hexCode()}]_BIND_End result=$boundPlayback".logDebug()
+    if (changed) manager.refresh() // Kick it.
     return boundPlayback
   }
-
-  override fun toString(): String = "R@${hexCode()}"
 }

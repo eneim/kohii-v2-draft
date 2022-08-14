@@ -28,7 +28,7 @@ class Request(
 ) : Parcelable {
 
   /**
-   * Creates a new [Request] with a new tag.
+   * Creates a new [Request] using the same data with a new tag.
    */
   fun copy(tag: String? = null): Request = Request(
     data = this.data,
@@ -55,7 +55,6 @@ class Request(
     return "Request(tag=$tag, data=$data)"
   }
 
-  // This Parceler only handles ExoPlayer's MediaItems.
   internal companion object : Parceler<Request> {
     override fun Request.write(
       parcel: Parcel,

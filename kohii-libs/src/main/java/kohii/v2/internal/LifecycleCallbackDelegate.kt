@@ -26,29 +26,19 @@ import kotlin.LazyThreadSafetyMode.NONE
  */
 internal class LifecycleCallbackDelegate(val playable: Playable) : LifecycleCallback {
 
-  override fun onAdded(playback: Playback) {
-    "CallbackDelegate[${hexCode()}]_ADDED [PK=$playback]".logInfo()
-  }
+  override fun onAdded(playback: Playback) = Unit
 
-  override fun onRemoved(playback: Playback) {
-    "CallbackDelegate[${hexCode()}]_REMOVED [PK=$playback]".logInfo()
-  }
+  override fun onRemoved(playback: Playback) = Unit
 
-  override fun onAttached(playback: Playback) {
-    "CallbackDelegate[${hexCode()}]_ATTACHED [PK=$playback]".logInfo()
-  }
+  override fun onAttached(playback: Playback) = Unit
 
-  override fun onDetached(playback: Playback) {
-    "CallbackDelegate[${hexCode()}]_DETACHED [PK=$playback]".logInfo()
-  }
+  override fun onDetached(playback: Playback) = Unit
 
   override fun onActivated(playback: Playback) {
-    "CallbackDelegate[${hexCode()}]_ACTIVATED [PK=$playback]".logInfo()
     playable.tryRestorePlayableState()
   }
 
   override fun onDeactivated(playback: Playback) {
-    "CallbackDelegate[${hexCode()}]_DEACTIVATED [PK=$playback]".logInfo()
     if (
     // The provided Playback must be the same one bound to the current Playable.
       playback === playable.playback &&

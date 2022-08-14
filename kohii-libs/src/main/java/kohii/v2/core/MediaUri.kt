@@ -20,6 +20,10 @@ import android.net.Uri
 import androidx.media3.common.MediaItem
 import kotlinx.parcelize.Parcelize
 
+/**
+ * A [RequestData] that is constructed from a [String]. Normally it is the [Uri] of the media
+ * content.
+ */
 @Parcelize
 @JvmInline
 value class MediaUri(val value: String) : RequestData {

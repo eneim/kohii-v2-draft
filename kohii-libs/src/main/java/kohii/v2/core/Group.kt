@@ -23,6 +23,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import kohii.v2.internal.GroupDispatcher
 import kohii.v2.internal.hexCode
+import kohii.v2.internal.logDebug
 
 /**
  * A [Group] represents an [Activity] in the Application. It manages [Manager]s and ensure the
@@ -35,8 +36,6 @@ class Group(
 
   internal val managers = ArrayDeque<Manager>()
   private val dispatcher = GroupDispatcher(this, Looper.getMainLooper())
-
-  override fun toString(): String = "G@${hexCode()}"
 
   internal fun addManager(manager: Manager) {
     if (managers.add(manager)) {
@@ -64,6 +63,7 @@ class Group(
 
     toPause.forEach(dispatcher::dispatchPausePlayback)
     toPlay.forEach(dispatcher::dispatchStartPlayback)
+    "Group#${hexCode()} refreshes".logDebug()
   }
 
   override fun onDestroy(owner: LifecycleOwner) {

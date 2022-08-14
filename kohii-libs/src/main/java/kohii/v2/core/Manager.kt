@@ -32,9 +32,6 @@ import kohii.v2.internal.StaticViewPlaybackCreator
 import kohii.v2.internal.checkMainThread
 import kohii.v2.internal.debugOnly
 import kohii.v2.internal.hexCode
-import kohii.v2.internal.logDebug
-import kohii.v2.internal.logError
-import kohii.v2.internal.logInfo
 import kohii.v2.internal.onRemoveEach
 import kohii.v2.internal.partitionToMutableSets
 import kotlinx.coroutines.flow.Flow
@@ -85,8 +82,6 @@ class Manager(
       is Fragment -> owner.activity?.isChangingConfigurations == true
       else -> false
     }
-
-  override fun toString(): String = "M@${hexCode()}"
 
   internal fun refresh(): Unit = group.onRefresh()
 
@@ -141,7 +136,6 @@ class Manager(
   @Suppress("unused")
   @MainThread
   internal fun addPlayback(playback: Playback) {
-    "Manager[${hexCode()}]_ADD_Playback [PK=$playback]".logInfo()
     checkMainThread()
     val container = playback.container
     val removedPlayback: Playback? = playbacks.put(container, playback)
@@ -178,7 +172,6 @@ class Manager(
     playback: Playback,
     clearPlayable: Boolean = true,
   ) {
-    "Manager[${hexCode()}]_REMOVE_Playback_Begin [PK=$playback]".logDebug()
     checkMainThread()
     val container = playback.container
     val removedPlayback = playbacks.remove(container)
@@ -189,7 +182,6 @@ class Manager(
     }
     onRemovePlayback(playback, clearPlayable)
     refresh()
-    "Manager[${hexCode()}]_REMOVE_Playback_End [PK=$playback]".logDebug()
   }
 
   internal fun notifyPlaybackRemoved(playback: Playback) {
@@ -214,29 +206,20 @@ class Manager(
     }
   }
 
+  @Throws(IllegalStateException::class)
   @MainThread
   internal fun requirePlaybackCreator(
     playable: Playable,
     container: Any,
-  ): PlaybackCreator {
-    return playbackCreators.firstOrNull { creator ->
-      creator.accept(playable = playable, container = container)
-    } ?: throw IllegalStateException("No PlaybackCreator available for $playable and $container.")
-  }
+  ): PlaybackCreator = playbackCreators
+    .firstOrNull { creator -> creator.accept(playable = playable, container = container) }
+    ?: error("No PlaybackCreator available for $playable and $container.")
 
   @Throws(IllegalArgumentException::class)
   @MainThread
-  internal fun requireBucket(container: Any): Bucket {
-    // Check from the top of the stack.
-    val bucket = buckets.lastOrNull { it.accept(container) }
-    if (bucket == null) {
-      val error = IllegalArgumentException("No bucket in $this accepts container $container.")
-      "Manager[${hexCode()}]_BIND_End error=$error".logError()
-      throw error
-    }
-
-    return bucket
-  }
+  internal fun requireBucket(container: Any): Bucket =
+    buckets.lastOrNull { it.accept(container) } // Check from the top of the stack.
+      ?: error("No bucket in $this accepts container $container.")
 
   @MainThread
   internal fun splitPlaybacks(): Pair<Collection<Playback> /* toPlay */, Collection<Playback> /* toPause */> {
@@ -267,8 +250,8 @@ class Manager(
   }
 
   // Returns a Pair of [a set of Activated playbacks] to [a set of Deactivated playbacks].
-  private fun refreshPlaybackStates(): Pair<MutableSet<Playback>, MutableSet<Playback>> {
-    return playbacks.values
+  private fun refreshPlaybackStates(): Pair<MutableSet<Playback>, MutableSet<Playback>> =
+    playbacks.values
       .onEach { playback ->
         playback.performRefresh()
         if (!playback.isActive && playback.shouldActivate()) {
@@ -280,7 +263,6 @@ class Manager(
       }
       .filter(predicate = Playback::isAttached)
       .partitionToMutableSets(predicate = Playback::isActive)
-  }
   //endregion
 
   //region Container APIs
@@ -339,7 +321,6 @@ class Manager(
     source: LifecycleOwner,
     event: Event,
   ) {
-    "Manager[${hexCode()}]_Lifecycle [State -> ${event.targetState}]".logInfo()
     playbacks.forEach { (_, playback) -> playback.lifecycleState = event.targetState }
   }
 

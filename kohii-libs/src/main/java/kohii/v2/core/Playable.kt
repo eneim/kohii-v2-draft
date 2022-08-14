@@ -32,6 +32,9 @@ import kohii.v2.internal.playbackLifecycleCallback
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 
+/**
+ * TODO: kdoc.
+ */
 abstract class Playable(
   val home: Home,
   val tag: String,

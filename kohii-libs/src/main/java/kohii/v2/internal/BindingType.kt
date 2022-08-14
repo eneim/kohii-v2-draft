@@ -21,15 +21,18 @@ import kohii.v2.core.Playback
 
 internal sealed class BindingType(val playable: Playable) {
 
-  abstract fun performBind(createNewPlayback: () -> Playback): Playback
+  // Return a pair:
+  // Pair.first -> the bound Playback.
+  // Pair.second -> true if it is a new Playback, false if nothing changes for the existing Playback
+  abstract fun performBind(createNewPlayback: () -> Playback): Pair<Playback, Boolean>
 
   // Bind a new Playable to a clean Container.
   class BindToCleanContainer(playable: Playable) : BindingType(playable) {
 
-    override fun performBind(createNewPlayback: () -> Playback): Playback {
+    override fun performBind(createNewPlayback: () -> Playback): Pair<Playback, Boolean> {
       val newPlayback = createNewPlayback()
       newPlayback.bindPlayable(playable)
-      return newPlayback
+      return newPlayback to true
     }
   }
 
@@ -41,11 +44,11 @@ internal sealed class BindingType(val playable: Playable) {
     val containerCurrentPlayback: Playback,
   ) : BindingType(playable) {
 
-    override fun performBind(createNewPlayback: () -> Playback): Playback {
+    override fun performBind(createNewPlayback: () -> Playback): Pair<Playback, Boolean> {
       containerCurrentPlayback.manager.removePlayback(containerCurrentPlayback)
       val newPlayback = createNewPlayback()
       newPlayback.bindPlayable(playable)
-      return newPlayback
+      return newPlayback to true
     }
   }
 
@@ -57,11 +60,11 @@ internal sealed class BindingType(val playable: Playable) {
     val playableCurrentPlayback: Playback,
   ) : BindingType(playable) {
 
-    override fun performBind(createNewPlayback: () -> Playback): Playback {
+    override fun performBind(createNewPlayback: () -> Playback): Pair<Playback, Boolean> {
       playableCurrentPlayback.manager.removePlayback(playableCurrentPlayback, clearPlayable = false)
       val newPlayback = createNewPlayback()
       newPlayback.bindPlayable(playable)
-      return newPlayback
+      return newPlayback to true
     }
   }
 
@@ -73,9 +76,9 @@ internal sealed class BindingType(val playable: Playable) {
     val playableCurrentPlayback: Playback,
     val containerCurrentPlayback: Playback,
   ) : BindingType(playable) {
-    override fun performBind(createNewPlayback: () -> Playback): Playback {
+    override fun performBind(createNewPlayback: () -> Playback): Pair<Playback, Boolean> {
       return if (playableCurrentPlayback === containerCurrentPlayback) {
-        playableCurrentPlayback
+        playableCurrentPlayback to false
       } else {
         containerCurrentPlayback.manager.removePlayback(containerCurrentPlayback)
         playableCurrentPlayback.manager.removePlayback(
@@ -83,14 +86,14 @@ internal sealed class BindingType(val playable: Playable) {
         )
         val newPlayback = createNewPlayback()
         newPlayback.bindPlayable(playable)
-        newPlayback
+        newPlayback to true
       }
     }
   }
 
   companion object {
 
-    fun get(
+    operator fun invoke(
       playable: Playable,
       samePlayable: Playback?,
       sameContainer: Playback?,

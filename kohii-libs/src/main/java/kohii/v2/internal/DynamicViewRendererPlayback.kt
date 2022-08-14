@@ -70,7 +70,7 @@ internal class DynamicViewRendererPlayback(
       if (attachRendererResult == null) {
         playable.onRendererAttached(renderer)
       } else {
-        "Playback[${hexCode()}]_ATTACH_Renderer [RR=${renderer?.asString()}] fails, result=$attachRendererResult".logDebug()
+        "Playback[${hexCode()}] fails to attach $renderer, result=$attachRendererResult".logDebug()
       }
     }
   }
@@ -86,7 +86,7 @@ internal class DynamicViewRendererPlayback(
           renderer = renderer
         )
       } else {
-        "Playback[${hexCode()}]_DETACH_Renderer [RR=${renderer.asString()}] fails, result=$detachRenderInfo".logDebug()
+        "Playback[${hexCode()}] fails to detach $renderer, result=$detachRenderInfo".logDebug()
       }
     }
   }

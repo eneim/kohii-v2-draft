@@ -24,6 +24,7 @@ import androidx.core.view.contains
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
+@Suppress("RemoveExplicitTypeArguments")
 internal suspend fun View.awaitAttached() {
   if (isAttachedToWindow) return else suspendCancellableCoroutine<Unit> { continuation ->
     val listener = object : OnAttachStateChangeListener {
