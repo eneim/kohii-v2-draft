@@ -51,26 +51,30 @@ abstract class ViewBucket(
   private val containers = mutableSetOf<Any>()
 
   private val rootViewAttachStateListener = object : OnAttachStateChangeListener {
-    override fun onViewAttachedToWindow(v: View?) = onStart()
-    override fun onViewDetachedFromWindow(v: View?) = onStop()
+    override fun onViewAttachedToWindow(v: View) = onStart()
+    override fun onViewDetachedFromWindow(v: View) = onStop()
   }
 
   private val containerAttachStateListener = object : OnAttachStateChangeListener {
-    override fun onViewAttachedToWindow(v: View?) {
-      v?.let(manager::onContainerAttached)
+    override fun onViewAttachedToWindow(v: View) {
+      manager.onContainerAttached(v)
     }
 
-    override fun onViewDetachedFromWindow(v: View?) {
-      v?.let(manager::onContainerDetached)
+    override fun onViewDetachedFromWindow(v: View) {
+      manager.onContainerDetached(v)
     }
   }
 
-  private val containerLayoutChangeListener =
-    OnLayoutChangeListener { v: View?, nl: Int, nt: Int, nr: Int, nb: Int, ol: Int, ot: Int, or: Int, ob: Int ->
-      if (nl != ol || nr != or || nt != ot || nb != ob) {
-        v?.let(manager::onContainerUpdated)
-      }
+  private val containerLayoutChangeListener = OnLayoutChangeListener {
+    v: View,
+      nl: Int, nt: Int, nr: Int, nb: Int,
+      ol: Int, ot: Int, or: Int, ob: Int,
+    ->
+    @Suppress("ComplexCondition")
+    if (nl != ol || nr != or || nt != ot || nb != ob) {
+      manager.onContainerUpdated(v)
     }
+  }
 
   @CallSuper
   override fun onAdd() {

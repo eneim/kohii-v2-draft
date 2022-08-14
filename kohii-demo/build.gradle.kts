@@ -23,12 +23,12 @@ plugins {
 
 android {
   namespace = "kohii.v2.demo"
-  compileSdk = 32
+  compileSdk = 33
 
   defaultConfig {
     applicationId = "kohii.v2.demo"
     minSdk = 21
-    targetSdk = 32
+    targetSdk = 33
     versionCode = 1
     versionName = "1.0"
 

@@ -66,9 +66,10 @@ class Request(
 
     override fun create(parcel: Parcel): Request = Request(
       tag = parcel.readString(),
-      data = parcel.readArrayList(RequestData::class.java.classLoader)
-        ?.filterIsInstance<RequestData>()
-        ?: emptyList(),
+      data = parcel.readArrayList(
+        /* loader = */ RequestData::class.java.classLoader,
+        /* clazz = */ RequestData::class.java
+      ) ?: emptyList(),
     )
   }
 }

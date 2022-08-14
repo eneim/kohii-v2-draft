@@ -72,11 +72,13 @@ class ExoPlayerExtras(
 
     override fun create(parcel: Parcel): ExoPlayerExtras = ExoPlayerExtras(
       playerState = parcel.readInt(),
-      playerParameters = parcel.readParcelable(PlayerParameters::class.java.classLoader)
-        ?: PlayerParameters.DEFAULT,
+      playerParameters = parcel.readParcelable(
+        /* loader = */ PlayerParameters::class.java.classLoader,
+        /* clazz = */ PlayerParameters::class.java
+      ) ?: PlayerParameters.DEFAULT,
       trackSelectionParameters = parcel
         .readBundle(TrackSelectionParameters::class.java.classLoader)
-        ?.let(TrackSelectionParameters.CREATOR::fromBundle)
+        ?.let(TrackSelectionParameters::fromBundle)
         ?: TrackSelectionParameters.DEFAULT_WITHOUT_CONTEXT
     )
 

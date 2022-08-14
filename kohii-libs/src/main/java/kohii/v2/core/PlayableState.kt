@@ -79,16 +79,17 @@ sealed interface PlayableState {
   companion object {
     private const val KEY_PLAYABLE_STATE = "KEY_PLAYABLE_STATE"
 
-    fun Bundle.toPlayableState(): PlayableState? = with(get(KEY_PLAYABLE_STATE)) {
-      when (this) {
-        is Active -> return@with this
-        is String -> return@with when (this) {
+    fun Bundle.toPlayableState(): PlayableState? {
+      return getParcelable(
+        /* key = */ KEY_PLAYABLE_STATE,
+        /* clazz = */ Active::class.java
+      ) ?: getString(KEY_PLAYABLE_STATE)?.let { state ->
+        when (state) {
           Initialized.toString() -> Initialized
           Idle.toString() -> Idle
           Ended.toString() -> Ended
           else -> null
         }
-        else -> return@with null
       }
     }
   }

@@ -79,10 +79,13 @@ class PlayerParameters(
       volume = parcel.readFloat(),
       repeatMode = parcel.readInt(),
       shuffleModeEnabled = parcel.readInt() == 1,
-      audioParameters = parcel.readParcelable(AudioParameters::class.java.classLoader)
-        ?: AudioParameters.DEFAULT,
+      audioParameters = parcel.readParcelable(
+        /* loader = */ AudioParameters::class.java.classLoader,
+        /* clazz = */ AudioParameters::class.java
+      ) ?: AudioParameters.DEFAULT,
       playbackParameters = parcel.readBundle(PlaybackParameters::class.java.classLoader)
-        ?.let(PlaybackParameters.CREATOR::fromBundle) ?: PlaybackParameters.DEFAULT,
+        ?.let(PlaybackParameters.CREATOR::fromBundle)
+        ?: PlaybackParameters.DEFAULT,
     )
 
     override fun PlayerParameters.write(

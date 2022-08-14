@@ -28,7 +28,6 @@ import kohii.v2.core.Playback.Config
 import kohii.v2.internal.debugOnly
 import kohii.v2.internal.hexCode
 import kohii.v2.internal.logStackTrace
-import kohii.v2.internal.playbackLifecycleCallback
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 
@@ -89,7 +88,25 @@ abstract class Playable(
   internal val command = AtomicReference<Command>(null)
   //endregion
 
-  private val lifecycleCallback: LifecycleCallback by playbackLifecycleCallback()
+  private val lifecycleCallback: LifecycleCallback = object : LifecycleCallback {
+    override fun onDeactivated(playback: Playback) {
+      if (
+      // The provided Playback must be the same one bound to the current Playable.
+        playback === this@Playable.playback &&
+        // If the Playback is being removed, either naturally (1), or to be replaced by another one
+        // that uses the same Playable (2), we don't save the Playable state:
+        // In (1), there is no point to save the state.
+        // In (2), we want the Playable to keep playing as-if it is still bound to a Playback.
+        !playback.isRemoving &&
+        // If this is a destruction for recreation, we want to keep the Playable alive and unchanged.
+        // If after the recreation, the Playable is not bound to a new Playback, it will be destroyed.
+        !playback.manager.isChangingConfigurations
+      ) {
+        trySavePlayableState()
+        onRelease()
+      }
+    }
+  }
 
   init {
     "Playable[${hexCode()}] is created.".logStackTrace()
@@ -201,9 +218,7 @@ abstract class Playable(
   protected open fun onManagerChanged(
     previous: PlayableManager,
     next: PlayableManager,
-  ) {
-    "Playable[${hexCode()}]_CHANGE_Manager [$previous → $next]".logStackTrace()
-  }
+  ) = Unit
 
   @JvmSynthetic
   internal fun trySavePlayableState() {

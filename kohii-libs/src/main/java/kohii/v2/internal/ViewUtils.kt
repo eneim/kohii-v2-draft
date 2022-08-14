@@ -28,12 +28,12 @@ import kotlin.coroutines.resume
 internal suspend fun View.awaitAttached() {
   if (isAttachedToWindow) return else suspendCancellableCoroutine<Unit> { continuation ->
     val listener = object : OnAttachStateChangeListener {
-      override fun onViewAttachedToWindow(v: View?) {
+      override fun onViewAttachedToWindow(v: View) {
         removeOnAttachStateChangeListener(this)
         continuation.resume(Unit)
       }
 
-      override fun onViewDetachedFromWindow(v: View?) = Unit
+      override fun onViewDetachedFromWindow(v: View) = Unit
     }
 
     continuation.invokeOnCancellation {

@@ -27,27 +27,22 @@ internal class HomeDispatcher(private val home: Home) : Handler(Looper.getMainLo
   fun dispatchDestroyPlayable(
     playable: Playable,
     delayMillis: Long = DEFAULT_DELAY,
-  ) = sendMessageDelayed(obtainMessage(MSG_DESTROY_PLAYABLE, playable), delayMillis)
+  ) = sendMessageDelayed(
+    /* msg = */ obtainMessage(/* what = */ MSG_DESTROY_PLAYABLE, /* obj = */ playable),
+    /* delayMillis = */ delayMillis
+  )
 
   fun cancelPlayableDestroy(playable: Playable) = removeMessages(MSG_DESTROY_PLAYABLE, playable)
 
-  override fun sendMessageAtTime(
-    msg: Message,
-    uptimeMillis: Long,
-  ): Boolean {
-    "Home[${home.hexCode()}]_SEND_Message [MS=${msg.hexCode()}, ${msg.what}]".logInfo()
-    return super.sendMessageAtTime(msg, uptimeMillis)
-  }
-
   override fun handleMessage(msg: Message) {
-    "Home[${home.hexCode()}]_HANDLE_Message [MS=${msg.hexCode()}, ${msg.what}]".logDebug()
+    "Home[${home.hexCode()}] handles [MS=$msg]".logDebug()
     when (msg.what) {
       MSG_DESTROY_PLAYABLE -> performDestroyPlayable(msg.obj as Playable)
     }
   }
 
   private fun performDestroyPlayable(playable: Playable) {
-    "Home[${home.hexCode()}]_DESTROY_Playable [PB=$playable]".logInfo()
+    "Home[${home.hexCode()}] destroys [PB=$playable]".logInfo()
     playable.trySavePlayableState()
     playable.onPause()
     playable.onRelease()

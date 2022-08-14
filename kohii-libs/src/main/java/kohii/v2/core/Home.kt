@@ -41,6 +41,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
+import kotlinx.coroutines.ensureActive
 import kotlin.coroutines.cancellation.CancellationException
 
 class Home private constructor(context: Context) {
@@ -146,6 +147,7 @@ class Home private constructor(context: Context) {
     val deferredBindResult: Deferred<Result<Playback>> = scope.async {
       try {
         request.lifecycle.awaitStarted()
+        ensureActive()
         val playback = request.onBind()
         request.callback?.onSuccess(playback, request.request)
         return@async Result.success(playback)
