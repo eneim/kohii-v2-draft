@@ -78,7 +78,9 @@ abstract class Playable(
       if (value == null) {
         val destroyPlayableDelay = if (prev != null && prev.manager.isChangingConfigurations) {
           DEFAULT_DESTRUCTION_DELAY_MS
-        } else 0
+        } else {
+          0
+        }
         home.destroyPlayableDelayed(playable = this, delayMillis = destroyPlayableDelay)
       }
     }
@@ -168,9 +170,16 @@ abstract class Playable(
    */
   abstract fun currentState(): PlayableState
 
+  /**
+   * Prepares this [Playable]. This method should create necessary objects for playing the content,
+   * but it doesn't need to load the resource for playing it, unless [preload] is true.
+   */
   @CallSuper
   open fun onPrepare(preload: Boolean) = Unit
 
+  /**
+   * Starts loading the content for playback.
+   */
   @CallSuper
   open fun onReady() = Unit
 

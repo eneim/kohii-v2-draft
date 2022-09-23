@@ -17,7 +17,6 @@
 package kohii.v2.exoplayer
 
 import android.util.Range
-import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerView
 import kohii.v2.core.BasePlayable
 import kohii.v2.core.Bridge
@@ -29,7 +28,6 @@ import kohii.v2.core.RequestData
 /**
  * A [Playable] that uses [PlayerView] as the renderer.
  */
-@UnstableApi
 internal class PlayerViewPlayable(
   home: Home,
   tag: String,

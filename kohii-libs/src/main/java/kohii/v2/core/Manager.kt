@@ -397,6 +397,6 @@ class Manager(
   //endregion
 
   internal companion object {
-    const val DEFAULT_DESTRUCTION_DELAY_MS = 800L // ProcessLifecycle delay + 100ms
+    const val DEFAULT_DESTRUCTION_DELAY_MS = 750L // ProcessLifecycle delay + 50ms
   }
 }

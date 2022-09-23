@@ -16,7 +16,6 @@
 
 package kohii.v2.exoplayer
 
-import androidx.annotation.OptIn
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.DeviceInfo
 import androidx.media3.common.MediaItem
@@ -33,7 +32,6 @@ import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
 import androidx.media3.common.text.CueGroup
-import androidx.media3.common.util.UnstableApi
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdEvent
 import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
@@ -43,7 +41,6 @@ import java.util.concurrent.CopyOnWriteArraySet
 /**
  * A [ComponentsListener] which is also a [MutableSet] of the [ComponentsListener].
  */
-@OptIn(UnstableApi::class)
 class ComponentsListeners internal constructor(
   listeners: MutableSet<ComponentsListener>,
 ) : ComponentsListener, MutableSet<ComponentsListener> by listeners {
