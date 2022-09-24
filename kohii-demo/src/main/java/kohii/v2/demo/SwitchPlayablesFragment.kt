@@ -22,7 +22,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.ui.PlayerControlView
 import androidx.media3.ui.PlayerView
 import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.Engine
@@ -93,7 +92,7 @@ class SwitchPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
     val binder = engine.setUp(tag = commonTag, data = commonData)
     val containers = listOf(binding.videoTop, binding.videoBottom)
 
-    val fullScreenListener = PlayerControlView.OnFullScreenModeChangedListener { isFullScreen ->
+    val fullScreenListener = PlayerView.FullscreenButtonClickListener { isFullScreen ->
       if (isFullScreen) {
         DummyBottomSheetDialog.newInstance(binder.request, commonTag)
           .show(childFragmentManager, commonTag)
@@ -101,7 +100,7 @@ class SwitchPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
     }
 
     containers.forEach { playerView ->
-      playerView.setControllerOnFullScreenModeChangedListener(fullScreenListener)
+      playerView.setFullscreenButtonClickListener(fullScreenListener)
     }
 
     val index = AtomicInteger(0)
@@ -114,7 +113,7 @@ class SwitchPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
 
     childFragmentManager
       .setFragmentResultListener(commonTag, viewLifecycleOwner) { resultKey, bundle ->
-        val request: Request = requireNotNull(bundle.getParcelable(ARGS_REQUEST))
+        val request = requireNotNull(bundle.getParcelable(ARGS_REQUEST, Request::class.java))
         engine.setUp(request).bind(containers[index.getAndIncrement() % containers.size])
         childFragmentManager.clearFragmentResult(resultKey)
       }

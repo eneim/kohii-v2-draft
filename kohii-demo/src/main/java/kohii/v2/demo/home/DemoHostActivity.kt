@@ -28,7 +28,7 @@ import kotlin.LazyThreadSafetyMode.NONE
 class DemoHostActivity : AppCompatActivity() {
 
   private val demoItem: DemoItem by lazy(NONE) {
-    requireNotNull(intent.getParcelableExtra(KEY_DEMO_ITEM))
+    requireNotNull(intent.getParcelableExtra(KEY_DEMO_ITEM, DemoItem::class.java))
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {

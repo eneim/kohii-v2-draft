@@ -14,22 +14,52 @@
  * limitations under the License.
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-buildscript {
-  repositories {
-    google()
-    mavenCentral()
-  }
-
-  dependencies {
-    classpath("com.android.tools.build:gradle:7.3.0")
-    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
-
-    // NOTE: Do not place your application dependencies here; they belong
-    // in the individual module build.gradle.kts files
-  }
+plugins {
+  id("com.android.application") version "7.2.2" apply false
+  id("com.android.library") version "7.2.2" apply false
+  id("org.jetbrains.kotlin.android") version "1.7.10" apply false
 }
 
 tasks.register("clean", Delete::class) {
   delete(rootProject.buildDir)
+}
+
+allprojects {
+  afterEvaluate {
+    if (hasProperty("android") && hasProperty("dependencies")) {
+      dependencies {
+        "coreLibraryDesugaring"("com.android.tools:desugar_jdk_libs:1.1.5")
+      }
+    }
+  }
+
+  plugins.withType<com.android.build.gradle.BasePlugin>().configureEach {
+    extensions.findByType<com.android.build.gradle.BaseExtension>()?.apply {
+      compileSdkVersion(33)
+      defaultConfig {
+        minSdk = 21
+        targetSdk = 33
+      }
+
+      compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+      }
+
+      buildFeatures.viewBinding = true
+    }
+  }
+
+  tasks.withType<JavaCompile>().configureEach {
+    sourceCompatibility = JavaVersion.VERSION_11.toString()
+    targetCompatibility = JavaVersion.VERSION_11.toString()
+  }
+
+  tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
+    kotlinOptions {
+      jvmTarget = "11"
+      freeCompilerArgs = freeCompilerArgs + arrayOf("-opt-in=kotlin.RequiresOptIn")
+    }
+  }
 }

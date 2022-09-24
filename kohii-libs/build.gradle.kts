@@ -22,16 +22,12 @@ plugins {
 
 android {
   namespace = "kohii.v2"
-  compileSdk = 33
 
   testOptions {
     unitTests.isIncludeAndroidResources = true
   }
 
   defaultConfig {
-    minSdk = 21
-    targetSdk = 33
-
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     consumerProguardFiles("consumer-rules.pro")
   }
@@ -41,17 +37,6 @@ android {
       isMinifyEnabled = false
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
     }
-  }
-
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-  }
-
-  kotlinOptions {
-    jvmTarget = "1.8"
-    @Suppress("SuspiciousCollectionReassignment")
-    freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
   }
 
   buildFeatures {
@@ -68,6 +53,9 @@ dependencies {
   implementation(libs.androidx.media3.ui)
   implementation(libs.androidx.media3.exoplayer)
   implementation(libs.androidx.media3.exoplayer.ima)
+  implementation(libs.androidx.media3.exoplayer.dash)
+  implementation(libs.androidx.media3.exoplayer.hls)
+  implementation(libs.androidx.media3.exoplayer.rtsp)
 
   implementation(libs.androidx.core)
   implementation(libs.androidx.appcompat)

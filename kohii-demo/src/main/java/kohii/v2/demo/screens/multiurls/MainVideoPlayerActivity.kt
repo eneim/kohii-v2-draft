@@ -38,7 +38,7 @@ class MainVideoPlayerActivity : AppCompatActivity() {
   // Note: this code is for demonstration purpose only. In practice, if an Activity is registered
   // as singleTop, `onNewIntent` might be called and and the request value is changed.
   private val request: Request by lazy {
-    requireNotNull(intent.extras?.getParcelable(ARGS_REQUEST))
+    requireNotNull(intent.extras?.getParcelable(ARGS_REQUEST, Request::class.java))
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {

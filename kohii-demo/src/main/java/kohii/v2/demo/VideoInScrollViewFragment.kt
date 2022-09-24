@@ -61,7 +61,7 @@ class VideoInScrollViewFragment : Fragment(R.layout.fragment_video_in_scroll_vie
     //endregion
 
     setFragmentResultListener(VIDEO_TAG) { _, bundle ->
-      val request: Request = requireNotNull(bundle.getParcelable(ARGS_REQUEST))
+      val request: Request = requireNotNull(bundle.getParcelable(ARGS_REQUEST, Request::class.java))
       engine.setUp(request).bind(container = binding.videoContainer)
       clearFragmentResult(VIDEO_TAG)
     }

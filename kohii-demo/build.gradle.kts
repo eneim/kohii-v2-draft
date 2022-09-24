@@ -23,12 +23,9 @@ plugins {
 
 android {
   namespace = "kohii.v2.demo"
-  compileSdk = 33
 
   defaultConfig {
     applicationId = "kohii.v2.demo"
-    minSdk = 21
-    targetSdk = 33
     versionCode = 1
     versionName = "1.0"
 
@@ -69,19 +66,10 @@ android {
     }
   }
 
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-  }
-
-  kotlinOptions {
-    jvmTarget = "1.8"
-    @Suppress("SuspiciousCollectionReassignment")
-    freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
-  }
-
-  buildFeatures {
-    viewBinding = true
+  packagingOptions {
+    resources {
+      excludes += "/META-INF/{AL2.0,LGPL2.1}"
+    }
   }
 }
 

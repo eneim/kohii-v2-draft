@@ -36,7 +36,7 @@ import kotlin.LazyThreadSafetyMode.NONE
 class FullscreenPlayerSheetDialog : FullscreenDialogFragment(R.layout.fragment_fullscreen_sheet) {
 
   private val request: Request by lazy(NONE) {
-    requireNotNull(requireArguments().getParcelable(ARGS_REQUEST))
+    requireNotNull(requireArguments().getParcelable(ARGS_REQUEST, Request::class.java))
   }
 
   private val resultKey: String by lazy(NONE) {

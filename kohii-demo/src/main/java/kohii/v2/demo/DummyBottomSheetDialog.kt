@@ -47,7 +47,7 @@ class DummyBottomSheetDialog : BottomSheetDialogFragment() {
   private val binding: FragmentDummySheetBinding by viewBinding(FragmentDummySheetBinding::bind)
 
   private val request: Request by lazy(NONE) {
-    requireNotNull(requireArguments().getParcelable(ARGS_REQUEST))
+    requireNotNull(requireArguments().getParcelable(ARGS_REQUEST, Request::class.java))
   }
   private val resultKey: String by lazy(NONE) {
     requireNotNull(requireArguments().getString(ARGS_RESULT_KEY))
