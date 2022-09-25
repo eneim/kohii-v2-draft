@@ -123,7 +123,7 @@ class Home private constructor(context: Context) {
   }
 
   internal fun cancelPlayableDestruction(playable: Playable) {
-    "Home[${hexCode()}] cancels [PB=$playable] destruction".logStackTrace()
+    "Home[${hexCode()}] cancels [PB=$playable] destruction".logInfo()
     dispatcher.cancelPlayableDestroy(playable)
   }
 

@@ -29,6 +29,7 @@ import kohii.v2.core.PlayerEventListener
 import kohii.v2.core.Request
 import kohii.v2.demo.R
 import kohii.v2.demo.common.FullscreenDialogFragment
+import kohii.v2.demo.common.getParcelableCompat
 import kohii.v2.demo.common.hideSystemBars
 import kohii.v2.demo.databinding.FragmentFullscreenSheetBinding
 import kotlin.LazyThreadSafetyMode.NONE
@@ -36,7 +37,7 @@ import kotlin.LazyThreadSafetyMode.NONE
 class FullscreenPlayerSheetDialog : FullscreenDialogFragment(R.layout.fragment_fullscreen_sheet) {
 
   private val request: Request by lazy(NONE) {
-    requireNotNull(requireArguments().getParcelable(ARGS_REQUEST, Request::class.java))
+    requireNotNull(requireArguments().getParcelableCompat(ARGS_REQUEST))
   }
 
   private val resultKey: String by lazy(NONE) {

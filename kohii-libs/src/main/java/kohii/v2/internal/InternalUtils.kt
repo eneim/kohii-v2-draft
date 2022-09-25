@@ -16,7 +16,9 @@
 
 package kohii.v2.internal
 
+import android.os.Build
 import android.os.Looper
+import android.os.Parcel
 import android.util.Log
 import android.view.View
 import androidx.annotation.MainThread
@@ -140,3 +142,12 @@ internal inline fun Player.doOnTrackInfoChanged(
     action(tracks)
   }
 })
+
+@Suppress("DEPRECATION")
+internal inline fun <reified T : Any> Parcel.readArrayListCompat(classLoader: ClassLoader?): ArrayList<T>? {
+  return if (Build.VERSION.SDK_INT >= 33) {
+    readArrayList(classLoader, T::class.java)
+  } else {
+    readArrayList(classLoader) as? ArrayList<T>
+  }
+}

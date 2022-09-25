@@ -22,13 +22,14 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.fragment.app.commit
+import kohii.v2.demo.common.getParcelableExtraCompat
 import kohii.v2.demo.home.DemoItemFragment.Companion.KEY_SEED
 import kotlin.LazyThreadSafetyMode.NONE
 
 class DemoHostActivity : AppCompatActivity() {
 
   private val demoItem: DemoItem by lazy(NONE) {
-    requireNotNull(intent.getParcelableExtra(KEY_DEMO_ITEM, DemoItem::class.java))
+    requireNotNull(intent.getParcelableExtraCompat(KEY_DEMO_ITEM))
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {

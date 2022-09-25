@@ -30,6 +30,7 @@ import kohii.v2.core.Request
 import kohii.v2.core.playbackManager
 import kohii.v2.demo.DummyBottomSheetDialog.Companion.ARGS_REQUEST
 import kohii.v2.demo.common.VideoUrls
+import kohii.v2.demo.common.getParcelableCompat
 import kohii.v2.demo.databinding.FragmentVideoInScrollViewBinding
 import kohii.v2.exoplayer.PlayerViewPlayableCreator
 import kohii.v2.exoplayer.getPlayerViewProvider
@@ -61,7 +62,7 @@ class VideoInScrollViewFragment : Fragment(R.layout.fragment_video_in_scroll_vie
     //endregion
 
     setFragmentResultListener(VIDEO_TAG) { _, bundle ->
-      val request: Request = requireNotNull(bundle.getParcelable(ARGS_REQUEST, Request::class.java))
+      val request: Request = requireNotNull(bundle.getParcelableCompat(ARGS_REQUEST))
       engine.setUp(request).bind(container = binding.videoContainer)
       clearFragmentResult(VIDEO_TAG)
     }

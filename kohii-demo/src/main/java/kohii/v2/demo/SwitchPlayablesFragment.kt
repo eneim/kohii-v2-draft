@@ -31,6 +31,7 @@ import kohii.v2.core.Request
 import kohii.v2.core.playbackManager
 import kohii.v2.demo.DummyBottomSheetDialog.Companion.ARGS_REQUEST
 import kohii.v2.demo.common.VideoUrls
+import kohii.v2.demo.common.getParcelableCompat
 import kohii.v2.demo.databinding.FragmentSwitchPlayablesBinding
 import kohii.v2.exoplayer.PlayerViewPlayableCreator
 import kohii.v2.exoplayer.getPlayerViewProvider
@@ -113,7 +114,7 @@ class SwitchPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
 
     childFragmentManager
       .setFragmentResultListener(commonTag, viewLifecycleOwner) { resultKey, bundle ->
-        val request = requireNotNull(bundle.getParcelable(ARGS_REQUEST, Request::class.java))
+        val request: Request = requireNotNull(bundle.getParcelableCompat(ARGS_REQUEST))
         engine.setUp(request).bind(containers[index.getAndIncrement() % containers.size])
         childFragmentManager.clearFragmentResult(resultKey)
       }

@@ -15,8 +15,8 @@
  */
 
 plugins {
-  id("com.android.application") version "7.2.2" apply false
-  id("com.android.library") version "7.2.2" apply false
+  id("com.android.application") version "7.4.0-beta01" apply false
+  id("com.android.library") version "7.4.0-beta01" apply false
   id("org.jetbrains.kotlin.android") version "1.7.10" apply false
 }
 
@@ -28,7 +28,7 @@ allprojects {
   afterEvaluate {
     if (hasProperty("android") && hasProperty("dependencies")) {
       dependencies {
-        "coreLibraryDesugaring"("com.android.tools:desugar_jdk_libs:1.1.5")
+        "coreLibraryDesugaring"("com.android.tools:desugar_jdk_libs:2.0.0")
       }
     }
   }

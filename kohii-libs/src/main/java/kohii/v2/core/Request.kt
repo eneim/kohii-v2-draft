@@ -18,6 +18,7 @@ package kohii.v2.core
 
 import android.os.Parcel
 import android.os.Parcelable
+import kohii.v2.internal.readArrayListCompat
 import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize
 
@@ -66,10 +67,7 @@ class Request(
 
     override fun create(parcel: Parcel): Request = Request(
       tag = parcel.readString(),
-      data = parcel.readArrayList(
-        /* loader = */ RequestData::class.java.classLoader,
-        /* clazz = */ RequestData::class.java
-      ) ?: emptyList(),
+      data = parcel.readArrayListCompat(RequestData::class.java.classLoader) ?: emptyList(),
     )
   }
 }

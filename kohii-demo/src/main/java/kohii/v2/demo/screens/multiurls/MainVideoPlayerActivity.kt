@@ -27,6 +27,7 @@ import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.Playback
 import kohii.v2.core.PlayerEventListener
 import kohii.v2.core.Request
+import kohii.v2.demo.common.getParcelableCompat
 import kohii.v2.demo.common.hideSystemBars
 import kohii.v2.demo.databinding.ActivityFullscreenMainUriBinding
 
@@ -38,7 +39,7 @@ class MainVideoPlayerActivity : AppCompatActivity() {
   // Note: this code is for demonstration purpose only. In practice, if an Activity is registered
   // as singleTop, `onNewIntent` might be called and and the request value is changed.
   private val request: Request by lazy {
-    requireNotNull(intent.extras?.getParcelable(ARGS_REQUEST, Request::class.java))
+    requireNotNull(intent.extras?.getParcelableCompat(ARGS_REQUEST))
   }
 
   override fun onCreate(savedInstanceState: Bundle?) {
