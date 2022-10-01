@@ -45,7 +45,7 @@ internal class PlayerViewPlayable(
 
   override val triggerRange: Range<Float> = Range(0.0f, 1.0f)
 
-  // TODO: the PlayerView controller is not disappearing sometime ...
+  // TODO: the PlayerView controller doesn't disappear sometime ...
   override fun onRendererAttached(renderer: Any?) {
     super.onRendererAttached(renderer)
     if (renderer != null) {

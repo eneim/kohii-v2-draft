@@ -32,7 +32,8 @@ import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 
 /**
- * TODO: kdoc.
+ * @param initialManager The first [PlayableManager] that manages this [Playable]. A [Playable] can
+ * be managed by different [PlayableManager]s in different times.
  */
 abstract class Playable(
   val home: Home,
@@ -91,6 +92,11 @@ abstract class Playable(
   //endregion
 
   private val lifecycleCallback: LifecycleCallback = object : LifecycleCallback {
+
+    override fun onActivated(playback: Playback) {
+      tryRestorePlayableState()
+    }
+
     override fun onDeactivated(playback: Playback) {
       if (
       // The provided Playback must be the same one bound to the current Playable.

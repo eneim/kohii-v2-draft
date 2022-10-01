@@ -54,8 +54,6 @@ import kohii.v2.core.PlayableState.Initialized
 import kohii.v2.core.PlayerPool
 import kohii.v2.core.PlayerProgress
 import kohii.v2.internal.doOnTrackInfoChanged
-import kohii.v2.internal.hexCode
-import kohii.v2.internal.logInfo
 
 /**
  * A [Bridge] that works with [PlayerView] and [ExoPlayer].
@@ -291,9 +289,7 @@ internal class PlayerViewBridge(
   override fun onEvents(
     player: Player,
     events: Events,
-  ) {
-    "Bridge[${hexCode()}]_STATS [stats=${playbackStatsListener.playbackStats}]".logInfo()
-  }
+  ) = Unit
 
   override fun onPlaybackStateChanged(playbackState: Int) {
     lastSeenPlayerState = playbackState

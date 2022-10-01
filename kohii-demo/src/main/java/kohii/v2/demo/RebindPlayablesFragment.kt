@@ -22,16 +22,11 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.media3.ui.PlayerView
 import kohii.v2.common.ExperimentalKohiiApi
-import kohii.v2.core.Engine
-import kohii.v2.core.Manager
+import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.Playback
-import kohii.v2.core.playbackManager
 import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.databinding.FragmentSwitchPlayablesBinding
-import kohii.v2.exoplayer.PlayerViewPlayableCreator
-import kohii.v2.exoplayer.getPlayerViewProvider
 import kotlin.LazyThreadSafetyMode.NONE
 
 @ExperimentalKohiiApi
@@ -46,17 +41,11 @@ class RebindPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
     savedInstanceState: Bundle?,
   ) {
     super.onViewCreated(view, savedInstanceState)
-    val manager: Manager = playbackManager()
     val binding: FragmentSwitchPlayablesBinding = FragmentSwitchPlayablesBinding.bind(view)
     binding.details.isVisible = false
 
-    manager.bucket(binding.videos)
-
-    val engine = Engine.get<PlayerView>(
-      manager = manager,
-      playableCreator = PlayerViewPlayableCreator.getInstance(requireContext()),
-      rendererProvider = requireActivity().getPlayerViewProvider(),
-    )
+    val engine = ExoPlayerEngine()
+    engine.useBucket(binding.videos)
 
     // Example: observing Playback flows of a specific tag.
     binding.removeAll.setOnClickListener {

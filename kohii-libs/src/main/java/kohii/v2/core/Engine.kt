@@ -32,8 +32,6 @@ class Engine constructor(
   internal val rendererProvider: RendererProvider,
 ) : DefaultLifecycleObserver {
 
-  val home: Home = manager.home
-
   init {
     manager.lifecycleOwner.lifecycle.addObserver(this)
   }

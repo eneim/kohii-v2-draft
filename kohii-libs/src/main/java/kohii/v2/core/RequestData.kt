@@ -21,11 +21,12 @@ import android.os.Parcelable
 import androidx.media3.common.MediaItem
 
 /**
- * A class that needs to be a [Parcelable] and knows how to build a [MediaItem].
+ * Definition of the data that can be used in Kohii's requests.
  *
  * Client can implement this class to provide a custom behavior, such as to retain the full data of
  * a [MediaItem] after configuration change. Note that, the default behavior of a [MediaItem]
- * ignores the [MediaItem.localConfiguration] across serializations.
+ * ignores the [MediaItem.localConfiguration] across serializations. Clients that need to retain
+ * those information should use this interface to save and restore them.
  */
 interface RequestData : Parcelable {
 

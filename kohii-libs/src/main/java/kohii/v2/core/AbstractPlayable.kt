@@ -21,12 +21,7 @@ import kohii.v2.core.PlayableState.Initialized
 import kohii.v2.internal.asString
 import kohii.v2.internal.hexCode
 import kohii.v2.internal.logInfo
-import kohii.v2.internal.logWarn
 
-/**
- * @param firstManager The first [PlayableManager] that manages this [Playable]. In practice, a
- * [Playable] can be managed by different [PlayableManager]s in different times.
- */
 abstract class AbstractPlayable(
   home: Home,
   tag: String,
@@ -47,17 +42,15 @@ abstract class AbstractPlayable(
   override fun currentState(): PlayableState = Initialized
 
   @CallSuper
-  override fun onRelease() {
-    "Playable[${hexCode()}]_RELEASE".logInfo()
-  }
+  override fun onRelease() = Unit
 
   @CallSuper
   override fun onRendererAttached(renderer: Any?) {
-    "Playable[${hexCode()}]_ATTACH_Renderer [RR=${renderer?.asString()}]".logWarn()
+    "Playable[${hexCode()}] attaches [RR=${renderer?.asString()}]".logInfo()
   }
 
   @CallSuper
   override fun onRendererDetached(renderer: Any?) {
-    "Playable[${hexCode()}]_DETACH_Renderer [RR=${renderer?.asString()}]".logWarn()
+    "Playable[${hexCode()}] detaches [RR=${renderer?.asString()}]".logInfo()
   }
 }

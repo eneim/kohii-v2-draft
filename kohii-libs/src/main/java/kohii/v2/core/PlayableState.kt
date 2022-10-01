@@ -19,6 +19,7 @@ package kohii.v2.core
 import android.os.Bundle
 import android.os.Parcelable
 import androidx.core.os.bundleOf
+import kohii.v2.internal.getParcelableCompat
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -80,17 +81,15 @@ sealed interface PlayableState {
     private const val KEY_PLAYABLE_STATE = "KEY_PLAYABLE_STATE"
 
     fun Bundle.toPlayableState(): PlayableState? {
-      return getParcelable(
-        /* key = */ KEY_PLAYABLE_STATE,
-        /* clazz = */ Active::class.java
-      ) ?: getString(KEY_PLAYABLE_STATE)?.let { state ->
-        when (state) {
-          Initialized.toString() -> Initialized
-          Idle.toString() -> Idle
-          Ended.toString() -> Ended
-          else -> null
+      return getParcelableCompat<Active>(KEY_PLAYABLE_STATE)
+        ?: getString(KEY_PLAYABLE_STATE)?.let { state ->
+          when (state) {
+            Initialized.toString() -> Initialized
+            Idle.toString() -> Idle
+            Ended.toString() -> Ended
+            else -> null
+          }
         }
-      }
     }
   }
 }

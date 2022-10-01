@@ -34,8 +34,8 @@ import kohii.v2.internal.awaitStarted
 import kohii.v2.internal.debugOnly
 import kohii.v2.internal.hexCode
 import kohii.v2.internal.logInfo
-import kohii.v2.internal.logStackTrace
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -48,11 +48,15 @@ class Home private constructor(context: Context) {
 
   val application = context.applicationContext as Application
 
+  @JvmSynthetic
   internal val playables = mutableMapOf<Playable, PlayableKey>()
+
+  @JvmSynthetic
   internal val pendingRequests = mutableMapOf<Any /* Container, PlayableKey */, RequestHandleImpl>()
   private val scope = CoroutineScope(
-    context = SupervisorJob() +
+    SupervisorJob() +
       Dispatchers.Main.immediate +
+      CoroutineName("Kohii Coroutine Scope") +
       CoroutineExceptionHandler { _, throwable -> debugOnly(throwable::printStackTrace) }
   )
 
@@ -71,6 +75,7 @@ class Home private constructor(context: Context) {
     })
   } */
 
+  @JvmSynthetic
   internal fun registerManagerInternal(
     owner: Any,
     managerLifecycleOwner: LifecycleOwner,
@@ -80,7 +85,7 @@ class Home private constructor(context: Context) {
       "The manager $managerLifecycleOwner is already destroyed"
     }
 
-    val groupLifecycleOwner = when (owner) {
+    val groupLifecycleOwner: LifecycleOwner = when (owner) {
       is ComponentActivity -> owner
       is Fragment -> owner.requireActivity()
       else -> managerLifecycleOwner
@@ -90,52 +95,51 @@ class Home private constructor(context: Context) {
       "The group $groupLifecycleOwner is already destroyed"
     }
 
-    val group: Group = groups
-      .find { it.lifecycleOwner === groupLifecycleOwner }
-      ?: Group(this, groupLifecycleOwner)
-        .also { newGroup ->
-          groups.add(newGroup)
-          groupLifecycleOwner.lifecycle.addObserver(newGroup)
-        }
+    val group: Group = groups.find { it.lifecycleOwner === groupLifecycleOwner }
+      ?: Group(this, groupLifecycleOwner).also { newGroup ->
+        groups.add(newGroup)
+        groupLifecycleOwner.lifecycle.addObserver(newGroup)
+      }
 
-    return group.managers
-      .find { it.lifecycleOwner === managerLifecycleOwner && it.owner == owner }
+    return group.managers.find { it.lifecycleOwner === managerLifecycleOwner && it.owner == owner }
       ?: Manager(
         home = this,
         owner = owner,
         group = group,
         playableManager = managerViewModel.value,
         lifecycleOwner = managerLifecycleOwner
-      )
-        .also { newManager ->
-          group.addManager(newManager)
-          managerLifecycleOwner.lifecycle.addObserver(newManager)
-        }
+      ).also { newManager ->
+        group.addManager(newManager)
+        managerLifecycleOwner.lifecycle.addObserver(newManager)
+      }
   }
 
+  @JvmSynthetic
   internal fun startPlayable(playable: Playable) {
     playable.onReady()
     playable.onStart()
   }
 
+  @JvmSynthetic
   internal fun pausePlayable(playable: Playable) {
     playable.onPause()
   }
 
+  @JvmSynthetic
   internal fun cancelPlayableDestruction(playable: Playable) {
-    "Home[${hexCode()}] cancels [PB=$playable] destruction".logInfo()
     dispatcher.cancelPlayableDestroy(playable)
   }
 
+  @JvmSynthetic
   internal fun destroyPlayableDelayed(
     playable: Playable,
     delayMillis: Long,
   ) {
-    "Home[${hexCode()}] destroys [PB=$playable, delay=$delayMillis]".logStackTrace()
     cancelPlayableDestruction(playable)
     dispatcher.dispatchDestroyPlayable(playable, delayMillis)
   }
 
+  @JvmSynthetic
   internal fun enqueueRequest(
     container: Any,
     request: BindRequest,
@@ -151,7 +155,7 @@ class Home private constructor(context: Context) {
         val playback = request.onBind()
         request.callback?.onSuccess(playback, request.request)
         return@async Result.success(playback)
-      } catch (error: Throwable) {
+      } catch (error: Exception) {
         if (error is CancellationException) {
           request.callback?.onCanceled(error, request.request)
         } else {
@@ -175,14 +179,15 @@ class Home private constructor(context: Context) {
         pendingRequests[request.playableKey] = requestHandle
       }
     }
-    "Home[${hexCode()}]_ENQUEUE_Request [handle=${requestHandle.hexCode()}] [R=$request] [C=${container.asString()}]".logInfo()
+    "Home[${hexCode()}] enqueues [H=${requestHandle.hexCode()}] [R=$request] [C=${container.asString()}]".logInfo()
     return requestHandle
   }
 
+  @JvmSynthetic
   internal fun onGroupDestroyed(group: Group) {
     groups.remove(group)
     if (groups.isEmpty()) {
-      // TODO: improve to avoid new allocation.
+      // Note: handle.cancel will mutate pendingRequests.
       pendingRequests.entries
         .toMutableSet()
         .onEach { (_, handle) -> handle.cancel() }
@@ -194,15 +199,14 @@ class Home private constructor(context: Context) {
   //region Public APIs
   @ExperimentalKohiiApi
   fun cancel(tag: String) {
-    playables.keys.firstOrNull { it.tag == tag }
-      ?.playback
-      ?.unbind()
+    playables.keys.firstOrNull { it.tag == tag }?.playback?.unbind()
       ?: pendingRequests.values.firstOrNull { it.request.tag == tag }?.cancel()
   }
   //endregion
 
   companion object {
 
+    @JvmSynthetic
     internal const val NO_TAG = ""
 
     private val capsule: Capsule<Home, Context> = Capsule(::Home)

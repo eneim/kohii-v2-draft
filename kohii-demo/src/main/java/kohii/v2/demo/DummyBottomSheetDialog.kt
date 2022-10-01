@@ -24,23 +24,18 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.media3.common.Player
-import androidx.media3.ui.PlayerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import kohii.v2.core.Engine
-import kohii.v2.core.Manager
+import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.Playback
 import kohii.v2.core.PlayerEventListener
 import kohii.v2.core.Request
-import kohii.v2.core.playbackManager
 import kohii.v2.demo.common.doOnStateChanged
 import kohii.v2.demo.common.getParcelableCompat
 import kohii.v2.demo.common.viewBinding
 import kohii.v2.demo.databinding.FragmentDummySheetBinding
-import kohii.v2.exoplayer.PlayerViewPlayableCreator
-import kohii.v2.exoplayer.getPlayerViewProvider
 import kotlin.LazyThreadSafetyMode.NONE
 
 class DummyBottomSheetDialog : BottomSheetDialogFragment() {
@@ -69,14 +64,8 @@ class DummyBottomSheetDialog : BottomSheetDialogFragment() {
     savedInstanceState: Bundle?,
   ) {
     super.onViewCreated(view, savedInstanceState)
-    val manager: Manager = playbackManager()
-    manager.bucket(binding.root)
-
-    val engine = Engine.get<PlayerView>(
-      manager = manager,
-      playableCreator = PlayerViewPlayableCreator.getInstance(view.context),
-      rendererProvider = requireActivity().getPlayerViewProvider(),
-    )
+    val engine = ExoPlayerEngine()
+    engine.useBucket(binding.root)
 
     engine.setUp(request).bind(container = binding.videoContainer) {
       addPlayerEventListener(object : PlayerEventListener {

@@ -17,6 +17,7 @@
 package kohii.v2.internal
 
 import android.os.Build
+import android.os.Bundle
 import android.os.Looper
 import android.os.Parcel
 import android.util.Log
@@ -52,48 +53,51 @@ internal fun <T : Any> T.asString(): String = if (this is View) {
   this.toString()
 }
 
+@JvmSynthetic
 internal fun <T : Any> T.hexCode(): String = Integer.toHexString(hashCode())
 
 // Because I want to compose the message first, then log it.
-@RestrictTo(LIBRARY_GROUP_PREFIX)
+@RestrictTo(LIBRARY_GROUP_PREFIX) @JvmSynthetic
 internal fun String.logDebug(tag: String = "${BuildConfig.LIBRARY_PACKAGE_NAME}.log") {
   if (BuildConfig.DEBUG) {
     Log.d(tag, this)
   }
 }
 
-@RestrictTo(LIBRARY_GROUP_PREFIX)
+@RestrictTo(LIBRARY_GROUP_PREFIX) @JvmSynthetic
 internal fun String.logInfo(tag: String = "${BuildConfig.LIBRARY_PACKAGE_NAME}.log") {
   if (BuildConfig.DEBUG) {
     Log.i(tag, this)
   }
 }
 
-@RestrictTo(LIBRARY_GROUP_PREFIX)
+@RestrictTo(LIBRARY_GROUP_PREFIX) @JvmSynthetic
 internal fun String.logWarn(tag: String = "${BuildConfig.LIBRARY_PACKAGE_NAME}.log") {
   if (BuildConfig.DEBUG) {
     Log.w(tag, this)
   }
 }
 
-@RestrictTo(LIBRARY_GROUP_PREFIX)
+@RestrictTo(LIBRARY_GROUP_PREFIX) @JvmSynthetic
 internal fun String.logError(tag: String = "${BuildConfig.LIBRARY_PACKAGE_NAME}.log") {
   if (BuildConfig.DEBUG) {
     Log.e(tag, this)
   }
 }
 
-@RestrictTo(LIBRARY_GROUP_PREFIX)
+@RestrictTo(LIBRARY_GROUP_PREFIX) @JvmSynthetic
 internal fun String.logStackTrace(tag: String = "${BuildConfig.LIBRARY_PACKAGE_NAME}.log") {
   if (BuildConfig.DEBUG) {
     Log.w(tag, Log.getStackTraceString(Throwable(this)))
   }
 }
 
+@JvmSynthetic
 internal inline fun debugOnly(action: () -> Unit) {
   if (BuildConfig.DEBUG) action()
 }
 
+@JvmSynthetic
 internal inline fun <T> Iterable<T>.partitionToMutableSets(
   predicate: (T) -> Boolean,
 ): Pair<MutableSet<T>, MutableSet<T>> {
@@ -112,6 +116,7 @@ internal inline fun <T> Iterable<T>.partitionToMutableSets(
 /**
  * Removes all item from this object, and applies [action] on each item after it is removed.
  */
+@JvmSynthetic
 internal inline fun <T> MutableIterator<T>.onRemoveEach(action: (T) -> Unit) {
   while (hasNext()) {
     val target = next()
@@ -120,10 +125,11 @@ internal inline fun <T> MutableIterator<T>.onRemoveEach(action: (T) -> Unit) {
   }
 }
 
+@JvmSynthetic
 internal inline fun <T> MutableCollection<T>.onRemoveEach(action: (T) -> Unit) =
   iterator().onRemoveEach(action)
 
-@MainThread
+@MainThread @JvmSynthetic
 internal inline fun <reified T : Any> View.getTagOrPut(
   key: Int,
   createNew: () -> T,
@@ -131,9 +137,10 @@ internal inline fun <reified T : Any> View.getTagOrPut(
   getTag(key) as? T ?: createNew().also { value -> setTag(key, value) }
 }
 
-@MainThread
+@MainThread @JvmSynthetic
 internal inline fun <reified T : Any> View.getTypedTag(key: Int): T? = getTag(key) as? T
 
+@JvmSynthetic
 internal inline fun Player.doOnTrackInfoChanged(
   crossinline action: Player.(Tracks) -> Unit,
 ) = addListener(object : Player.Listener {
@@ -143,11 +150,21 @@ internal inline fun Player.doOnTrackInfoChanged(
   }
 })
 
-@Suppress("DEPRECATION")
+@JvmSynthetic @Suppress("DEPRECATION")
+inline fun <reified T : Any> Bundle.getParcelableCompat(key: String): T? {
+  return if (Build.VERSION.SDK_INT >= 33) {
+    getParcelable(key, T::class.java)
+  } else {
+    getParcelable(key) as? T
+  }
+}
+
+@JvmSynthetic @Suppress("DEPRECATION")
 internal inline fun <reified T : Any> Parcel.readArrayListCompat(classLoader: ClassLoader?): ArrayList<T>? {
   return if (Build.VERSION.SDK_INT >= 33) {
     readArrayList(classLoader, T::class.java)
   } else {
+    @Suppress("UNCHECKED_CAST")
     readArrayList(classLoader) as? ArrayList<T>
   }
 }

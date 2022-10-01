@@ -22,43 +22,29 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.clearFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
-import androidx.media3.ui.PlayerView
-import kohii.v2.common.ExperimentalKohiiApi
-import kohii.v2.core.Engine
-import kohii.v2.core.Manager
+import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.Request
-import kohii.v2.core.playbackManager
 import kohii.v2.demo.DummyBottomSheetDialog.Companion.ARGS_REQUEST
 import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.common.getParcelableCompat
 import kohii.v2.demo.databinding.FragmentVideoInScrollViewBinding
-import kohii.v2.exoplayer.PlayerViewPlayableCreator
-import kohii.v2.exoplayer.getPlayerViewProvider
 
 class VideoInScrollViewFragment : Fragment(R.layout.fragment_video_in_scroll_view) {
 
-  @OptIn(ExperimentalKohiiApi::class)
   override fun onViewCreated(
     view: View,
     savedInstanceState: Bundle?,
   ) {
     super.onViewCreated(view, savedInstanceState)
-    val manager: Manager = playbackManager()
     val binding = FragmentVideoInScrollViewBinding.bind(view)
-    //region Setup the Manager
-    if (binding.videoContainer.parent == binding.videoArea) {
-      manager.bucket(binding.videoArea ?: binding.content)
-    } else {
-      manager.bucket(binding.videos)
-    }
-    //endregion
 
     //region Setup the Engine
-    val engine = Engine.get<PlayerView>(
-      manager = manager,
-      playableCreator = PlayerViewPlayableCreator.getInstance(view.context),
-      rendererProvider = requireActivity().getPlayerViewProvider(),
-    )
+    val engine = ExoPlayerEngine()
+    if (binding.videoContainer.parent == binding.videoArea) {
+      engine.useBucket(binding.videoArea ?: binding.content)
+    } else {
+      engine.useBucket(binding.videos)
+    }
     //endregion
 
     setFragmentResultListener(VIDEO_TAG) { _, bundle ->

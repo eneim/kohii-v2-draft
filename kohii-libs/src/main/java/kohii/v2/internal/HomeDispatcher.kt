@@ -22,6 +22,9 @@ import android.os.Message
 import kohii.v2.core.Home
 import kohii.v2.core.Playable
 
+private const val DEFAULT_DELAY = 0L
+private const val MSG_DESTROY_PLAYABLE = 1
+
 internal class HomeDispatcher(private val home: Home) : Handler(Looper.getMainLooper()) {
 
   fun dispatchDestroyPlayable(
@@ -35,23 +38,17 @@ internal class HomeDispatcher(private val home: Home) : Handler(Looper.getMainLo
   fun cancelPlayableDestroy(playable: Playable) = removeMessages(MSG_DESTROY_PLAYABLE, playable)
 
   override fun handleMessage(msg: Message) {
-    "Home[${home.hexCode()}] handles [MS=$msg]".logDebug()
     when (msg.what) {
       MSG_DESTROY_PLAYABLE -> performDestroyPlayable(msg.obj as Playable)
     }
   }
 
   private fun performDestroyPlayable(playable: Playable) {
-    "Home[${home.hexCode()}] destroys [PB=$playable]".logInfo()
+    "Home[${home.hexCode()}] destroys [PB=$playable]".logStackTrace()
     playable.trySavePlayableState()
     playable.onPause()
     playable.onRelease()
     playable.onDestroy()
     home.playables.remove(playable)
-  }
-
-  private companion object {
-    const val MSG_DESTROY_PLAYABLE = 1
-    const val DEFAULT_DELAY = 0L
   }
 }
