@@ -141,7 +141,7 @@ internal inline fun <reified T : Any> View.getTagOrPut(
 internal inline fun <reified T : Any> View.getTypedTag(key: Int): T? = getTag(key) as? T
 
 @JvmSynthetic
-internal inline fun Player.doOnTrackInfoChanged(
+internal inline fun Player.doOnTracksChanged(
   crossinline action: Player.(Tracks) -> Unit,
 ) = addListener(object : Player.Listener {
   override fun onTracksChanged(tracks: Tracks) {
@@ -152,7 +152,7 @@ internal inline fun Player.doOnTrackInfoChanged(
 
 @JvmSynthetic @Suppress("DEPRECATION")
 inline fun <reified T : Any> Bundle.getParcelableCompat(key: String): T? {
-  return if (Build.VERSION.SDK_INT >= 33) {
+  return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU /* 33 */) {
     getParcelable(key, T::class.java)
   } else {
     getParcelable(key) as? T
@@ -161,7 +161,7 @@ inline fun <reified T : Any> Bundle.getParcelableCompat(key: String): T? {
 
 @JvmSynthetic @Suppress("DEPRECATION")
 internal inline fun <reified T : Any> Parcel.readArrayListCompat(classLoader: ClassLoader?): ArrayList<T>? {
-  return if (Build.VERSION.SDK_INT >= 33) {
+  return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU /* 33 */) {
     readArrayList(classLoader, T::class.java)
   } else {
     @Suppress("UNCHECKED_CAST")

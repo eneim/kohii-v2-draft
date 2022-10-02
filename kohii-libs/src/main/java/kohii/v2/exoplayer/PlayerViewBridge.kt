@@ -53,7 +53,7 @@ import kohii.v2.core.PlayableState.Idle
 import kohii.v2.core.PlayableState.Initialized
 import kohii.v2.core.PlayerPool
 import kohii.v2.core.PlayerProgress
-import kohii.v2.internal.doOnTrackInfoChanged
+import kohii.v2.internal.doOnTracksChanged
 
 /**
  * A [Bridge] that works with [PlayerView] and [ExoPlayer].
@@ -181,7 +181,7 @@ internal class PlayerViewBridge(
           if (lastSeenTracks !== Tracks.EMPTY) {
             player.trackSelectionParameters = playerState.trackSelectionParameters
           } else {
-            player.doOnTrackInfoChanged {
+            player.doOnTracksChanged {
               player.trackSelectionParameters = playerState.trackSelectionParameters
             }
           }
@@ -334,7 +334,7 @@ internal class PlayerViewBridge(
 
     if (playerExtras !== ExoPlayerExtras.DEFAULT) {
       player.player.parameters = playerExtras.playerParameters
-      player.doOnTrackInfoChanged {
+      player.doOnTracksChanged {
         trackSelectionParameters = playerExtras.trackSelectionParameters
       }
     }
