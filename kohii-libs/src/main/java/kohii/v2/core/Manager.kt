@@ -79,7 +79,7 @@ class Manager(
   internal val isChangingConfigurations: Boolean
     get() = when (owner) {
       is Activity -> owner.isChangingConfigurations
-      is Fragment -> owner.activity?.isChangingConfigurations == true
+      is Fragment -> owner.activity?.isChangingConfigurations ?: false
       else -> false
     }
 
@@ -111,7 +111,7 @@ class Manager(
   internal fun stickBucketInternal(bucket: Bucket) {
     checkMainThread()
     require(buckets.contains(bucket)) {
-      "$bucket is not registered. Please add it before stick it."
+      "$bucket is not registered. Please add it before sticking it."
     }
     if (bucket !== stickyBucket) {
       stickyBucket?.let(::unstickBucketInternal)
@@ -239,6 +239,7 @@ class Manager(
         }
         .firstOrNull(Collection<Playback>::isNotEmpty)
         .orEmpty()
+        .toSet()
         .also { playbacks ->
           toPlay.addAll(playbacks)
           activePlaybacks.removeAll(playbacks)

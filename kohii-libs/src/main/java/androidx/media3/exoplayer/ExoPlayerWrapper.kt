@@ -24,8 +24,8 @@ import kohii.v2.exoplayer.PlayerParameters
 import kohii.v2.exoplayer.PlayerViewBridge
 
 /**
- * A wrapper for [ExoPlayer] that also exposes the [DefaultMediaSourceFactory] instance if it is use
- * to create the player instance. This is used by the [PlayerViewBridge] to setup for Ad
+ * A wrapper of the [ExoPlayer] that also exposes the [DefaultMediaSourceFactory] instance if it is
+ * used to create the player instance. This is used by the [PlayerViewBridge] to setup for Ad
  * playback.
  */
 class ExoPlayerWrapper private constructor(
@@ -82,6 +82,8 @@ class ExoPlayerWrapper private constructor(
   }
 }
 
+@get:JvmSynthetic
+@set:JvmSynthetic
 internal var ExoPlayer.parameters: PlayerParameters
   get() = if (this is ExoPlayerWrapper) {
     playerParameters
@@ -95,8 +97,9 @@ internal var ExoPlayer.parameters: PlayerParameters
     )
   }
   set(value) {
-    if (this is ExoPlayerWrapper) playerParameters = value
-    else {
+    if (this is ExoPlayerWrapper) {
+      playerParameters = value
+    } else {
       volume = value.volume
       repeatMode = value.repeatMode
       shuffleModeEnabled = value.shuffleModeEnabled

@@ -16,6 +16,7 @@
 
 package kohii.v2.demo.common
 
+@Suppress("MatchingDeclarationName")
 object VideoUrls {
 
   const val SINTEL_HLS = "https://bitmovin-a.akamaihd.net/content/sintel/hls/playlist.m3u8"

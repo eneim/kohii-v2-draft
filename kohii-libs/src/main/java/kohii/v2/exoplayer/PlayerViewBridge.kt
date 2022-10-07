@@ -18,20 +18,22 @@ package kohii.v2.exoplayer
 
 import android.content.Context
 import android.util.Pair
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.annotation.VisibleForTesting
 import androidx.media3.common.AdOverlayInfo
 import androidx.media3.common.AdOverlayInfo.Purpose
+import androidx.media3.common.AdViewProvider
 import androidx.media3.common.C
 import androidx.media3.common.ErrorMessageProvider
 import androidx.media3.common.ForwardingPlayer
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaItem.AdsConfiguration
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Player.Events
 import androidx.media3.common.Tracks
-import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.ExoPlayerWrapper
 import androidx.media3.exoplayer.analytics.PlaybackStatsListener
@@ -39,6 +41,7 @@ import androidx.media3.exoplayer.ima.ImaAdsLoader
 import androidx.media3.exoplayer.mediacodec.MediaCodecRenderer.DecoderInitializationException
 import androidx.media3.exoplayer.mediacodec.MediaCodecUtil.DecoderQueryException
 import androidx.media3.exoplayer.parameters
+import androidx.media3.exoplayer.source.ads.AdsLoader
 import androidx.media3.ui.PlayerView
 import com.google.ads.interactivemedia.v3.api.FriendlyObstruction
 import com.google.ads.interactivemedia.v3.api.FriendlyObstructionPurpose
@@ -63,7 +66,7 @@ import kohii.v2.internal.doOnTracksChanged
  * [ImaAdsLoader].
  */
 // TODO: when a video is paused manually, do not start the next one automatically :thinking:
-@UnstableApi
+@Suppress("TooManyFunctions", "ForbiddenComment")
 internal class PlayerViewBridge(
   context: Context,
   private val mediaItems: List<MediaItem>,
@@ -77,12 +80,13 @@ internal class PlayerViewBridge(
   private var imaSetupBundle: ImaSetupBundle? = null
   private var internalPlayer: InternalExoPlayerWrapper? = null
     set(value) {
-      if (field !== value) {
-        field?.wrappedPlayer?.removeAnalyticsListener(playbackStatsListener)
-        field?.wrappedPlayer?.removeListener(componentsListeners)
+      val previous = field
+      if (previous !== value) {
+        previous?.wrappedPlayer?.removeAnalyticsListener(playbackStatsListener)
+        previous?.wrappedPlayer?.removeListener(componentsListeners)
         field = value
-        field?.wrappedPlayer?.addListener(componentsListeners)
-        field?.wrappedPlayer?.addAnalyticsListener(playbackStatsListener)
+        value?.wrappedPlayer?.addListener(componentsListeners)
+        value?.wrappedPlayer?.addAnalyticsListener(playbackStatsListener)
       }
     }
 
@@ -91,16 +95,17 @@ internal class PlayerViewBridge(
   private var lastSeenTracks: Tracks = Tracks.EMPTY
   private var playerPrepared = false
 
-  // A temporary data for restoration only. It will be cleared after the restoration.
-  private var lastSeenState: Active = Active.DEFAULT
+  // A temporary data for restoration only. It will be reset after the restoration.
+  private var lastSeenPlayableState: Active = Active.DEFAULT
 
   override var renderer: PlayerView? = null
     set(value) {
-      if (field === value) return
+      val previous = field
+      if (previous === value) return
 
       val imaBundle = imaSetupBundle
 
-      field?.let { playerView ->
+      previous?.let { playerView ->
         playerView.setErrorMessageProvider(null)
         playerView.setCustomErrorMessage(null)
         if (imaBundle != null) {
@@ -110,7 +115,7 @@ internal class PlayerViewBridge(
       }
 
       internalPlayer?.let { player ->
-        PlayerView.switchTargetView(player, field, value)
+        PlayerView.switchTargetView(player, previous, value)
       }
 
       if (value != null) {
@@ -185,9 +190,9 @@ internal class PlayerViewBridge(
               player.trackSelectionParameters = playerState.trackSelectionParameters
             }
           }
-          lastSeenState = Active.DEFAULT
+          lastSeenPlayableState = Active.DEFAULT
         } else {
-          lastSeenState = value
+          lastSeenPlayableState = value
         }
       }
     }
@@ -200,10 +205,7 @@ internal class PlayerViewBridge(
     }
 
   override val isPlaying: Boolean
-    get() {
-      val player = internalPlayer ?: return false
-      return player.isPlaying
-    }
+    get() = internalPlayer?.isPlaying ?: false
 
   override fun prepare(loadSource: Boolean) {
     super.addComponentsListener(playerListener)
@@ -232,7 +234,7 @@ internal class PlayerViewBridge(
 
   override fun reset() {
     (internalPlayer?.wrappedPlayer as? ExoPlayerWrapper)?.resetAdsBundle()
-    lastSeenState = Active.DEFAULT
+    lastSeenPlayableState = Active.DEFAULT
     internalPlayer?.let { player ->
       player.stop()
       player.clearMediaItems()
@@ -247,7 +249,7 @@ internal class PlayerViewBridge(
   // Playable. When it is scrolled back, the Playable will be prepared again.
   override fun release() {
     renderer?.player = null
-    lastSeenState = Active.DEFAULT
+    lastSeenPlayableState = Active.DEFAULT
     internalPlayer?.let { player ->
       player.stop()
       player.clearMediaItems()
@@ -328,9 +330,9 @@ internal class PlayerViewBridge(
       InternalExoPlayerWrapper(player = playerPool.getPlayer(mediaItems))
     }
 
-    val activeState = lastSeenState
+    val activeState = lastSeenPlayableState
     val playerExtras = activeState.extras as? ExoPlayerExtras ?: ExoPlayerExtras.DEFAULT
-    lastSeenState = Active.DEFAULT
+    lastSeenPlayableState = Active.DEFAULT
 
     if (playerExtras !== ExoPlayerExtras.DEFAULT) {
       player.player.parameters = playerExtras.playerParameters
@@ -427,7 +429,37 @@ internal class PlayerViewBridge(
   private inner class InternalExoPlayerWrapper(val player: ExoPlayer) : ForwardingPlayer(player) {
     override fun play() = controller.play()
     override fun pause() = controller.pause()
-    override fun getWrappedPlayer(): ExoPlayer = player // Typed overriding.
+    override fun getWrappedPlayer(): ExoPlayer = player
+  }
+
+  /**
+   * A helper class used by the [PlayerViewBridge] to setup ads playback.
+   *
+   * This class uses a prebuilt [AdsLoader] but doesn't use the provided [AdsConfiguration] to
+   * create the [AdsLoader] instance.
+   */
+  private class ImaSetupBundle(
+    val adsLoader: ImaAdsLoader,
+    private val adViewGroup: FrameLayout,
+  ) : AdsLoader.Provider, AdViewProvider {
+
+    override fun getAdsLoader(adsConfiguration: AdsConfiguration): AdsLoader = adsLoader
+    override fun getAdViewGroup(): ViewGroup = adViewGroup
+    override fun getAdOverlayInfos(): MutableList<AdOverlayInfo> = mutableListOf()
+
+    // Must be called before player.prepare()
+    fun ready(player: Player) {
+      adsLoader.setPlayer(player)
+    }
+
+    fun reset() {
+      adsLoader.setPlayer(null)
+    }
+
+    fun release() {
+      adsLoader.setPlayer(null)
+      adsLoader.release()
+    }
   }
 
   private companion object {

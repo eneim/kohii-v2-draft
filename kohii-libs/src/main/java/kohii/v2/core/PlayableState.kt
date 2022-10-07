@@ -81,7 +81,7 @@ sealed interface PlayableState {
     private const val KEY_PLAYABLE_STATE = "KEY_PLAYABLE_STATE"
 
     fun Bundle.toPlayableState(): PlayableState? {
-      return getParcelableCompat<Active>(KEY_PLAYABLE_STATE)
+      return this.getParcelableCompat<Any>(KEY_PLAYABLE_STATE) as? Active
         ?: getString(KEY_PLAYABLE_STATE)?.let { state ->
           when (state) {
             Initialized.toString() -> Initialized

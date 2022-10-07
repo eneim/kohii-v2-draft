@@ -19,10 +19,8 @@ package kohii.v2.exoplayer
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.annotation.FloatRange
-import androidx.annotation.OptIn
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
-import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize
@@ -30,7 +28,6 @@ import kotlinx.parcelize.Parcelize
 /**
  * Common parameters used to restore an [ExoPlayer] instance.
  */
-@OptIn(UnstableApi::class)
 @Parcelize
 class PlayerParameters(
   @FloatRange(from = 0.0, to = 1.0) val volume: Float = 1.0f,

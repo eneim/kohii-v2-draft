@@ -17,10 +17,8 @@
 package kohii.v2.exoplayer
 
 import android.content.Context
-import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
 import androidx.media3.common.TrackSelectionParameters
-import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.ExoPlayer.Builder
 import androidx.media3.exoplayer.ExoPlayerWrapper
@@ -30,7 +28,6 @@ import kohii.v2.core.PlayerPool
 /**
  * A [PlayerPool] that manages instances of [ExoPlayer]s.
  */
-@OptIn(UnstableApi::class)
 class ExoPlayerPool(
   context: Context,
   private val builder: Builder.() -> Unit = {},

@@ -34,7 +34,7 @@ abstract class PlayerPool<PLAYER : Any> @JvmOverloads constructor(
     require(poolSize > 0) { "Pool size must be positive." }
   }
 
-  private val playerPool = arraySetOf<PLAYER>()
+  private val pool = arraySetOf<PLAYER>()
 
   /**
    * Returns `true` if the [PLAYER] instance can be used to play the [mediaData], `false` otherwise.
@@ -71,20 +71,20 @@ abstract class PlayerPool<PLAYER : Any> @JvmOverloads constructor(
    * @param mediaData The media data.
    * @return a [PLAYER] instance that can be used to play the [mediaData].
    */
-  fun getPlayer(mediaData: Any): PLAYER = playerPool.find { it.accept(mediaData) }
-    ?.also { playerPool.remove(it) }
+  fun getPlayer(mediaData: Any): PLAYER = pool.find { it.accept(mediaData) }
+    ?.also(pool::remove)
     ?: createPlayer(mediaData)
 
   /**
    * Releases an unused [PLAYER] to the pool. If the pool is already full, the client needs to
-   * destroy the [PLAYER] instance. Return `true` if the instance is successfully put back to the
+   * destroy the [PLAYER] instance. Return `true` if the instance is successfully added to the
    * pool, or `false` otherwise.
    *
-   * @param player The [PLAYER] to be put back to the pool.
-   * @return `true` if the instance is successfully put back to the pool, or `false` otherwise.
+   * @param player The [PLAYER] to be released to the pool.
+   * @return `true` if the instance is successfully added to the pool, or `false` otherwise.
    */
   fun putPlayer(player: PLAYER): Boolean {
-    return if (!playerPool.release(player, poolSize)) {
+    return if (!pool.release(player, poolSize)) {
       destroyPlayer(player)
       false
     } else {
@@ -98,7 +98,7 @@ abstract class PlayerPool<PLAYER : Any> @JvmOverloads constructor(
    */
   @CallSuper
   open fun clear() {
-    playerPool.onEach(::destroyPlayer).clear()
+    pool.onEach(::destroyPlayer).clear()
   }
 
   companion object {

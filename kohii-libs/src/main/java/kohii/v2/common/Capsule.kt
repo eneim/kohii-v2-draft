@@ -19,7 +19,7 @@ package kohii.v2.common
 /**
  * Singleton Holder
  */
-open class Capsule<OUTPUT : Any, in INPUT>(
+internal open class Capsule<OUTPUT : Any, in INPUT>(
   creator: (INPUT) -> OUTPUT,
   onCreate: ((OUTPUT) -> Unit) = { },
 ) {
@@ -28,26 +28,20 @@ open class Capsule<OUTPUT : Any, in INPUT>(
   private var creator: ((INPUT) -> OUTPUT)? = creator
   private var onCreate: ((OUTPUT) -> Unit)? = onCreate
 
-  private fun getInstance(arg: INPUT): OUTPUT {
+  private fun getInstance(arg: INPUT): OUTPUT = instance ?: synchronized(this) {
     val check = instance
     if (check != null) {
-      return check
-    }
-
-    return synchronized(this) {
-      val doubleCheck = instance
-      if (doubleCheck != null) {
-        doubleCheck
-      } else {
-        val created = checkNotNull(creator)(arg)
-        checkNotNull(onCreate)(created)
-        instance = created
-        creator = null
-        onCreate = null
-        created
-      }
+      check
+    } else {
+      val created = checkNotNull(creator)(arg)
+      checkNotNull(onCreate)(created)
+      instance = created
+      creator = null
+      onCreate = null
+      created
     }
   }
 
+  @JvmSynthetic
   fun get(arg: INPUT): OUTPUT = getInstance(arg)
 }

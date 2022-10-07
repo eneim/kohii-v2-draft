@@ -32,7 +32,6 @@ import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
 import androidx.media3.common.text.CueGroup
-import androidx.media3.common.util.UnstableApi
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
 import com.google.ads.interactivemedia.v3.api.AdEvent
@@ -65,7 +64,6 @@ interface ComponentsListener :
   //endregion
 }
 
-@UnstableApi
 @JvmSynthetic
 internal fun ComponentsListener(
   playerListener: Player.Listener = DEFAULT_PLAYER_LISTENER,
