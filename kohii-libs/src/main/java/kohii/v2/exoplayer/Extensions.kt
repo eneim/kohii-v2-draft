@@ -19,6 +19,7 @@ package kohii.v2.exoplayer
 import android.app.Activity
 import android.view.View
 import androidx.annotation.MainThread
+import androidx.media3.common.util.UnstableApi
 import kohii.v2.R
 import kohii.v2.core.RendererProvider
 import kohii.v2.internal.getTagOrPut
@@ -26,7 +27,7 @@ import kohii.v2.internal.getTagOrPut
 /**
  * Returns a [PlayerViewProvider] that is managed by the Activity.
  */
-@MainThread
+@MainThread @UnstableApi
 fun Activity.getPlayerViewProvider(): RendererProvider {
   val rootView: View = checkNotNull(window.peekDecorView()) {
     "Activity's decorView must be available. Please call this method after Activity.onCreate()."

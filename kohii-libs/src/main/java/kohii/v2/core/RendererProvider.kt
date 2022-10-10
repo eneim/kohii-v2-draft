@@ -18,14 +18,27 @@ package kohii.v2.core
 
 import androidx.lifecycle.DefaultLifecycleObserver
 
+/**
+ * A lifecycle-aware class that provides renderer for the [Playback] when needed.
+ */
 abstract class RendererProvider : DefaultLifecycleObserver {
 
+  /**
+   * Returns `true` if this [RendererProvider] accepts [playback] and can provide it a renderer.
+   */
   abstract fun accept(playback: Playback): Boolean
 
+  /**
+   * Provides a renderer to [playback].
+   */
   abstract fun provideRenderer(
     playback: Playback,
   ): Any?
 
+  /**
+   * Puts the [renderer] that was used by [playback] to the cache, or clear it if this
+   * [RendererProvider] doesn't cache.
+   */
   abstract fun releaseRenderer(
     playback: Playback,
     renderer: Any?,

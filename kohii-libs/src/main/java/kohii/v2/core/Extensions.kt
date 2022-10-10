@@ -21,6 +21,7 @@ import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.viewModels
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerView
 import kohii.v2.exoplayer.PlayerViewPlayableCreator
 import kohii.v2.exoplayer.PlayerViewProvider
@@ -42,12 +43,13 @@ fun ComponentActivity.playbackManager(): Manager = Home[this].registerManagerInt
  * Creates a new [Engine] that supports the ExoPlayer stack for this [Fragment].
  */
 @Suppress("FunctionName")
+@UnstableApi
 fun Fragment.ExoPlayerEngine(): Engine {
   val manager = playbackManager()
-  return Engine.get<PlayerView>(
+  return Engine.newInstance<PlayerView>(
     manager = manager,
     playableCreator = PlayerViewPlayableCreator.getInstance(requireContext()),
-    rendererProvider = PlayerViewProvider(),
+    rendererProvider = PlayerViewProvider(), // TODO: reusing Activity's PlayerViewProvider?
   )
 }
 
@@ -55,9 +57,10 @@ fun Fragment.ExoPlayerEngine(): Engine {
  * Creates a new [Engine] that supports the ExoPlayer stack for this [FragmentActivity].
  */
 @Suppress("FunctionName")
+@UnstableApi
 fun ComponentActivity.ExoPlayerEngine(): Engine {
   val manager = playbackManager()
-  return Engine.get<PlayerView>(
+  return Engine.newInstance<PlayerView>(
     manager = manager,
     playableCreator = PlayerViewPlayableCreator.getInstance(application),
     rendererProvider = getPlayerViewProvider(),

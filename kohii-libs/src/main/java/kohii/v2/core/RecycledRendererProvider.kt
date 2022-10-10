@@ -23,10 +23,14 @@ import androidx.core.util.Pools.SimplePool
 import androidx.lifecycle.LifecycleOwner
 import kohii.v2.internal.asString
 import kohii.v2.internal.debugOnly
+import kohii.v2.internal.getOrPut
 import kohii.v2.internal.hexCode
 import kohii.v2.internal.logInfo
 import kohii.v2.internal.onEachAcquired
 
+/**
+ * A [RendererProvider] that caches renderers for reuse.
+ */
 abstract class RecycledRendererProvider @JvmOverloads constructor(
   private val poolSize: Int = 2,
 ) : RendererProvider() {
@@ -37,7 +41,7 @@ abstract class RecycledRendererProvider @JvmOverloads constructor(
     val rendererType: Int = getRendererType(playback.container, playback.playable.data)
     val pool = pools.get(rendererType)
     val result = pool?.acquire() ?: createRenderer(playback, rendererType)
-    "RendererProvider[${hexCode()}]_PROVIDE [RR=${result?.asString()}]".logInfo()
+    "RendererProvider#${hexCode()} provides [RR=${result?.asString()}]".logInfo()
     return result
   }
 
@@ -45,15 +49,15 @@ abstract class RecycledRendererProvider @JvmOverloads constructor(
     playback: Playback,
     renderer: Any?,
   ) {
-    "RendererProvider[${hexCode()}]_RELEASE [RR=${renderer?.asString()}]".logInfo()
+    "RendererProvider#${hexCode()} releases [RR=${renderer?.asString()}]".logInfo()
     if (renderer == null) return
     recycleRenderer(renderer)
     val rendererType: Int = getRendererType(playback.container, playback.playable.data)
-    val pool = pools.get(rendererType) ?: SimplePool<Any>(poolSize).also {
-      pools.put(rendererType, it)
-    }
+    val pool = pools.getOrPut(rendererType) { SimplePool(poolSize) }
     try {
-      pool.release(renderer)
+      if (!pool.release(renderer)) {
+        destroyRenderer(renderer)
+      }
     } catch (error: IllegalStateException) {
       debugOnly(error::printStackTrace)
     }

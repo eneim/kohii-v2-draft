@@ -26,6 +26,7 @@ import androidx.lifecycle.Lifecycle.Event
 import androidx.lifecycle.Lifecycle.State.STARTED
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
+import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.internal.BindRequest
 import kohii.v2.internal.DynamicViewPlaybackCreator
 import kohii.v2.internal.StaticViewPlaybackCreator
@@ -61,8 +62,7 @@ class Manager(
   private val playbacks = linkedMapOf<Any /* Container */, Playback>()
   private val playbacksFlow = MutableStateFlow<List<Playback>>(emptyList())
 
-  @Suppress("RemoveExplicitTypeArguments")
-  private val playbackCreators = setOf<PlaybackCreator>(
+  private val playbackCreators: Set<PlaybackCreator> = setOf(
     StaticViewPlaybackCreator(manager = this),
     DynamicViewPlaybackCreator(manager = this, rendererProviderManager = this)
   )
@@ -77,17 +77,21 @@ class Manager(
   private val isStarted: Boolean get() = lifecycleOwner.lifecycle.currentState.isAtLeast(STARTED)
 
   internal val isChangingConfigurations: Boolean
+    @JvmSynthetic
     get() = when (owner) {
       is Activity -> owner.isChangingConfigurations
       is Fragment -> owner.activity?.isChangingConfigurations ?: false
       else -> false
     }
 
+  @JvmSynthetic
   internal fun refresh(): Unit = group.onRefresh()
 
+  @JvmSynthetic
   internal fun findPlaybackForContainer(container: Any): Playback? = playbacks[container]
 
   //region Bucket APIs
+  @JvmSynthetic
   @MainThread
   internal fun addBucketInternal(bucket: Bucket) {
     checkMainThread()
@@ -98,6 +102,7 @@ class Manager(
     }
   }
 
+  @JvmSynthetic
   @MainThread
   internal fun removeBucketInternal(bucket: Bucket) {
     checkMainThread()
@@ -107,6 +112,7 @@ class Manager(
     }
   }
 
+  @JvmSynthetic
   @MainThread
   internal fun stickBucketInternal(bucket: Bucket) {
     checkMainThread()
@@ -121,6 +127,7 @@ class Manager(
     }
   }
 
+  @JvmSynthetic
   @MainThread
   internal fun unstickBucketInternal(bucket: Bucket) {
     checkMainThread()
@@ -133,7 +140,7 @@ class Manager(
   //endregion
 
   //region Playback APIs
-  @Suppress("unused")
+  @JvmSynthetic
   @MainThread
   internal fun addPlayback(playback: Playback) {
     checkMainThread()
@@ -152,6 +159,7 @@ class Manager(
     refresh()
   }
 
+  @JvmSynthetic
   internal fun notifyPlaybackAdded(playback: Playback) {
     val currentPlaybacks = playbacksFlow.value
     playbacksFlow.value = currentPlaybacks + playback
@@ -167,6 +175,7 @@ class Manager(
    *
    * @see [BindRequest.onBind]
    */
+  @JvmSynthetic
   @MainThread
   internal fun removePlayback(
     playback: Playback,
@@ -184,6 +193,7 @@ class Manager(
     refresh()
   }
 
+  @JvmSynthetic
   internal fun notifyPlaybackRemoved(playback: Playback) {
     val currentPlaybacks = playbacksFlow.value
     playbacksFlow.value = currentPlaybacks - playback
@@ -207,6 +217,7 @@ class Manager(
   }
 
   @Throws(IllegalStateException::class)
+  @JvmSynthetic
   @MainThread
   internal fun requirePlaybackCreator(
     playable: Playable,
@@ -216,11 +227,13 @@ class Manager(
     ?: error("No PlaybackCreator available for $playable and $container.")
 
   @Throws(IllegalArgumentException::class)
+  @JvmSynthetic
   @MainThread
   internal fun requireBucket(container: Any): Bucket =
     buckets.lastOrNull { it.accept(container) } // Check from the top of the stack.
       ?: error("No bucket in $this accepts container $container.")
 
+  @JvmSynthetic
   @MainThread
   internal fun splitPlaybacks(): Pair<Collection<Playback> /* toPlay */, Collection<Playback> /* toPause */> {
     if (playbacks.isEmpty()) return emptySet<Playback>() to emptySet()
@@ -267,6 +280,7 @@ class Manager(
   //endregion
 
   //region Container APIs
+  @JvmSynthetic
   @MainThread
   internal fun onContainerAttached(container: Any) {
     checkMainThread()
@@ -280,6 +294,7 @@ class Manager(
     refresh()
   }
 
+  @JvmSynthetic
   @MainThread
   internal fun onContainerDetached(container: Any) {
     checkMainThread()
@@ -294,6 +309,7 @@ class Manager(
     refresh()
   }
 
+  @JvmSynthetic
   @MainThread
   internal fun onContainerUpdated(container: Any) {
     checkMainThread()
@@ -310,6 +326,7 @@ class Manager(
   // this method again. So we allow the cached Playback to be null.
   // Note(eneim, 2021/10/10): removing a Container should also remove the Playback if it is still
   // there.
+  @JvmSynthetic
   @MainThread
   internal fun onContainerRemoved(container: Any) {
     checkMainThread()
@@ -390,6 +407,7 @@ class Manager(
    * Returns a [Flow] of [Playback] that can be used to know when a [Playback] for a specific tag
    * is available/added.
    */
+  @ExperimentalKohiiApi
   fun getPlaybackFlow(tag: String): Flow<Playback?> = playbacksFlow
     .map { playbacks ->
       playbacks.find { playback -> playback.tag == tag }

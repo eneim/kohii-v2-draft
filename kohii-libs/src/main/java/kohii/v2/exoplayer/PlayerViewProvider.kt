@@ -19,6 +19,7 @@ package kohii.v2.exoplayer
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import androidx.media3.ui.PlayerView.ControllerVisibilityListener
@@ -26,6 +27,7 @@ import kohii.v2.R
 import kohii.v2.core.Playback
 import kohii.v2.core.RecycledRendererProvider
 
+@UnstableApi
 class PlayerViewProvider : RecycledRendererProvider() {
 
   override fun getRendererType(

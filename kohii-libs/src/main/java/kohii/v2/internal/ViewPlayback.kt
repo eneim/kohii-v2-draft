@@ -27,6 +27,7 @@ import kohii.v2.core.Bucket
 import kohii.v2.core.Manager
 import kohii.v2.core.Playable
 import kohii.v2.core.Playback
+import java.util.concurrent.TimeUnit.NANOSECONDS
 import kotlin.system.measureNanoTime
 
 /**
@@ -71,7 +72,7 @@ internal abstract class ViewPlayback(
       super.onRefresh()
       internalToken = fetchToken()
     }
-    "Playback[${hexCode()}]_REFRESH [$=${refreshTimeNano / 1E6f}ms]".logDebug()
+    "Playback#${hexCode()} refreshes in $=${NANOSECONDS.toMillis(refreshTimeNano)}ms".logInfo()
   }
 
   override fun onStarted() {

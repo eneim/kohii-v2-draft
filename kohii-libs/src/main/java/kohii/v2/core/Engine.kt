@@ -117,7 +117,7 @@ class Engine constructor(
      *
      * @param T Type of the renderer that this [Engine] supports.
      */
-    inline fun <reified T> get(
+    inline fun <reified T> newInstance(
       manager: Manager,
       playableCreator: PlayableCreator,
       rendererProvider: RendererProvider,

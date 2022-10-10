@@ -25,6 +25,7 @@ import android.view.View
 import androidx.annotation.MainThread
 import androidx.annotation.RestrictTo
 import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX
+import androidx.collection.SparseArrayCompat
 import androidx.core.util.Pools.Pool
 import androidx.media3.common.Player
 import androidx.media3.common.Tracks
@@ -168,3 +169,9 @@ internal inline fun <reified T : Any> Parcel.readArrayListCompat(classLoader: Cl
     readArrayList(classLoader) as? ArrayList<T>
   }
 }
+
+@JvmSynthetic
+internal inline fun <T> SparseArrayCompat<T>.getOrPut(
+  key: Int,
+  defaultValue: () -> T,
+) = get(key) ?: defaultValue().also { put(key, it) }

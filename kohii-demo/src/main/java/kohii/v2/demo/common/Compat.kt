@@ -23,7 +23,7 @@ import android.os.Parcel
 
 @Suppress("DEPRECATION")
 inline fun <reified T : Any> Intent.getParcelableExtraCompat(key: String): T? {
-  return if (Build.VERSION.SDK_INT >= 33) {
+  return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU /* 33 */) {
     getParcelableExtra(key, T::class.java)
   } else {
     getParcelableExtra(key) as? T
@@ -32,7 +32,7 @@ inline fun <reified T : Any> Intent.getParcelableExtraCompat(key: String): T? {
 
 @Suppress("DEPRECATION")
 inline fun <reified T : Any> Bundle.getParcelableCompat(key: String): T? {
-  return if (Build.VERSION.SDK_INT >= 33) {
+  return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU /* 33 */) {
     getParcelable(key, T::class.java)
   } else {
     getParcelable(key) as? T
@@ -41,9 +41,9 @@ inline fun <reified T : Any> Bundle.getParcelableCompat(key: String): T? {
 
 @Suppress("DEPRECATION")
 inline fun <reified T : Any> Parcel.readArrayListCompat(classLoader: ClassLoader): ArrayList<T>? {
-  return if (Build.VERSION.SDK_INT >= 33) {
+  return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU /* 33 */) {
     readArrayList(classLoader, T::class.java)
   } else {
-    readArrayList(classLoader) as? ArrayList<T>
+    readArrayList(classLoader)?.filterIsInstanceTo(arrayListOf())
   }
 }
