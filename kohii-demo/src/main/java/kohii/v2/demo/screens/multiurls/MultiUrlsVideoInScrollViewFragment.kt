@@ -26,6 +26,7 @@ import androidx.lifecycle.Lifecycle.State
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.media3.common.VideoSize
+import androidx.media3.common.util.UnstableApi
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.Playback
 import kohii.v2.core.PlayerEventListener
@@ -40,6 +41,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
+@UnstableApi
 class MultiUrlsVideoInScrollViewFragment :
   DemoItemFragment(R.layout.fragment_video_in_scroll_view_simple) {
 

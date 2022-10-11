@@ -19,6 +19,7 @@ package kohii.v2.exoplayer
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.media3.common.AudioAttributes
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize
@@ -27,6 +28,7 @@ import kotlinx.parcelize.Parcelize
  * Parameters used by [ExoPlayer.setAudioAttributes].
  */
 @Parcelize
+@UnstableApi
 class AudioParameters(
   val handleAudioFocus: Boolean = true,
   val audioAttributes: AudioAttributes = AudioAttributes.DEFAULT,

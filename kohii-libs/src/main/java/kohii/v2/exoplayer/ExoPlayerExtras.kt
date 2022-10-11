@@ -20,7 +20,9 @@ import android.os.Parcel
 import android.os.Parcelable
 import androidx.media3.common.Player
 import androidx.media3.common.TrackSelectionParameters
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import kohii.v2.internal.readParcelableCompat
 import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize
 
@@ -28,6 +30,7 @@ import kotlinx.parcelize.Parcelize
  * Information that is used to restore an [ExoPlayer] instance.
  */
 @Parcelize
+@UnstableApi
 class ExoPlayerExtras(
   @Player.State val playerState: Int,
   val playerParameters: PlayerParameters,
@@ -69,10 +72,7 @@ class ExoPlayerExtras(
 
     override fun create(parcel: Parcel): ExoPlayerExtras = ExoPlayerExtras(
       playerState = parcel.readInt(),
-      playerParameters = parcel.readParcelable(
-        /* loader = */ PlayerParameters::class.java.classLoader,
-        /* clazz = */ PlayerParameters::class.java
-      ) ?: PlayerParameters.DEFAULT,
+      playerParameters = parcel.readParcelableCompat() ?: PlayerParameters.DEFAULT,
       trackSelectionParameters = parcel
         .readBundle(TrackSelectionParameters::class.java.classLoader)
         ?.let(TrackSelectionParameters::fromBundle)

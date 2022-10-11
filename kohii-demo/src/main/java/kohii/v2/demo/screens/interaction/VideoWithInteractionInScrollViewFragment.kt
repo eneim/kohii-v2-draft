@@ -24,6 +24,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle.State
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.media3.common.util.UnstableApi
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.demo.R
 import kohii.v2.demo.common.VideoUrls
@@ -36,6 +37,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
+@UnstableApi
 class VideoWithInteractionInScrollViewFragment :
   DemoItemFragment(R.layout.fragment_video_in_scroll_view_simple) {
 

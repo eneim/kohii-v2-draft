@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.Playback
 import kohii.v2.core.PlayerEventListener
@@ -34,6 +35,7 @@ import kohii.v2.demo.common.hideSystemBars
 import kohii.v2.demo.databinding.FragmentFullscreenSheetBinding
 import kotlin.LazyThreadSafetyMode.NONE
 
+@UnstableApi
 class FullscreenPlayerSheetDialog : FullscreenDialogFragment(R.layout.fragment_fullscreen_sheet) {
 
   private val request: Request by lazy(NONE) {

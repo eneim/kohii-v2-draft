@@ -32,6 +32,7 @@ import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
 import androidx.media3.common.text.CueGroup
+import androidx.media3.common.util.UnstableApi
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdEvent
 import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
@@ -87,6 +88,7 @@ class ComponentsListeners internal constructor(
 
   override fun onRenderedFirstFrame(): Unit = forEach { it.onRenderedFirstFrame() }
 
+  @androidx.annotation.OptIn(UnstableApi::class)
   override fun onAudioSessionIdChanged(audioSessionId: Int): Unit =
     forEach { it.onAudioSessionIdChanged(audioSessionId) }
 
@@ -99,6 +101,8 @@ class ComponentsListeners internal constructor(
     forEach { it.onSkipSilenceEnabledChanged(skipSilenceEnabled) }
 
   override fun onCues(cueGroup: CueGroup): Unit = forEach { it.onCues(cueGroup) }
+
+  @androidx.annotation.OptIn(UnstableApi::class)
   override fun onMetadata(metadata: Metadata): Unit = forEach { it.onMetadata(metadata) }
 
   override fun onDeviceInfoChanged(deviceInfo: DeviceInfo): Unit =

@@ -19,6 +19,7 @@ package kohii.v2.demo.screens.nested
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import androidx.media3.common.util.UnstableApi
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.SnapHelper
 import com.airbnb.epoxy.Carousel
@@ -30,6 +31,7 @@ import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.databinding.FragmentCarouselInScrollviewBinding
 import kohii.v2.demo.home.DemoItemFragment
 
+@UnstableApi
 class RecyclerViewInScrollViewFragment :
   DemoItemFragment(R.layout.fragment_carousel_in_scrollview) {
 

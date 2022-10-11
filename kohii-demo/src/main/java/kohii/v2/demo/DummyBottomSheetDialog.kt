@@ -24,10 +24,12 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.Playback
 import kohii.v2.core.PlayerEventListener
@@ -38,6 +40,12 @@ import kohii.v2.demo.common.viewBinding
 import kohii.v2.demo.databinding.FragmentDummySheetBinding
 import kotlin.LazyThreadSafetyMode.NONE
 
+internal const val EXTRAS_SHEET_STATE = "EXTRAS_SHEET_STATE"
+internal const val ARGS_REQUEST = "ARGS_BIND_BUILDER"
+internal const val ARGS_RESULT_KEY = "ARGS_RESULT_KEY"
+
+@UnstableApi
+@ExperimentalKohiiApi
 class DummyBottomSheetDialog : BottomSheetDialogFragment() {
 
   private val binding: FragmentDummySheetBinding by viewBinding(FragmentDummySheetBinding::bind)
@@ -104,10 +112,6 @@ class DummyBottomSheetDialog : BottomSheetDialogFragment() {
   }
 
   companion object {
-
-    internal const val EXTRAS_SHEET_STATE = "EXTRAS_SHEET_STATE"
-    internal const val ARGS_REQUEST = "ARGS_BIND_BUILDER"
-    internal const val ARGS_RESULT_KEY = "ARGS_RESULT_KEY"
 
     fun newInstance(
       request: Request,

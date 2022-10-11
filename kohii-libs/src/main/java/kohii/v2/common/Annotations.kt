@@ -16,5 +16,8 @@
 
 package kohii.v2.common
 
+import kotlin.annotation.AnnotationRetention.BINARY
+
 @RequiresOptIn("This API is experimental and is likely to change in the future.")
+@Retention(BINARY)
 annotation class ExperimentalKohiiApi

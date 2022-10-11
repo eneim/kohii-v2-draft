@@ -22,6 +22,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.Playback
 import kohii.v2.core.PlayerEventListener
@@ -30,6 +31,7 @@ import kohii.v2.demo.common.getParcelableCompat
 import kohii.v2.demo.common.hideSystemBars
 import kohii.v2.demo.databinding.FragmentFullscreenSheetBinding
 
+@UnstableApi
 class FullscreenPlayerActivity : AppCompatActivity() {
 
   // Note: this code is for demonstration purpose only. In practice, if an Activity is registered

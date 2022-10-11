@@ -18,6 +18,7 @@ package kohii.v2.demo.screens.basic
 
 import android.os.Bundle
 import android.view.View
+import androidx.media3.common.util.UnstableApi
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.demo.R.layout
 import kohii.v2.demo.VideoInScrollViewFragment.Companion.VIDEO_TAG
@@ -25,6 +26,7 @@ import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.databinding.FragmentVideosInRecyclerViewBinding
 import kohii.v2.demo.home.DemoItemFragment
 
+@UnstableApi
 class VideosInRecyclerViewFragment : DemoItemFragment(layout.fragment_videos_in_recycler_view) {
 
   override fun onViewCreated(

@@ -34,6 +34,7 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Player.Events
 import androidx.media3.common.Tracks
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.ExoPlayerWrapper
 import androidx.media3.exoplayer.analytics.PlaybackStatsListener
@@ -67,6 +68,7 @@ import kohii.v2.internal.doOnTracksChanged
  */
 // TODO: when a video is paused manually, do not start the next one automatically :thinking:
 @Suppress("TooManyFunctions", "ForbiddenComment")
+@UnstableApi
 internal class PlayerViewBridge(
   context: Context,
   private val mediaItems: List<MediaItem>,

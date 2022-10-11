@@ -73,7 +73,7 @@ internal fun <V : View> ViewGroup.isAncestorOf(view: V): Boolean {
 }
 
 fun Window.hideSystemBars() {
-  val windowInsetsController = WindowCompat.getInsetsController(this, decorView) ?: return
+  val windowInsetsController = WindowCompat.getInsetsController(this, decorView)
   // Configure the behavior of the hidden system bars
   windowInsetsController.systemBarsBehavior =
     WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
@@ -82,7 +82,7 @@ fun Window.hideSystemBars() {
 }
 
 fun Window.showSystemBars() {
-  val windowInsetsController = WindowCompat.getInsetsController(this, decorView) ?: return
+  val windowInsetsController = WindowCompat.getInsetsController(this, decorView)
   // Configure the behavior of the hidden system bars
   windowInsetsController.systemBarsBehavior =
     WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE

@@ -19,12 +19,15 @@ package kohii.v2.demo
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.media3.common.util.UnstableApi
 import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.databinding.FragmentVideoInScrollViewPortraitOnlyBinding
 import kohii.v2.demo.home.DemoItemFragment
 
+@UnstableApi
+@ExperimentalKohiiApi
 class NoVideoInLandscapeScrollViewFragment :
   DemoItemFragment(R.layout.fragment_video_in_scroll_view_portrait_only) {
 

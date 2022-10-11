@@ -32,6 +32,7 @@ import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
 import androidx.media3.common.text.CueGroup
+import androidx.media3.common.util.UnstableApi
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
 import com.google.ads.interactivemedia.v3.api.AdEvent
@@ -164,6 +165,7 @@ internal fun ComponentsListener(
     events: Events,
   ) = playerListener.onEvents(player, events)
 
+  @androidx.annotation.OptIn(UnstableApi::class)
   override fun onAudioSessionIdChanged(audioSessionId: Int) =
     playerListener.onAudioSessionIdChanged(audioSessionId)
 
@@ -197,6 +199,8 @@ internal fun ComponentsListener(
 
   override fun onRenderedFirstFrame() = playerListener.onRenderedFirstFrame()
   override fun onCues(cueGroup: CueGroup) = playerListener.onCues(cueGroup)
+
+  @androidx.annotation.OptIn(UnstableApi::class)
   override fun onMetadata(metadata: Metadata) = playerListener.onMetadata(metadata)
   override fun onIsLoadingChanged(isLoading: Boolean) = playerListener.onIsLoadingChanged(isLoading)
   override fun onIsPlayingChanged(isPlaying: Boolean) = playerListener.onIsPlayingChanged(isPlaying)

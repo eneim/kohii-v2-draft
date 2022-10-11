@@ -19,6 +19,8 @@ package kohii.v2.demo.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.media3.common.util.UnstableApi
+import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.demo.NoVideoInLandscapeScrollViewFragment
 import kohii.v2.demo.screens.ads.VideosWithAdsInRecyclerViewFragment
 import kohii.v2.demo.screens.basic.VideosInRecyclerViewFragment
@@ -28,6 +30,8 @@ import kohii.v2.demo.screens.mixed.MixedVideosInRecyclerViewFragment
 import kohii.v2.demo.screens.multiurls.MultiUrlsVideoInScrollViewFragment
 import kohii.v2.demo.screens.nested.RecyclerViewInScrollViewFragment
 
+@UnstableApi
+@ExperimentalKohiiApi
 class HomeViewModel : ViewModel() {
 
   val demoItems: LiveData<List<DemoItem>> = MutableLiveData(

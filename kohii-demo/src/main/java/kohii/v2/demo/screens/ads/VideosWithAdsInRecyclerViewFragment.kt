@@ -25,12 +25,12 @@ import android.widget.CheckedTextView
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.util.UnstableApi
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.epoxy.SimpleEpoxyModel
 import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
-import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.RequestHandle
 import kohii.v2.demo.R
@@ -43,12 +43,12 @@ import kotlinx.coroutines.flow.onEach
 import okio.buffer
 import okio.source
 
+@UnstableApi
 class VideosWithAdsInRecyclerViewFragment : DemoItemFragment(R.layout.fragment_videos_with_ads) {
 
   private val viewModel: VideoWithAdsViewModel by viewModels()
 
   @SuppressLint("SetTextI18n")
-  @OptIn(ExperimentalKohiiApi::class)
   override fun onViewCreated(
     view: View,
     savedInstanceState: Bundle?,

@@ -20,6 +20,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.core.os.bundleOf
+import androidx.media3.common.util.UnstableApi
 import com.airbnb.epoxy.SimpleEpoxyModel
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.RequestHandle
@@ -32,6 +33,7 @@ import kohii.v2.demo.home.DemoItemFragment
 /**
  * A RecyclerView Fragment with 2 Videos in the same ViewHolder.
  */
+@UnstableApi
 class MixedVideosInRecyclerViewFragment : DemoItemFragment(layout.fragment_simple_recycler_view) {
 
   override fun onViewCreated(

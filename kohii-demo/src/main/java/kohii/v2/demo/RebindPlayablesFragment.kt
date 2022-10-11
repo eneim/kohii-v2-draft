@@ -22,6 +22,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.util.UnstableApi
 import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.Playback
@@ -29,6 +30,7 @@ import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.databinding.FragmentSwitchPlayablesBinding
 import kotlin.LazyThreadSafetyMode.NONE
 
+@UnstableApi
 @ExperimentalKohiiApi
 class RebindPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
 

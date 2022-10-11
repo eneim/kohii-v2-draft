@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
+/* buildscript {
+  dependencies {
+    classpath(kotlin("gradle-plugin", version = libs.versions.kotlin.get()))
+  }
+} */
+
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-  id("com.android.application") version "7.4.0-beta02" apply false
-  id("com.android.library") version "7.4.0-beta02" apply false
-  id("org.jetbrains.kotlin.android") version "1.7.10" apply false
+  kotlin("jvm") version libs.versions.kotlin.get() apply false
+  alias(libs.plugins.kotlin.android) apply false
+  alias(libs.plugins.android.application) apply false
+  alias(libs.plugins.android.library) apply false
+  alias(libs.plugins.mavenPublish) apply false
 }
 
 tasks.register("clean", Delete::class) {
@@ -61,6 +70,17 @@ allprojects {
     kotlinOptions {
       jvmTarget = "11"
       freeCompilerArgs = freeCompilerArgs + arrayOf("-opt-in=kotlin.RequiresOptIn")
+    }
+  }
+}
+
+subprojects {
+  // configuration required to produce unique META-INF/*.kotlin_module file names
+  tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions {
+      if (project.hasProperty("POM_ARTIFACT_ID")) {
+        moduleName = project.property("POM_ARTIFACT_ID") as String
+      }
     }
   }
 }

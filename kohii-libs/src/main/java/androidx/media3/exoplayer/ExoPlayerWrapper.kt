@@ -17,6 +17,7 @@
 package androidx.media3.exoplayer
 
 import androidx.media3.common.AudioAttributes
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.exoplayer.source.MediaSource
 import kohii.v2.exoplayer.AudioParameters
@@ -28,6 +29,7 @@ import kohii.v2.exoplayer.PlayerViewBridge
  * used to create the player instance. This is used by the [PlayerViewBridge] to setup for Ad
  * playback.
  */
+@UnstableApi
 class ExoPlayerWrapper private constructor(
   private val player: ExoPlayer,
   val mediaSourceFactory: DefaultMediaSourceFactory?,

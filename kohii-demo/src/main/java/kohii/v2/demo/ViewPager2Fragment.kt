@@ -21,11 +21,13 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
+import androidx.media3.common.util.UnstableApi
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import kohii.v2.core.playbackManager
 import kohii.v2.demo.databinding.FragmentViewpager2Binding
 import kohii.v2.demo.screens.mixed.MixedVideosInRecyclerViewFragment
 
+@UnstableApi
 class ViewPager2Fragment : Fragment(R.layout.fragment_viewpager_2) {
 
   class PagerAdapter(

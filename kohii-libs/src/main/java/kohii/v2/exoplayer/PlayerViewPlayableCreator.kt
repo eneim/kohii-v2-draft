@@ -17,6 +17,7 @@
 package kohii.v2.exoplayer
 
 import android.content.Context
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import kohii.v2.common.Capsule
@@ -38,6 +39,7 @@ import kotlin.LazyThreadSafetyMode.NONE
  *
  * Using [PlayerViewPlayableCreator.getInstance] to obtain an instance of this class.
  */
+@UnstableApi
 class PlayerViewPlayableCreator private constructor(
   private val home: Home,
   private val playerPool: Lazy<PlayerPool<ExoPlayer>>,

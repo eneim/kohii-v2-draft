@@ -21,7 +21,9 @@ import android.os.Parcelable
 import androidx.annotation.FloatRange
 import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import kohii.v2.internal.readParcelableCompat
 import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize
 
@@ -29,6 +31,7 @@ import kotlinx.parcelize.Parcelize
  * Common parameters used to restore an [ExoPlayer] instance.
  */
 @Parcelize
+@UnstableApi
 class PlayerParameters(
   @FloatRange(from = 0.0, to = 1.0) val volume: Float = 1.0f,
   @Player.RepeatMode val repeatMode: Int = Player.REPEAT_MODE_OFF,
@@ -76,10 +79,7 @@ class PlayerParameters(
       volume = parcel.readFloat(),
       repeatMode = parcel.readInt(),
       shuffleModeEnabled = parcel.readInt() == 1,
-      audioParameters = parcel.readParcelable(
-        /* loader = */ AudioParameters::class.java.classLoader,
-        /* clazz = */ AudioParameters::class.java
-      ) ?: AudioParameters.DEFAULT,
+      audioParameters = parcel.readParcelableCompat() ?: AudioParameters.DEFAULT,
       playbackParameters = parcel.readBundle(PlaybackParameters::class.java.classLoader)
         ?.let(PlaybackParameters.CREATOR::fromBundle)
         ?: PlaybackParameters.DEFAULT,

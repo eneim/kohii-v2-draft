@@ -22,13 +22,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.clearFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.util.UnstableApi
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.Request
-import kohii.v2.demo.DummyBottomSheetDialog.Companion.ARGS_REQUEST
 import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.common.getParcelableCompat
 import kohii.v2.demo.databinding.FragmentVideoInScrollViewBinding
 
+@UnstableApi
 class VideoInScrollViewFragment : Fragment(R.layout.fragment_video_in_scroll_view) {
 
   override fun onViewCreated(

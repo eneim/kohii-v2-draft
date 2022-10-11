@@ -18,6 +18,7 @@ package kohii.v2.core
 
 import androidx.media3.common.C
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.source.ShuffleOrder
 import androidx.media3.exoplayer.source.ShuffleOrder.UnshuffledShuffleOrder
 import kohii.v2.common.ExperimentalKohiiApi
@@ -25,7 +26,6 @@ import kohii.v2.core.Chain.SelectScope.ALL
 import kohii.v2.core.Chain.SelectScope.AVAILABLE_ONLY
 import kohii.v2.internal.hexCode
 import kohii.v2.internal.logInfo
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -44,6 +44,7 @@ import java.util.concurrent.atomic.AtomicInteger
  * A [Chain] can be constructed using the [Bucket.chain] method.
  */
 @ExperimentalKohiiApi
+@androidx.annotation.OptIn(UnstableApi::class)
 class Chain private constructor(
   private val bucket: Bucket,
   private val tags: List<String>,
@@ -80,7 +81,7 @@ class Chain private constructor(
         tags
           .filterIndexed { index, _ -> index == targetIndex.get() }
           .mapNotNull { tag -> playbacks[tag] }
-          .intersect(candidates)
+          .intersect(candidates.toSet())
       }
       AVAILABLE_ONLY -> {
         listOfNotNull(
@@ -93,7 +94,7 @@ class Chain private constructor(
             .dropWhile { playback -> playback == null || !playback.shouldPlay() }
             .firstOrNull()
         )
-          .intersect(candidates)
+          .intersect(candidates.toSet())
       }
     }
   }

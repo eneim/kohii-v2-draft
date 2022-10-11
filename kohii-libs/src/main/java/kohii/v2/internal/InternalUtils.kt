@@ -23,8 +23,6 @@ import android.os.Parcel
 import android.util.Log
 import android.view.View
 import androidx.annotation.MainThread
-import androidx.annotation.RestrictTo
-import androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX
 import androidx.collection.SparseArrayCompat
 import androidx.core.util.Pools.Pool
 import androidx.media3.common.Player
@@ -38,15 +36,16 @@ internal fun checkMainThread() = check(Looper.myLooper() == Looper.getMainLooper
 /**
  * Acquires all item from the Pool and applies an action for each item.
  */
+@JvmSynthetic
 internal inline fun <T> Pool<T>.onEachAcquired(action: (T) -> Unit) {
-  var item: T?
   do {
-    item = acquire()
+    val item = acquire()
     if (item == null) break
     else action(item)
   } while (true)
 }
 
+@JvmSynthetic
 internal fun <T : Any> T.asString(): String = if (this is View) {
   val original = this.toString()
   original.replace(javaClass.canonicalName.orEmpty(), this.javaClass.simpleName)
@@ -58,35 +57,35 @@ internal fun <T : Any> T.asString(): String = if (this is View) {
 internal fun <T : Any> T.hexCode(): String = Integer.toHexString(hashCode())
 
 // Because I want to compose the message first, then log it.
-@RestrictTo(LIBRARY_GROUP_PREFIX) @JvmSynthetic
+@JvmSynthetic
 internal fun String.logDebug(tag: String = "${BuildConfig.LIBRARY_PACKAGE_NAME}.log") {
   if (BuildConfig.DEBUG) {
     Log.d(tag, this)
   }
 }
 
-@RestrictTo(LIBRARY_GROUP_PREFIX) @JvmSynthetic
+@JvmSynthetic
 internal fun String.logInfo(tag: String = "${BuildConfig.LIBRARY_PACKAGE_NAME}.log") {
   if (BuildConfig.DEBUG) {
     Log.i(tag, this)
   }
 }
 
-@RestrictTo(LIBRARY_GROUP_PREFIX) @JvmSynthetic
+@JvmSynthetic
 internal fun String.logWarn(tag: String = "${BuildConfig.LIBRARY_PACKAGE_NAME}.log") {
   if (BuildConfig.DEBUG) {
     Log.w(tag, this)
   }
 }
 
-@RestrictTo(LIBRARY_GROUP_PREFIX) @JvmSynthetic
+@JvmSynthetic
 internal fun String.logError(tag: String = "${BuildConfig.LIBRARY_PACKAGE_NAME}.log") {
   if (BuildConfig.DEBUG) {
     Log.e(tag, this)
   }
 }
 
-@RestrictTo(LIBRARY_GROUP_PREFIX) @JvmSynthetic
+@JvmSynthetic
 internal fun String.logStackTrace(tag: String = "${BuildConfig.LIBRARY_PACKAGE_NAME}.log") {
   if (BuildConfig.DEBUG) {
     Log.w(tag, Log.getStackTraceString(Throwable(this)))
@@ -151,11 +150,12 @@ internal inline fun Player.doOnTracksChanged(
   }
 })
 
-@JvmSynthetic @Suppress("DEPRECATION")
+@JvmSynthetic
 inline fun <reified T : Any> Bundle.getParcelableCompat(key: String): T? {
   return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU /* 33 */) {
     getParcelable(key, T::class.java)
   } else {
+    @Suppress("DEPRECATION")
     getParcelable(key) as? T
   }
 }
@@ -167,6 +167,17 @@ internal inline fun <reified T : Any> Parcel.readArrayListCompat(classLoader: Cl
   } else {
     @Suppress("UNCHECKED_CAST")
     readArrayList(classLoader) as? ArrayList<T>
+  }
+}
+
+@JvmSynthetic
+internal inline fun <reified T : Any> Parcel.readParcelableCompat(): T? {
+  val clazz = T::class.java
+  return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU /* 33 */) {
+    readParcelable(clazz.classLoader, clazz)
+  } else {
+    @Suppress("DEPRECATION")
+    readParcelable(clazz.classLoader)
   }
 }
 

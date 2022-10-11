@@ -19,6 +19,7 @@ package kohii.v2.demo.screens.chain
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.util.UnstableApi
 import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.Chain.SelectScope.AVAILABLE_ONLY
 import kohii.v2.core.ExoPlayerEngine
@@ -27,9 +28,10 @@ import kohii.v2.demo.common.VideoUrls
 import kohii.v2.demo.databinding.FragmentVideosInScrollViewBinding
 import kohii.v2.demo.home.DemoItemFragment
 
+@UnstableApi
+@ExperimentalKohiiApi
 class ChainedVideosInScrollViewFragment : DemoItemFragment(layout.fragment_videos_in_scroll_view) {
 
-  @OptIn(ExperimentalKohiiApi::class)
   override fun onViewCreated(
     view: View,
     savedInstanceState: Bundle?,

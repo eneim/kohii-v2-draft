@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.media3.common.Player
 import androidx.media3.common.VideoSize
+import androidx.media3.common.util.UnstableApi
 import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.Playback
 import kohii.v2.core.PlayerEventListener
@@ -34,6 +35,7 @@ import kohii.v2.demo.databinding.ActivityFullscreenMainUriBinding
 /**
  * A fullscreen Activity that plays the main Video of a multi-urls request.
  */
+@UnstableApi
 class MainVideoPlayerActivity : AppCompatActivity() {
 
   // Note: this code is for demonstration purpose only. In practice, if an Activity is registered
