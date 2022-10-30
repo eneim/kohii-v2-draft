@@ -22,10 +22,4 @@ interface RendererProviderManager {
 
   @MainThread
   fun getRendererProvider(playback: Playback): RendererProvider
-
-  @MainThread
-  fun addRendererProvider(rendererProvider: RendererProvider)
-
-  @MainThread
-  fun removeRendererProvider(rendererProvider: RendererProvider)
 }

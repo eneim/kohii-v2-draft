@@ -47,10 +47,11 @@ import java.util.ArrayDeque
  *
  * TODO(eneim): this class should be named "PlaybackManager".
  */
-class Manager(
+@Suppress("TooManyFunctions")
+class Manager private constructor(
   internal val home: Home,
   internal val owner: Any,
-  internal val group: Group,
+  private val group: Group,
   internal val playableManager: PlayableManager,
   internal val lifecycleOwner: LifecycleOwner,
 ) : DefaultLifecycleObserver, LifecycleEventObserver, RendererProviderManager, PlaybackManager {
@@ -372,24 +373,25 @@ class Manager(
     group.removeManager(this)
   }
 
-  //region RendererProviderManager
-  override fun addRendererProvider(rendererProvider: RendererProvider) {
+  @JvmSynthetic
+  internal fun addRendererProvider(rendererProvider: RendererProvider) {
     if (!rendererProviders.contains(rendererProvider)) {
       rendererProviders.addFirst(rendererProvider)
       lifecycleOwner.lifecycle.addObserver(rendererProvider)
     }
   }
 
-  override fun removeRendererProvider(rendererProvider: RendererProvider) {
+  @JvmSynthetic
+  internal fun removeRendererProvider(rendererProvider: RendererProvider) {
     if (rendererProviders.remove(rendererProvider)) {
       rendererProvider.onDestroy(lifecycleOwner)
       lifecycleOwner.lifecycle.removeObserver(rendererProvider)
     }
   }
 
+  //region RendererProviderManager
   override fun getRendererProvider(playback: Playback): RendererProvider {
-    return rendererProviders
-      .firstOrNull { provider -> provider.accept(playback) }
+    return rendererProviders.firstOrNull { provider -> provider.accept(playback) }
       ?: throw IllegalArgumentException("No RendererProvider found for $playback.")
   }
   //endregion
@@ -417,5 +419,20 @@ class Manager(
 
   internal companion object {
     const val DEFAULT_DESTRUCTION_DELAY_MS = 750L // ProcessLifecycle delay + 50ms
+
+    @JvmSynthetic
+    internal fun newInstance(
+      home: Home,
+      owner: Any,
+      group: Group,
+      playableManager: PlayableManager,
+      lifecycleOwner: LifecycleOwner,
+    ): Manager = Manager(
+      home = home,
+      owner = owner,
+      group = group,
+      playableManager = playableManager,
+      lifecycleOwner = lifecycleOwner
+    )
   }
 }

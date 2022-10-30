@@ -18,6 +18,7 @@ package kohii.v2.core
 
 import androidx.annotation.CallSuper
 import androidx.annotation.MainThread
+import kohii.v2.internal.checkMainThread
 
 /**
  * A class that can create [Playable] for a specific piece of data.
@@ -51,6 +52,7 @@ abstract class PlayableCreator {
   @CallSuper
   @MainThread
   open fun onAttached() {
+    checkMainThread()
     attachCount++
   }
 
@@ -60,6 +62,7 @@ abstract class PlayableCreator {
   @CallSuper
   @MainThread
   open fun onDetached() {
+    checkMainThread()
     attachCount--
     if (attachCount <= 0) onClear()
   }

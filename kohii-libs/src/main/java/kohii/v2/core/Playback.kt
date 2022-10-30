@@ -37,7 +37,6 @@ import kohii.v2.core.Playback.State.REMOVED
 import kohii.v2.exoplayer.ComponentsListener
 import kohii.v2.exoplayer.ComponentsListeners
 import kohii.v2.internal.PlayableControllerImpl
-import kohii.v2.internal.asString
 import kohii.v2.internal.checkMainThread
 import kohii.v2.internal.hexCode
 import kohii.v2.internal.logInfo
@@ -81,16 +80,19 @@ abstract class Playback(
     }
   }
 
+  @JvmSynthetic
   internal val componentsListeners: ComponentsListeners = with(config) {
     componentsListeners.add(internalComponentsListener)
     componentsListeners
   }
 
+  @JvmSynthetic
   internal val trigger: Float = config.trigger
 
   /**
    * The current [Lifecycle.State] of the lifecycle that hosts this [Playback].
    */
+  @JvmSynthetic
   internal var lifecycleState: Lifecycle.State = manager.lifecycleOwner.lifecycle.currentState
     set(value) {
       "Playback[${hexCode()}]_LIFECYCLE [$field → $value]".logInfo()
@@ -101,11 +103,12 @@ abstract class Playback(
    * Only used when the Playback is being removed. In that time, the Playable may be switched to
    * another Playback already.
    */
-  internal val activePlayable: Playable? get() = playable.takeIf { it.playback === this }
+  private val activePlayable: Playable? get() = playable.takeIf { it.playback === this }
 
   /**
    * Returns the current state of the Playback.
    */
+  @JvmSynthetic
   internal var state: State = CREATED
     private set(value) {
       "Playback[${hexCode()}]_STATE [$field → $value]".logInfo()
@@ -119,6 +122,7 @@ abstract class Playback(
     }
 
   // This field is set to true once when this Playback is being removed.
+  @JvmSynthetic
   internal var isRemoving: Boolean = false
 
   /**
@@ -144,30 +148,30 @@ abstract class Playback(
    * This value should be set once.
    */
   @ExperimentalKohiiApi
+  @JvmSynthetic
   internal var chain: Chain? = null
-    internal set(value) {
+    @JvmSynthetic internal set(value) {
       check(field == null) { "This value is already set for this Playback." }
       field = value
     }
 
-  init {
-    @Suppress("LeakingThis")
-    "Playback[${hexCode()}]_CREATED".logInfo()
-  }
-
+  @JvmSynthetic
   @MainThread
   internal open fun shouldActivate(): Boolean = false
 
+  @JvmSynthetic
   @MainThread
   internal open fun shouldPrepare(): Boolean = false
 
+  @JvmSynthetic
   @MainThread
   internal open fun shouldPlay(): Boolean = false
 
   override fun toString(): String {
-    return "PK[${hexCode()}, s=$state, m=$manager, pb=PB@${playable.hexCode()}, t=$tag, rr=${playable.renderer?.asString()}]"
+    return "Playback#${hexCode()}"
   }
 
+  @JvmSynthetic
   @MainThread
   internal fun addLifecycleCallback(callback: LifecycleCallback) {
     checkMainThread()
@@ -177,12 +181,14 @@ abstract class Playback(
   }
 
   @Suppress("unused")
+  @JvmSynthetic
   @MainThread
   internal fun removeLifecycleCallback(callback: LifecycleCallback?) {
     checkMainThread()
     lifecycleCallbacks.remove(callback)
   }
 
+  @JvmSynthetic
   @MainThread
   internal fun addPlayerEventListener(listener: PlayerEventListener) {
     checkMainThread()
@@ -191,6 +197,7 @@ abstract class Playback(
     }
   }
 
+  @JvmSynthetic
   @MainThread
   internal fun removePlayerEventListener(listener: PlayerEventListener?) {
     checkMainThread()
@@ -201,6 +208,7 @@ abstract class Playback(
    * Called by the [Manager] to perform adding this Playback. This method will call [onAdd], and its
    * state will be changed: [CREATED]->[onAdd]->[ADDED].
    */
+  @JvmSynthetic
   @MainThread
   internal fun performAdd() {
     checkMainThread()
@@ -218,6 +226,7 @@ abstract class Playback(
    *
    * This method will call [onAttach], its state will be changed: [ADDED]->[onAttach]->[ATTACHED].
    */
+  @JvmSynthetic
   @MainThread
   internal fun performAttach() {
     checkMainThread()
@@ -235,6 +244,7 @@ abstract class Playback(
    * This method will call [onActivate], its state will be changed:
    * [ATTACHED]->[onActivate]->[ACTIVATED].
    */
+  @JvmSynthetic
   @MainThread
   internal fun performActivate() {
     checkMainThread()
@@ -253,6 +263,7 @@ abstract class Playback(
    * This method will call [onDeactivate], its state will be changed:
    * [ACTIVATED]->[ATTACHED]->[onDeactivate].
    */
+  @JvmSynthetic
   @MainThread
   internal fun performDeactivate() {
     checkMainThread()
@@ -270,6 +281,7 @@ abstract class Playback(
    *
    * This method will call [onDetach], its state will be changed: [ATTACHED]->[ADDED]->[onDetach].
    */
+  @JvmSynthetic
   @MainThread
   internal fun performDetach() {
     checkMainThread()
@@ -286,6 +298,7 @@ abstract class Playback(
    *
    * This method will call [onRemove], its state will be changed: [ADDED]->[REMOVED]->[onRemove].
    */
+  @JvmSynthetic
   @MainThread
   internal fun performRemove() {
     checkMainThread()
@@ -304,6 +317,7 @@ abstract class Playback(
   /**
    * Refresh the Playback internal state.
    */
+  @JvmSynthetic
   @MainThread
   internal fun performRefresh() {
     checkMainThread()
@@ -320,6 +334,7 @@ abstract class Playback(
   /**
    * Called after the Playback is attached, to make sure if it is activated or not.
    */
+  @JvmSynthetic
   @MainThread
   internal fun maybeActivated(): Boolean {
     performRefresh()
@@ -384,6 +399,7 @@ abstract class Playback(
   protected abstract fun detachRenderer()
 
   @ExperimentalKohiiApi
+  @MainThread
   @JvmOverloads
   fun rebind(callback: Binder.Callback? = null): RequestHandle {
     check(isAdded)
@@ -395,6 +411,7 @@ abstract class Playback(
   }
 
   @ExperimentalKohiiApi
+  @MainThread
   fun unbind(): Unit = manager.removePlayback(this)
 
   /**

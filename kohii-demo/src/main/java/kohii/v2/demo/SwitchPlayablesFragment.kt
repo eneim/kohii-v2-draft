@@ -101,10 +101,11 @@ class SwitchPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
     binder.bind(containers[index.getAndIncrement() % containers.size])
 
     childFragmentManager
-      .setFragmentResultListener(commonTag, viewLifecycleOwner) { resultKey, bundle ->
+      .setFragmentResultListener(commonTag, viewLifecycleOwner) { _, bundle ->
         val request: Request = requireNotNull(bundle.getParcelableCompat(ARGS_REQUEST))
-        engine.setUp(request).bind(containers[index.getAndIncrement() % containers.size])
-        childFragmentManager.clearFragmentResult(resultKey)
+        engine
+          .setUp(request)
+          .bind(containers[index.getAndIncrement() % containers.size])
       }
   }
 

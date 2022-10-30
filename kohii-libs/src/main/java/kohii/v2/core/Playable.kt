@@ -43,6 +43,7 @@ abstract class Playable(
   initialManager: PlayableManager,
 ) {
 
+  @get:JvmSynthetic
   internal val internalId = UUID.randomUUID().toString()
 
   abstract val isStarted: Boolean
@@ -141,7 +142,7 @@ abstract class Playable(
    */
   @CallSuper
   open fun onDestroy() {
-    // On normal destruction, we do not need to clear the state. When the manager is cleared, it
+    // On a normal destruction, we do not need to clear the state. When the manager is cleared, it
     // will clear them automatically.
     manager.removePlayable(playable = this, clearState = false)
   }

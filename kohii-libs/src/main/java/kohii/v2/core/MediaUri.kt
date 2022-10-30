@@ -24,9 +24,10 @@ import kotlinx.parcelize.Parcelize
  * A [RequestData] that is constructed from a [String]. Normally it is the [Uri] of the media
  * content.
  */
+@Suppress("unused")
 @Parcelize
 @JvmInline
-value class MediaUri(val value: String) : RequestData {
+value class MediaUri(private val value: String) : RequestData {
 
   constructor(uri: Uri) : this(uri.toString())
 

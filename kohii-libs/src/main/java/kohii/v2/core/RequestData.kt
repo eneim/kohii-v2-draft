@@ -53,6 +53,9 @@ interface RequestData : Parcelable {
  */
 @JvmSynthetic
 internal fun List<RequestData>.isCompatible(other: List<RequestData>): Boolean {
-  return (this.size == other.size) &&
-    this.asSequence().zip(other.asSequence()).all { (left, right) -> left.isCompatible(right) }
+  val size = this.size
+  return (size == other.size) &&
+    (size == 0 || (0 until size).all { index ->
+      this[index].isCompatible(other[index])
+    })
 }

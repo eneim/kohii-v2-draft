@@ -157,12 +157,14 @@ class Binder(
         tag = request.tag ?: Home.NO_TAG,
       )
 
-      val isCompatibleData = existingPlayable?.data?.isCompatible(request.data) == true
+      val isCompatibleData = existingPlayable?.data.orEmpty().isCompatible(request.data)
       // The state that can be used to transfer to the new Playable for the same tag. If the
       // requested data is not compatible with the one used the same tag, it will be (re)initialized.
-      val reusablePlayableState: PlayableState? = existingPlayable
-        ?.currentState()
-        ?.takeIf { isCompatibleData }
+      val reusablePlayableState: PlayableState? = if (isCompatibleData) {
+        existingPlayable?.currentState()
+      } else {
+        null
+      }
 
       playable.onCreate(
         initialState = reusablePlayableState?.toBundle() // Transferred state.
@@ -180,15 +182,17 @@ class Binder(
 
     other as Binder
 
-    if (engine !== other.engine) return false
+    if (engine != other.engine) return false
     if (request != other.request) return false
+    if (callback != other.callback) return false
 
     return true
   }
 
   override fun hashCode(): Int {
-    var result = request.hashCode()
-    result = 31 * result + engine.hashCode()
+    var result = engine.hashCode()
+    result = 31 * result + request.hashCode()
+    result = 31 * result + callback.hashCode()
     return result
   }
 

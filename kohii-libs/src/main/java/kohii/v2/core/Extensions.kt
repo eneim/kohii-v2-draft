@@ -30,13 +30,13 @@ import kohii.v2.exoplayer.getPlayerViewProvider
 fun Fragment.playbackManager(): Manager = Home[requireContext()].registerManagerInternal(
   owner = this,
   managerLifecycleOwner = viewLifecycleOwner,
-  managerViewModel = viewModels<Playable.ManagerImpl>()
+  playableManager = viewModels<Playable.ManagerImpl>()
 )
 
 fun ComponentActivity.playbackManager(): Manager = Home[this].registerManagerInternal(
   owner = this,
   managerLifecycleOwner = this,
-  managerViewModel = viewModels<Playable.ManagerImpl>()
+  playableManager = viewModels<Playable.ManagerImpl>()
 )
 
 /**

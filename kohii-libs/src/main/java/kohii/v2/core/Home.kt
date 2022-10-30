@@ -46,7 +46,8 @@ import kotlin.coroutines.cancellation.CancellationException
 
 class Home private constructor(context: Context) {
 
-  val application = context.applicationContext as Application
+  @JvmSynthetic
+  internal val application = context.applicationContext as Application
 
   @JvmSynthetic
   internal val playables = mutableMapOf<Playable, PlayableKey>()
@@ -75,11 +76,19 @@ class Home private constructor(context: Context) {
     })
   } */
 
+  /* init {
+    application.registerComponentCallbacks(object : ComponentCallbacks2 {
+      override fun onConfigurationChanged(newConfig: Configuration) = Unit
+      override fun onLowMemory() = Unit
+      override fun onTrimMemory(level: Int) = Unit
+    })
+  } */
+
   @JvmSynthetic
   internal fun registerManagerInternal(
     owner: Any,
     managerLifecycleOwner: LifecycleOwner,
-    managerViewModel: Lazy<PlayableManager>,
+    playableManager: Lazy<PlayableManager>,
   ): Manager {
     check(managerLifecycleOwner.lifecycle.currentState > DESTROYED) {
       "The manager $managerLifecycleOwner is already destroyed"
@@ -102,15 +111,15 @@ class Home private constructor(context: Context) {
       }
 
     return group.managers.find { it.lifecycleOwner === managerLifecycleOwner && it.owner == owner }
-      ?: Manager(
+      ?: Manager.newInstance(
         home = this,
         owner = owner,
         group = group,
-        playableManager = managerViewModel.value,
+        playableManager = playableManager.value,
         lifecycleOwner = managerLifecycleOwner
-      ).also { newManager ->
-        group.addManager(newManager)
-        managerLifecycleOwner.lifecycle.addObserver(newManager)
+      ).also { manager ->
+        group.addManager(manager)
+        managerLifecycleOwner.lifecycle.addObserver(manager)
       }
   }
 
@@ -199,6 +208,7 @@ class Home private constructor(context: Context) {
   //region Public APIs
   @ExperimentalKohiiApi
   fun cancel(tag: String) {
+    if (tag == NO_TAG) return
     playables.keys.firstOrNull { it.tag == tag }?.playback?.unbind()
       ?: pendingRequests.values.firstOrNull { it.request.tag == tag }?.cancel()
   }
