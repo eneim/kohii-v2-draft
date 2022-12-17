@@ -41,7 +41,7 @@ internal suspend inline fun Lifecycle.awaitStarted() {
 internal suspend fun Lifecycle.observeStarted() {
   var observer: LifecycleObserver? = null
   try {
-    suspendCancellableCoroutine<Unit> { continuation ->
+    suspendCancellableCoroutine { continuation ->
       observer = object : DefaultLifecycleObserver {
         override fun onStart(owner: LifecycleOwner): Unit = continuation.resume(Unit)
       }.also(::addObserver)

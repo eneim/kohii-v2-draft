@@ -137,13 +137,14 @@ abstract class Playable(
 
   /**
    * Notify the Playable that it is destroyed. This method is called right before the
-   * destruction of the [Playable] instance. The [Playable] instance is no longer used again after
+   * destruction of the [Playable] instance. The [Playable] instance is no longer usable again after
    * this method is called.
    */
   @CallSuper
   open fun onDestroy() {
-    // On a normal destruction, we do not need to clear the state. When the manager is cleared, it
-    // will clear them automatically.
+    // On a normal destruction, we do not need to clear the state. The state can be used to restore
+    // the Playable if it is requested again. When the manager is cleared, it will clear them
+    // automatically.
     manager.removePlayable(playable = this, clearState = false)
   }
 
@@ -310,7 +311,7 @@ abstract class Playable(
     }
 
     override fun getPlayableState(playable: Playable): Bundle? {
-      return stateHandle.get(playable.stateKey)
+      return stateHandle[playable.stateKey]
     }
 
     override fun trySavePlayableState(playable: Playable) {
@@ -327,7 +328,6 @@ abstract class Playable(
     }
 
     override fun onCleared() {
-      super.onCleared()
       if (playables.isNotEmpty()) {
         playables.toMutableSet()
           .onEach { playable ->
