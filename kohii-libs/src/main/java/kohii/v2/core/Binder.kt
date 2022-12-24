@@ -30,12 +30,12 @@ import kotlin.coroutines.cancellation.CancellationException
 /**
  * See [Engine.setUp].
  *
- * Instance of a [Binder] must not be reused across different [engine]. To reuse an existing
+ * Instance of a [Binder] must not be reused across different [Engine]s. To reuse an existing
  * [Request] in another [Engine], use [Engine.setUp] with the [Request] parameter instead.
  */
 class Binder(
   val request: Request,
-  val engine: Engine,
+  @JvmSynthetic @PublishedApi internal val engine: Engine,
   private val callback: Callback = EMPTY_CALLBACK,
 ) {
 
@@ -174,26 +174,6 @@ class Binder(
 
       return@lazy playable
     }
-  }
-
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (javaClass != other?.javaClass) return false
-
-    other as Binder
-
-    if (engine != other.engine) return false
-    if (request != other.request) return false
-    if (callback != other.callback) return false
-
-    return true
-  }
-
-  override fun hashCode(): Int {
-    var result = engine.hashCode()
-    result = 31 * result + request.hashCode()
-    result = 31 * result + callback.hashCode()
-    return result
   }
 
   interface Callback {

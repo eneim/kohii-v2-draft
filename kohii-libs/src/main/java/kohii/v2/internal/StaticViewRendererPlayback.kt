@@ -36,7 +36,7 @@ internal class StaticViewRendererPlayback(
   playable = playable,
   bucket = bucket,
   manager = manager,
-  viewContainer = container,
+  container = container,
   tag = tag,
   config = config,
 ) {

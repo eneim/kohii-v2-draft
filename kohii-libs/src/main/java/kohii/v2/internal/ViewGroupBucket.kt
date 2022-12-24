@@ -25,10 +25,10 @@ import kohii.v2.core.ViewBucket
 
 internal open class ViewGroupBucket(
   manager: Manager,
-  rootView: ViewGroup,
+  root: ViewGroup,
 ) : ViewBucket(
   manager = manager,
-  rootView = rootView
+  root = root
 ) {
 
   override val axis: Axis = UNKNOWN
@@ -37,11 +37,11 @@ internal open class ViewGroupBucket(
 
   override fun onAdd() {
     super.onAdd()
-    rootView.viewTreeObserver.addOnScrollChangedListener(globalScrollChangeListener)
+    root.viewTreeObserver.addOnScrollChangedListener(globalScrollChangeListener)
   }
 
   override fun onRemove() {
     super.onRemove()
-    rootView.viewTreeObserver.removeOnScrollChangedListener(globalScrollChangeListener)
+    root.viewTreeObserver.removeOnScrollChangedListener(globalScrollChangeListener)
   }
 }

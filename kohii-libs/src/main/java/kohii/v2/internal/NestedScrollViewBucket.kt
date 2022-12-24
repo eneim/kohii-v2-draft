@@ -23,12 +23,12 @@ import kohii.v2.core.Axis.VERTICAL
 import kohii.v2.core.Manager
 import kohii.v2.core.ViewBucket
 
-class NestedScrollViewBucket(
+internal class NestedScrollViewBucket(
   manager: Manager,
-  override val rootView: NestedScrollView,
+  override val root: NestedScrollView,
 ) : ViewBucket(
-  manager,
-  rootView
+  manager = manager,
+  root = root,
 ), OnScrollChangeListener {
 
   override val axis: Axis = VERTICAL
@@ -45,11 +45,11 @@ class NestedScrollViewBucket(
 
   override fun onAdd() {
     super.onAdd()
-    rootView.setOnScrollChangeListener(this)
+    root.setOnScrollChangeListener(this)
   }
 
   override fun onRemove() {
     super.onRemove()
-    rootView.setOnScrollChangeListener(null as OnScrollChangeListener?)
+    root.setOnScrollChangeListener(null as OnScrollChangeListener?)
   }
 }

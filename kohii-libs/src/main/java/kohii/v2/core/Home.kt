@@ -20,6 +20,7 @@ import android.app.Application
 import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Lifecycle.State.DESTROYED
 import androidx.lifecycle.Lifecycle.State.INITIALIZED
 import androidx.lifecycle.LifecycleOwner
@@ -203,6 +204,13 @@ class Home private constructor(context: Context) {
         .clear()
       pendingRequests.clear()
     }
+  }
+
+  @JvmSynthetic
+  internal fun onManagerDestroyed(lifecycle: Lifecycle) {
+    pendingRequests.values.filter { handle -> handle.lifecycle === lifecycle }
+      .onEach(RequestHandle::cancel)
+      .let(pendingRequests.values::removeAll)
   }
 
   //region Public APIs

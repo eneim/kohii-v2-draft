@@ -37,14 +37,14 @@ internal abstract class ViewPlayback(
   playable: Playable,
   bucket: Bucket,
   manager: Manager,
-  val viewContainer: View,
+  override val container: View,
   tag: String,
   config: Config,
 ) : Playback(
   playable = playable,
   bucket = bucket,
   manager = manager,
-  container = viewContainer,
+  container = container,
   tag = tag,
   config = config,
 ) {
@@ -57,7 +57,7 @@ internal abstract class ViewPlayback(
   override val token: Token get() = internalToken
 
   override val isOnline: Boolean
-    get() = super.isOnline && viewContainer.isAttachedToWindow
+    get() = super.isOnline && container.isAttachedToWindow
 
   override fun shouldActivate(): Boolean = internalToken.activePixelsRatio > 0
 
@@ -72,17 +72,17 @@ internal abstract class ViewPlayback(
       super.onRefresh()
       internalToken = fetchToken()
     }
-    "Playback#${hexCode()} refreshes in $=${NANOSECONDS.toMillis(refreshTimeNano)}ms".logInfo()
+    "$this refreshes in ${NANOSECONDS.toMillis(refreshTimeNano)}ms".logInfo()
   }
 
   override fun onStarted() {
-    viewContainer.keepScreenOn = true
+    container.keepScreenOn = true
     super.onStarted()
   }
 
   override fun onPaused() {
     super.onPaused()
-    viewContainer.keepScreenOn = false
+    container.keepScreenOn = false
   }
 
   private fun fetchToken(): ViewToken {
@@ -91,15 +91,15 @@ internal abstract class ViewPlayback(
     if (!isOnline) {
       return ViewToken(activePixelsRatio = -1f, boundInWindow = tokenRect)
     }
-    if (!viewContainer.getGlobalVisibleRect(tokenRect)) {
+    if (!container.getGlobalVisibleRect(tokenRect)) {
       // tokenRect is updated, but the container is not visible in the Window, so reset it to empty.
       tokenRect.setEmpty()
       return ViewToken(activePixelsRatio = -1f, boundInWindow = tokenRect)
     }
     drawRect.setEmpty()
     val drawArea: Float = with(drawRect) drawRect@{
-      viewContainer.getDrawingRect(this)
-      viewContainer.clipBounds?.let(::intersect)
+      container.getDrawingRect(this)
+      container.clipBounds?.let(::intersect)
       this@drawRect.area.toFloat()
     }
 

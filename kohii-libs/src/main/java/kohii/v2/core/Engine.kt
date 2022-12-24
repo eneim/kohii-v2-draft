@@ -18,12 +18,16 @@ package kohii.v2.core
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
+import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
 
 /**
  * [Engine] instance should have the same lifecycle as the [Manager] instance.
  *
  * If the [rendererProvider] provides [android.view.View]s objects, it is recommended to reuse the
  * same instance for the same Activity.
+ *
+ * @see [Engine.setUp]
  */
 class Engine constructor(
   internal val rendererType: Class<*>,
@@ -47,7 +51,8 @@ class Engine constructor(
     playableCreator.onDetached()
   }
 
-  private fun setUpInternal(
+  @JvmSynthetic
+  internal fun setUpInternal(
     tag: String? = null,
     data: List<RequestData>,
   ): Binder = Binder(
@@ -74,12 +79,21 @@ class Engine constructor(
   ): Binder = setUpInternal(tag = tag, data = arrayListOf(data))
 
   /**
-   * Creates a [Binder] for a list of [String]s.
+   * Creates a [Binder] for an array of [String]s.
    */
   @JvmOverloads
   fun setUp(
     tag: String? = null,
     data: Array<String>,
+  ): Binder = setUpInternal(tag = tag, data = data.map(::MediaUri))
+
+  /**
+   * Creates a [Binder] for a list of [String]s.
+   */
+  @JvmOverloads
+  fun setUp(
+    tag: String? = null,
+    data: Iterable<String>,
   ): Binder = setUpInternal(tag = tag, data = data.map(::MediaUri))
 
   /**
@@ -129,3 +143,13 @@ class Engine constructor(
     )
   }
 }
+
+@UnstableApi
+@JvmOverloads
+fun Engine.setUp(
+  tag: String? = null,
+  data: Iterable<MediaItem>,
+): Binder = setUpInternal(
+  tag = tag,
+  data = data.map(::MediaItemData)
+)

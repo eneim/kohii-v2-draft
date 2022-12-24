@@ -45,7 +45,7 @@ internal class DynamicViewRendererPlayback(
   playable = playable,
   bucket = bucket,
   manager = manager,
-  viewContainer = container,
+  container = container,
   tag = tag,
   config = config
 ) {
@@ -70,7 +70,7 @@ internal class DynamicViewRendererPlayback(
       if (attachRendererResult == null) {
         playable.onRendererAttached(renderer)
       } else {
-        "Playback[${hexCode()}] fails to attach $renderer, result=$attachRendererResult".logDebug()
+        "$this fails to attach $renderer, result=$attachRendererResult".logDebug()
       }
     }
   }
@@ -86,7 +86,7 @@ internal class DynamicViewRendererPlayback(
           renderer = renderer
         )
       } else {
-        "Playback[${hexCode()}] fails to detach $renderer, result=$detachRenderInfo".logDebug()
+        "$this fails to detach $renderer, result=$detachRenderInfo".logDebug()
       }
     }
   }

@@ -35,16 +35,15 @@ import kohii.v2.internal.getTagOrPut
 import kohii.v2.internal.getTypedTag
 import kohii.v2.internal.isAncestorOf
 
-// TODO(eneim): figure out the way to use Instrumentation Test to verify the ViewBucket behavior.
 /**
  * A base [Bucket] implementation where the [Bucket.root] is a [ViewGroup].
  */
-abstract class ViewBucket(
+internal abstract class ViewBucket(
   manager: Manager,
-  protected open val rootView: ViewGroup,
+  override val root: ViewGroup,
 ) : Bucket(
   manager = manager,
-  root = rootView
+  root = root
 ) {
 
   protected abstract val axis: Axis
@@ -79,21 +78,21 @@ abstract class ViewBucket(
   @CallSuper
   override fun onAdd() {
     super.onAdd()
-    if (rootView.isAttachedToWindow) {
-      rootViewAttachStateListener.onViewAttachedToWindow(rootView)
+    if (root.isAttachedToWindow) {
+      rootViewAttachStateListener.onViewAttachedToWindow(root)
     }
-    rootView.addOnAttachStateChangeListener(rootViewAttachStateListener)
+    root.addOnAttachStateChangeListener(rootViewAttachStateListener)
   }
 
   @CallSuper
   override fun onRemove() {
     super.onRemove()
-    rootView.removeOnAttachStateChangeListener(rootViewAttachStateListener)
+    root.removeOnAttachStateChangeListener(rootViewAttachStateListener)
     containers.onEach(::onRemoveContainer).clear()
   }
 
   override fun accept(container: Any): Boolean {
-    return container is View && container.isAttachedToWindow && rootView.isAncestorOf(container)
+    return container is View && container.isAttachedToWindow && root.isAncestorOf(container)
   }
 
   override fun selectToPlayInternal(candidates: Collection<Playback>): Collection<Playback> {
@@ -142,6 +141,7 @@ abstract class ViewBucket(
 
   companion object {
 
+    @JvmSynthetic
     internal operator fun get(
       manager: Manager,
       root: ViewGroup,

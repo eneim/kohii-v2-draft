@@ -19,6 +19,9 @@ package kohii.v2.core
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
+import kotlinx.parcelize.Parceler
+import kotlinx.parcelize.Parcelize
 
 /**
  * Definition of the data that can be used in Kohii's requests.
@@ -58,4 +61,28 @@ internal fun List<RequestData>.isCompatible(other: List<RequestData>): Boolean {
     (size == 0 || (0 until size).all { index ->
       this[index].isCompatible(other[index])
     })
+}
+
+@Parcelize
+@UnstableApi
+internal class MediaItemData(private val mediaItem: MediaItem) : RequestData {
+  override fun toMediaItem(): MediaItem = mediaItem
+
+  override fun isCompatible(other: RequestData): Boolean {
+    return (other is MediaItemData && mediaItem == other.mediaItem)
+  }
+
+  internal companion object : Parceler<MediaItemData> {
+    override fun create(parcel: Parcel): MediaItemData {
+      val bundle = requireNotNull(parcel.readBundle(MediaItem::class.java.classLoader))
+      return MediaItemData(MediaItem.CREATOR.fromBundle(bundle))
+    }
+
+    override fun MediaItemData.write(
+      parcel: Parcel,
+      flags: Int,
+    ) {
+      parcel.writeBundle(mediaItem.toBundle())
+    }
+  }
 }

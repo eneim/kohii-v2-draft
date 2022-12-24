@@ -50,7 +50,7 @@ internal class RequestHandleImpl(
   override suspend fun result(): Result<Playback> = deferred.await()
 
   private fun onCompleted(error: Throwable?) {
-    "Handle[${hexCode()}] completes [E: $error] [R=${request.hexCode()}]".logInfo()
+    "$this completes (error: $error), request=$request".logInfo()
     lifecycle.removeObserver(this)
     home.pendingRequests.values.removeAll { handle -> handle === this }
   }

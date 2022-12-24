@@ -27,7 +27,6 @@ import kohii.v2.core.Chain.SelectScope.ALL
 import kohii.v2.core.Playable.Command.STARTED_BY_USER
 import kohii.v2.internal.asString
 import kohii.v2.internal.checkMainThread
-import kohii.v2.internal.hexCode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -42,14 +41,14 @@ import kotlinx.coroutines.cancel
  * [RecyclerView] is the root of that [Bucket].
  */
 abstract class Bucket(
-  val manager: Manager,
-  val root: Any,
+  @JvmSynthetic internal val manager: Manager,
+  @JvmSynthetic internal open val root: Any,
   private val selector: Selector = defaultSelector,
 ) {
 
   internal val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
-  override fun toString(): String = "B[${hexCode()}, rt=${root.asString()}]"
+  override fun toString(): String = "Bucket#${hashCode()}, root=${root.asString()}]"
 
   /**
    * Called when this class is added to a [Manager].
@@ -181,6 +180,7 @@ abstract class Bucket(
       }
     }
 
+    @JvmSynthetic
     internal operator fun get(
       manager: Manager,
       root: Any,

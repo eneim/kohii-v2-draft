@@ -165,8 +165,7 @@ internal inline fun <reified T : Any> Parcel.readArrayListCompat(classLoader: Cl
   return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU /* 33 */) {
     readArrayList(classLoader, T::class.java)
   } else {
-    @Suppress("UNCHECKED_CAST")
-    readArrayList(classLoader) as? ArrayList<T>
+    readArrayList(classLoader).orEmpty().filterIsInstanceTo(arrayListOf())
   }
 }
 

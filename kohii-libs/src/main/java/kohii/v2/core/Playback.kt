@@ -26,7 +26,6 @@ import androidx.media3.common.Player
 import androidx.media3.common.VideoSize
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
 import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
-import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
 import kohii.v2.common.ExperimentalKohiiApi
 import kohii.v2.core.Playable.Controller
 import kohii.v2.core.Playback.State.ACTIVATED
@@ -36,6 +35,7 @@ import kohii.v2.core.Playback.State.CREATED
 import kohii.v2.core.Playback.State.REMOVED
 import kohii.v2.exoplayer.ComponentsListener
 import kohii.v2.exoplayer.ComponentsListeners
+import kohii.v2.exoplayer.DefaultVideoAdPlayerCallback
 import kohii.v2.internal.PlayableControllerImpl
 import kohii.v2.internal.checkMainThread
 import kohii.v2.internal.hexCode
@@ -48,12 +48,12 @@ import kotlin.LazyThreadSafetyMode.NONE
  */
 // TODO: allow the Playback to configure the renderer when it is available.
 abstract class Playback(
-  internal val playable: Playable,
-  internal val bucket: Bucket,
-  internal val manager: Manager,
-  val container: Any,
-  internal val tag: String,
-  internal val config: Config,
+  @JvmSynthetic internal val playable: Playable,
+  @JvmSynthetic internal val bucket: Bucket,
+  @JvmSynthetic internal val manager: Manager,
+  @JvmSynthetic internal open val container: Any,
+  @JvmSynthetic internal val tag: String,
+  @JvmSynthetic internal val config: Config,
 ) {
 
   // Note(eneim, 2021/04/30): Using ArrayDeque because it is fast and light-weight. It supports
@@ -64,21 +64,23 @@ abstract class Playback(
   private val lifecycleCallbacks = ArrayDeque(config.lifecycleCallbacks)
   private val playerEventListeners = ArrayDeque(config.playerEventListeners)
 
-  private val internalComponentsListener: ComponentsListener = object : ComponentsListener {
-    override fun onPlaybackStateChanged(playbackState: Int) {
-      val playback = this@Playback
-      for (callback in playerEventListeners) {
-        callback.onStateChanged(playback = playback, state = playbackState)
+  private val internalComponentsListener: ComponentsListener = ComponentsListener(
+    playerListener = object : Player.Listener {
+      override fun onPlaybackStateChanged(playbackState: Int) {
+        val playback = this@Playback
+        for (callback in playerEventListeners) {
+          callback.onStateChanged(playback = playback, state = playbackState)
+        }
       }
-    }
 
-    override fun onVideoSizeChanged(videoSize: VideoSize) {
-      val playback = this@Playback
-      for (callback in playerEventListeners) {
-        callback.onVideoSizeChanged(playback = playback, videoSize = videoSize)
+      override fun onVideoSizeChanged(videoSize: VideoSize) {
+        val playback = this@Playback
+        for (callback in playerEventListeners) {
+          callback.onVideoSizeChanged(playback = playback, videoSize = videoSize)
+        }
       }
     }
-  }
+  )
 
   @JvmSynthetic
   internal val componentsListeners: ComponentsListeners = with(config) {
@@ -95,7 +97,7 @@ abstract class Playback(
   @JvmSynthetic
   internal var lifecycleState: Lifecycle.State = manager.lifecycleOwner.lifecycle.currentState
     set(value) {
-      "Playback[${hexCode()}]_LIFECYCLE [$field → $value]".logInfo()
+      "$this lifecycle: $field → $value".logInfo()
       field = value
     }
 
@@ -374,7 +376,7 @@ abstract class Playback(
    */
   @CallSuper
   internal open fun onStarted() {
-    "Playback[${hexCode()}]_STARTED".logInfo()
+    "$this onStarted()".logInfo()
   }
 
   /**
@@ -382,7 +384,7 @@ abstract class Playback(
    */
   @CallSuper
   internal open fun onPaused() {
-    "Playback[${hexCode()}]_PAUSED".logInfo()
+    "$this onPaused()".logInfo()
   }
 
   /**
@@ -390,7 +392,7 @@ abstract class Playback(
    */
   @CallSuper
   protected open fun onRefresh() {
-    "Playback[${hexCode()}]_REFRESH".logInfo()
+    "$this onRefresh()".logInfo()
   }
 
   /**
@@ -469,13 +471,18 @@ abstract class Playback(
   }
 
   class Config(
-    internal val binder: Binder,
-    internal var trigger: Float = 0.65f,
-    internal var preload: Boolean = false,
+    @JvmSynthetic internal val binder: Binder,
+    @JvmSynthetic internal var trigger: Float = 0.65f,
+    @JvmSynthetic internal var preload: Boolean = false,
   ) {
 
+    @JvmSynthetic
     internal val lifecycleCallbacks = arraySetOf<LifecycleCallback>()
+
+    @JvmSynthetic
     internal val playerEventListeners = arraySetOf<PlayerEventListener>()
+
+    @JvmSynthetic
     internal val componentsListeners = ComponentsListeners()
 
     fun setPreload(preload: Boolean) = apply {
@@ -495,7 +502,7 @@ abstract class Playback(
     }
 
     fun addPlayerListener(listener: Player.Listener): Config = apply {
-      componentsListeners.add(ComponentsListener(listener))
+      componentsListeners.add(ComponentsListener(playerListener = listener))
     }
 
     fun addAdEventListener(listener: AdEventListener): Config = apply {
@@ -506,7 +513,7 @@ abstract class Playback(
       componentsListeners.add(ComponentsListener(adErrorListener = listener))
     }
 
-    fun addVideoAdPlayerCallback(callback: VideoAdPlayerCallback): Config = apply {
+    fun addVideoAdPlayerCallback(callback: DefaultVideoAdPlayerCallback): Config = apply {
       componentsListeners.add(ComponentsListener(videoAdPlayerCallback = callback))
     }
   }
@@ -514,7 +521,7 @@ abstract class Playback(
   companion object {
     @Throws(IllegalStateException::class)
     private fun Playback.checkState(expected: State): Unit = check(state == expected) {
-      "Expected Playback($this) state: $expected, Actual state: $state"
+      "$this expects state: $expected, but has actual state: $state"
     }
   }
 }

@@ -29,22 +29,22 @@ import kohii.v2.core.ViewBucket
 @RequiresApi(VERSION_CODES.M)
 internal class ViewGroupTwoThreeBucket(
   manager: Manager,
-  rootView: ViewGroup,
+  root: ViewGroup,
 ) : ViewBucket(
   manager = manager,
-  rootView = rootView
+  root = root
 ), OnScrollChangeListener {
 
   override val axis: Axis = UNKNOWN
 
   override fun onAdd() {
     super.onAdd()
-    rootView.setOnScrollChangeListener(this)
+    root.setOnScrollChangeListener(this)
   }
 
   override fun onRemove() {
     super.onRemove()
-    rootView.setOnScrollChangeListener(null)
+    root.setOnScrollChangeListener(null)
   }
 
   override fun onScrollChange(
