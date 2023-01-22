@@ -63,6 +63,11 @@ internal class DynamicViewRendererPlayback(
     tryDetachRenderer()
   }
 
+  override fun onDeactivate() {
+    super.onDeactivate()
+    tryDetachRenderer()
+  }
+
   private fun tryAttachRenderer() {
     if (playable.renderer == null) {
       val renderer = rendererProvider.provideRenderer(this)
@@ -121,6 +126,4 @@ internal class DynamicViewRendererPlayback(
     container.removeView(renderer)
     return null
   }
-
-  override fun detachRenderer(): Unit = tryDetachRenderer()
 }

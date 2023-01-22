@@ -366,9 +366,7 @@ abstract class Playback(
 
   @MainThread
   @CallSuper
-  protected open fun onDeactivate() {
-    detachRenderer()
-  }
+  protected open fun onDeactivate(): Unit = Unit
   //endregion
 
   /**
@@ -394,11 +392,6 @@ abstract class Playback(
   protected open fun onRefresh() {
     "$this onRefresh()".logInfo()
   }
-
-  /**
-   * Force this class to detach the current renderer.
-   */
-  protected abstract fun detachRenderer()
 
   @ExperimentalKohiiApi
   @MainThread

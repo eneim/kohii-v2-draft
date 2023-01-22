@@ -50,6 +50,4 @@ internal class StaticViewRendererPlayback(
     playable.onRendererDetached(container)
     super.onDeactivate()
   }
-
-  override fun detachRenderer() = Unit
 }
