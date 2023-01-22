@@ -28,6 +28,7 @@ import kotlin.coroutines.resume
 // Copied from Coil.
 
 /** Suspend until [Lifecycle.getCurrentState] is at least [STARTED] */
+@JvmSynthetic
 @MainThread
 internal suspend inline fun Lifecycle.awaitStarted() {
   // Fast path: we're already started.
@@ -38,7 +39,7 @@ internal suspend inline fun Lifecycle.awaitStarted() {
 
 /** Cannot be 'inline' due to a compiler bug. There is a test that guards against this bug. */
 @MainThread
-internal suspend fun Lifecycle.observeStarted() {
+private suspend fun Lifecycle.observeStarted() {
   var observer: LifecycleObserver? = null
   try {
     suspendCancellableCoroutine { continuation ->
