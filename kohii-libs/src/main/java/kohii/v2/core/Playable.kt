@@ -26,8 +26,6 @@ import kohii.v2.core.Home.Companion.NO_TAG
 import kohii.v2.core.Manager.Companion.DEFAULT_DESTRUCTION_DELAY_MS
 import kohii.v2.core.Playback.Config
 import kohii.v2.internal.debugOnly
-import kohii.v2.internal.hexCode
-import kohii.v2.internal.logStackTrace
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicReference
 
@@ -115,10 +113,6 @@ abstract class Playable(
         onRelease()
       }
     }
-  }
-
-  init {
-    "Playable[${hexCode()}] is created.".logStackTrace()
   }
 
   /**
