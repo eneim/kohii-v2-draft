@@ -20,12 +20,10 @@ import android.os.Build
 import androidx.annotation.CallSuper
 import androidx.annotation.IntRange
 import androidx.collection.arraySetOf
-import kotlin.math.max
 
 /**
  * Definition of a pool to provide [PLAYER] instance for the consumer.
  */
-// TODO: put an optional expiration so that it will cleanup unused instance after some time.
 abstract class PlayerPool<PLAYER : Any> @JvmOverloads constructor(
   @IntRange(from = 1) val poolSize: Int = DEFAULT_POOL_SIZE,
 ) {
@@ -103,9 +101,8 @@ abstract class PlayerPool<PLAYER : Any> @JvmOverloads constructor(
 
   companion object {
     // Max number of Player instances that are cached in the Pool
-    // Magic number: Build.VERSION.SDK_INT / 6 --> API 21 ~ 23 will set pool size to 3, etc.
-    val DEFAULT_POOL_SIZE =
-      max(Build.VERSION.SDK_INT / 6, max(Runtime.getRuntime().availableProcessors(), 1))
+    // Magic number: Build.VERSION.SDK_INT / 9 --> API 21 ~ 26 will set pool size to 2, etc.
+    val DEFAULT_POOL_SIZE = Build.VERSION.SDK_INT / 9
 
     private fun <T> MutableSet<T>.release(
       item: T,
