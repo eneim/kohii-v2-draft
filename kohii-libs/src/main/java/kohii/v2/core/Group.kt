@@ -24,7 +24,6 @@ import androidx.collection.arraySetOf
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import kohii.v2.core.Playable.Command.PAUSED_BY_USER
-import kohii.v2.internal.hexCode
 import kohii.v2.internal.logDebug
 import kohii.v2.internal.logInfo
 import java.util.concurrent.TimeUnit.NANOSECONDS
@@ -46,7 +45,7 @@ internal class Group(
   private val dispatcher = GroupDispatcher(this, Looper.getMainLooper())
 
   override fun toString(): String {
-    return "Group#${hexCode()}"
+    return "Group#${hashCode()}"
   }
 
   @JvmSynthetic
@@ -66,8 +65,7 @@ internal class Group(
   @JvmSynthetic
   internal fun onRefresh(): Unit = dispatcher.dispatchRefresh()
 
-  @JvmSynthetic
-  internal fun performRefresh() {
+  private fun performRefresh() {
     val toPlay = linkedSetOf<Playback>() // Need the order.
     val toPause = arraySetOf<Playback>()
 
@@ -79,7 +77,7 @@ internal class Group(
 
     toPause.forEach(dispatcher::dispatchPausePlayback)
     toPlay.forEach(dispatcher::dispatchStartPlayback)
-    "Group#${hexCode()} refreshes".logDebug()
+    "Group#${hashCode()} refreshes".logDebug()
   }
 
   override fun onDestroy(owner: LifecycleOwner) {

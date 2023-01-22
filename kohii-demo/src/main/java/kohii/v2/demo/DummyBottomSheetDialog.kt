@@ -25,7 +25,6 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -34,7 +33,6 @@ import kohii.v2.core.ExoPlayerEngine
 import kohii.v2.core.Playback
 import kohii.v2.core.PlayerEventListener
 import kohii.v2.core.Request
-import kohii.v2.demo.common.doOnStateChanged
 import kohii.v2.demo.common.getParcelableCompat
 import kohii.v2.demo.common.viewBinding
 import kohii.v2.demo.databinding.FragmentDummySheetBinding
@@ -57,8 +55,6 @@ class DummyBottomSheetDialog : BottomSheetDialogFragment() {
     requireNotNull(requireArguments().getString(ARGS_RESULT_KEY))
   }
 
-  private var sheetState: Int = BottomSheetBehavior.STATE_COLLAPSED
-
   override fun onCreateView(
     inflater: LayoutInflater,
     container: ViewGroup?,
@@ -75,16 +71,18 @@ class DummyBottomSheetDialog : BottomSheetDialogFragment() {
     val engine = ExoPlayerEngine()
     engine.useBucket(binding.root)
 
-    engine.setUp(request).bind(container = binding.videoContainer) {
-      addPlayerEventListener(object : PlayerEventListener {
-        override fun onStateChanged(
-          playback: Playback,
-          state: Int,
-        ) {
-          if (state == Player.STATE_ENDED) dismissAllowingStateLoss()
-        }
-      })
-    }
+    engine
+      .setUp(request = request)
+      .bind(container = binding.videoContainer) {
+        addPlayerEventListener(object : PlayerEventListener {
+          override fun onStateChanged(
+            playback: Playback,
+            state: Int,
+          ) {
+            if (state == Player.STATE_ENDED) dismissAllowingStateLoss()
+          }
+        })
+      }
   }
 
   override fun onCreateDialog(state: Bundle?): Dialog {
@@ -97,10 +95,6 @@ class DummyBottomSheetDialog : BottomSheetDialogFragment() {
       }
     }
 
-    dialog.doOnStateChanged(onStateChanged = { newState ->
-      sheetState = newState
-    })
-
     val initState = state?.getInt(EXTRAS_SHEET_STATE) ?: STATE_EXPANDED
     dialog.behavior.state = initState
     return dialog
@@ -108,6 +102,7 @@ class DummyBottomSheetDialog : BottomSheetDialogFragment() {
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
+    val sheetState = (dialog as? BottomSheetDialog)?.behavior?.state ?: return
     outState.putInt(EXTRAS_SHEET_STATE, sheetState)
   }
 

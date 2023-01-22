@@ -205,5 +205,14 @@ internal fun ComponentsListener(
   override fun onIsLoadingChanged(isLoading: Boolean) = playerListener.onIsLoadingChanged(isLoading)
   override fun onIsPlayingChanged(isPlaying: Boolean) = playerListener.onIsPlayingChanged(isPlaying)
   override fun onRepeatModeChanged(repeatMode: Int) = playerListener.onRepeatModeChanged(repeatMode)
+
+  //region Deprecated callbacks
+  // override fun onPositionDiscontinuity(reason: Int)
+  // override fun onCues(cues: MutableList<Cue>)
+  // override fun onLoadingChanged(isLoading: Boolean)
+  // override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int)
+  // override fun onSeekProcessed()
+  //endregion
+
   //endregion
 }

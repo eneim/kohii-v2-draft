@@ -19,7 +19,6 @@ package kohii.v2.internal
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import kohii.v2.core.Home
 import kohii.v2.core.Playback
 import kohii.v2.core.Request
 import kohii.v2.core.RequestHandle
@@ -31,15 +30,9 @@ import kotlinx.coroutines.Deferred
  */
 internal class RequestHandleImpl(
   override val request: Request,
-  private val home: Home,
   internal val lifecycle: Lifecycle,
   private val deferred: Deferred<Result<Playback>>,
 ) : RequestHandle, DefaultLifecycleObserver {
-
-  init {
-    lifecycle.addObserver(this)
-    deferred.invokeOnCompletion(::onCompleted)
-  }
 
   override val isCompleted: Boolean get() = deferred.isCompleted
 
@@ -48,10 +41,4 @@ internal class RequestHandleImpl(
   override fun cancel(): Unit = deferred.cancel()
 
   override suspend fun result(): Result<Playback> = deferred.await()
-
-  private fun onCompleted(error: Throwable?) {
-    "Handle[${hexCode()}] completes [E: $error] [R=${request.hexCode()}]".logInfo()
-    lifecycle.removeObserver(this)
-    home.pendingRequests.values.removeAll { handle -> handle === this }
-  }
 }

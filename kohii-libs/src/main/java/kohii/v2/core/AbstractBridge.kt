@@ -27,11 +27,11 @@ abstract class AbstractBridge<RENDERER : Any> : Bridge<RENDERER> {
 
   protected val componentsListeners: ComponentsListeners = ComponentsListeners()
 
-  override fun addComponentsListener(listener: ComponentsListener) {
+  final override fun addComponentsListener(listener: ComponentsListener) {
     componentsListeners.add(listener)
   }
 
-  override fun removeComponentsListener(listener: ComponentsListener?) {
+  final override fun removeComponentsListener(listener: ComponentsListener?) {
     componentsListeners.remove(listener)
   }
 

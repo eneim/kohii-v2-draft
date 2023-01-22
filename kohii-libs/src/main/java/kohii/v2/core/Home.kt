@@ -20,6 +20,7 @@ import android.app.Application
 import android.content.Context
 import androidx.activity.ComponentActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Lifecycle.State.DESTROYED
 import androidx.lifecycle.Lifecycle.State.INITIALIZED
 import androidx.lifecycle.LifecycleOwner
@@ -29,10 +30,8 @@ import kohii.v2.core.PlayableKey.Empty
 import kohii.v2.internal.BindRequest
 import kohii.v2.internal.HomeDispatcher
 import kohii.v2.internal.RequestHandleImpl
-import kohii.v2.internal.asString
 import kohii.v2.internal.awaitStarted
 import kohii.v2.internal.debugOnly
-import kohii.v2.internal.hexCode
 import kohii.v2.internal.logInfo
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineName
@@ -52,8 +51,7 @@ class Home private constructor(context: Context) {
   @JvmSynthetic
   internal val playables = mutableMapOf<Playable, PlayableKey>()
 
-  @JvmSynthetic
-  internal val pendingRequests = mutableMapOf<Any /* Container, PlayableKey */, RequestHandleImpl>()
+  private val pendingRequests = mutableMapOf<Any /* Container, PlayableKey */, RequestHandleImpl>()
   private val scope = CoroutineScope(
     SupervisorJob() +
       Dispatchers.Main.immediate +
@@ -159,7 +157,7 @@ class Home private constructor(context: Context) {
 
     val deferredBindResult: Deferred<Result<Playback>> = scope.async {
       try {
-        request.lifecycle.awaitStarted()
+        request.lifecycle.awaitStarted() // Note: what happens if it is already destroyed?
         ensureActive()
         val playback = request.onBind()
         request.callback?.onSuccess(playback, request.request)
@@ -176,19 +174,24 @@ class Home private constructor(context: Context) {
 
     val requestHandle = RequestHandleImpl(
       request = request.request,
-      home = this,
       lifecycle = request.lifecycle,
       deferred = deferredBindResult
     )
 
-    // The request may complete immediately, also the Lifecycle is not destroyed.
-    if (!requestHandle.isCompleted && request.lifecycle.currentState.isAtLeast(INITIALIZED)) {
+    if (request.lifecycle.currentState.isAtLeast(INITIALIZED)) {
+      request.lifecycle.addObserver(requestHandle)
       pendingRequests[container] = requestHandle
-      if (request.playableKey != Empty) {
+      if (request.playableKey !== Empty) {
         pendingRequests[request.playableKey] = requestHandle
       }
     }
-    "Home[${hexCode()}] enqueues [H=${requestHandle.hexCode()}] [R=$request] [C=${container.asString()}]".logInfo()
+
+    deferredBindResult.invokeOnCompletion {
+      request.lifecycle.removeObserver(requestHandle)
+      pendingRequests.values.removeAll { handle -> handle === requestHandle }
+    }
+
+    "Enqueued $request, container=$container, result=$requestHandle".logInfo()
     return requestHandle
   }
 
@@ -203,6 +206,13 @@ class Home private constructor(context: Context) {
         .clear()
       pendingRequests.clear()
     }
+  }
+
+  @JvmSynthetic
+  internal fun onManagerDestroyed(lifecycle: Lifecycle) {
+    pendingRequests.values.filter { handle -> handle.lifecycle === lifecycle }
+      .onEach(RequestHandle::cancel)
+      .let(pendingRequests.values::removeAll)
   }
 
   //region Public APIs

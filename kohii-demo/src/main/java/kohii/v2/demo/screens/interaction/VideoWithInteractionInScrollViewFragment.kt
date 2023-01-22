@@ -67,7 +67,8 @@ class VideoWithInteractionInScrollViewFragment :
     engine.useBucket(bucket)
 
     val requestTag = VideoUrls.LLAMA_DRAMA_HLS
-    val binder = engine.setUp(tag = requestTag, data = VideoUrls.LLAMA_DRAMA_HLS)
+    val binder = engine.setUp(data = VideoUrls.LLAMA_DRAMA_HLS)
+      .withTag(tag = requestTag)
 
     // Opening the video in fullscreen using a (fullscreen) Dialog
     /* viewLifecycleOwner.lifecycleScope.launch {

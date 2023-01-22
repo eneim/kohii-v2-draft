@@ -78,7 +78,8 @@ class SwitchPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
       }
     }
 
-    val binder = engine.setUp(tag = commonTag, data = commonData)
+    val binder = engine.setUp(data = commonData)
+      .withTag(tag = commonTag)
     val containers = listOf(binding.videoTop, binding.videoBottom)
 
     val fullScreenListener = PlayerView.FullscreenButtonClickListener { isFullScreen ->

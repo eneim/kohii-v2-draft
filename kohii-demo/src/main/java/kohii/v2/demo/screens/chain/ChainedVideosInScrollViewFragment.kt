@@ -42,7 +42,9 @@ class ChainedVideosInScrollViewFragment : DemoItemFragment(layout.fragment_video
     val engine = ExoPlayerEngine()
     val bucket = engine.useBucket(binding.videos)
 
-    engine.setUp(tag = "Z", data = VideoUrls.LOCAL_BBB_HEVC).bind(binding.topVideo)
+    engine.setUp(data = VideoUrls.LOCAL_BBB_HEVC)
+      .withTag("Z")
+      .bind(binding.topVideo)
 
     bucket.chain(loop = true, selectScope = AVAILABLE_ONLY) {
       listOf(
@@ -54,7 +56,9 @@ class ChainedVideosInScrollViewFragment : DemoItemFragment(layout.fragment_video
           Triple(
             tag,
             container,
-            engine.setUp(tag = tag, data = VideoUrls.LOCAL_BBB_HEVC).bind(container)
+            engine.setUp(data = VideoUrls.LOCAL_BBB_HEVC)
+              .withTag(tag)
+              .bind(container)
           )
         }
         .onEach { (_, container, handle) ->

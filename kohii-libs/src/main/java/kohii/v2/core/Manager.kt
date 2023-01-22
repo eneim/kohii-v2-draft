@@ -19,7 +19,6 @@ package kohii.v2.core
 import android.app.Activity
 import androidx.annotation.MainThread
 import androidx.annotation.VisibleForTesting
-import androidx.collection.arraySetOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle.Event
@@ -32,13 +31,13 @@ import kohii.v2.internal.DynamicViewPlaybackCreator
 import kohii.v2.internal.StaticViewPlaybackCreator
 import kohii.v2.internal.checkMainThread
 import kohii.v2.internal.debugOnly
-import kohii.v2.internal.hexCode
 import kohii.v2.internal.onRemoveEach
 import kohii.v2.internal.partitionToMutableSets
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import java.util.ArrayDeque
 
 /**
@@ -150,11 +149,11 @@ class Manager private constructor(
     // No existing Playback are allowed.
     require(removedPlayback == null) {
       """
-        Adding PK[${playback.hexCode()}, ${playback.state}] for container C@${container.hashCode()}, 
-        but found existing one: PK[${removedPlayback?.hexCode()}, ${removedPlayback?.state}].
+        Adding playback=$playback(state=${playback.state}) with container=$container, 
+        but found existing playback=$removedPlayback(state=${removedPlayback?.state}).
       """.trimIndent()
     }
-    // Playback should not let the bucket touch its container at this point.
+    // Note: Playback should not let the bucket touch its container at this point.
     playback.performAdd()
     playback.bucket.addContainer(container)
     refresh()
@@ -162,8 +161,9 @@ class Manager private constructor(
 
   @JvmSynthetic
   internal fun notifyPlaybackAdded(playback: Playback) {
-    val currentPlaybacks = playbacksFlow.value
-    playbacksFlow.value = currentPlaybacks + playback
+    playbacksFlow.update { current ->
+      current.plus(playback)
+    }
   }
 
   /**
@@ -210,7 +210,7 @@ class Manager private constructor(
       playback.performDetach()
     }
     playback.bucket.removeContainer(playback.container)
-    // Playback should not let the bucket touch its container at this point.
+    // Note: Playback should not let the bucket touch its container at this point.
     playback.performRemove()
     if (clearPlayable) {
       playback.playable.playback = null
@@ -243,9 +243,9 @@ class Manager private constructor(
     return if (isLocked || !isStarted) {
       emptySet<Playback>() to playbacks.values
     } else {
-      val toPlay = arraySetOf<Playback>()
-      activePlaybacks
+      val toPlay = activePlaybacks
         .groupBy(Playback::bucket)
+        .asSequence()
         .map { (bucket, playbacks) ->
           if (playbacks.isEmpty()) return@map emptyList()
           val candidates = playbacks.filter(bucket::allowToPlay)
@@ -254,13 +254,8 @@ class Manager private constructor(
         .firstOrNull(Collection<Playback>::isNotEmpty)
         .orEmpty()
         .toSet()
-        .also { playbacks ->
-          toPlay.addAll(playbacks)
-          activePlaybacks.removeAll(playbacks)
-        }
 
-      val toPause = activePlaybacks.apply { addAll(inactivePlaybacks) }
-      toPlay to toPause
+      toPlay to (activePlaybacks + inactivePlaybacks - toPlay)
     }
   }
 
@@ -355,7 +350,6 @@ class Manager private constructor(
   }
 
   override fun onDestroy(owner: LifecycleOwner) {
-    super.onDestroy(owner)
     playbacks.values.onRemoveEach(::onRemovePlayback)
 
     val lifecycle = owner.lifecycle
@@ -366,9 +360,7 @@ class Manager private constructor(
       .clear()
 
     buckets.onRemoveEach(Bucket::onRemove)
-    home.pendingRequests.values.filter { handle -> handle.lifecycle === lifecycle }
-      .onEach(RequestHandle::cancel)
-      .let(home.pendingRequests.values::removeAll)
+    home.onManagerDestroyed(lifecycle)
 
     group.removeManager(this)
   }

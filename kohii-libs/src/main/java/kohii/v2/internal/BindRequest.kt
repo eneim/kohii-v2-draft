@@ -41,6 +41,7 @@ internal class BindRequest(
   internal val lifecycle: Lifecycle = manager.lifecycleOwner.lifecycle
   internal val home: Home = manager.home
 
+  @JvmSynthetic
   @Throws(IllegalArgumentException::class)
   internal suspend fun onBind(): Playback {
     if (container is View) {

@@ -71,10 +71,8 @@ class VideosWithAdsInRecyclerViewFragment : DemoItemFragment(R.layout.fragment_v
 
         if (selectedAd != null) {
           binding.selectedAdTitle.text = selectedAd.name
-          handle = engine.setUp(
-            tag = "$seed::${selectedAd.name}",
-            data = selectedAd.toRequestData(),
-          )
+          handle = engine.setUp(data = selectedAd.toRequestData())
+            .withTag("$seed::${selectedAd.name}")
             .bind(binding.videoContainer) {
               addAdEventListener { Log.i("Kohii~Ad", "AdEvent: $it") }
               addAdErrorListener { Log.w("Kohii~Ad", "AdError: $it") }

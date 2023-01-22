@@ -32,15 +32,15 @@ import kohii.v2.core.removeContainers
 
 internal class RecyclerViewBucket(
   manager: Manager,
-  override val rootView: RecyclerView,
+  override val root: RecyclerView,
 ) : ViewBucket(
   manager = manager,
-  rootView = rootView
+  root = root,
 ) {
 
   override val axis: Axis
     get() {
-      val orientation = with(rootView.layoutManager) {
+      val orientation = with(root.layoutManager) {
         when (this) {
           is LinearLayoutManager -> orientation
           is StaggeredGridLayoutManager -> orientation
@@ -74,20 +74,20 @@ internal class RecyclerViewBucket(
 
   override fun onAdd() {
     super.onAdd()
-    rootView.addOnScrollListener(onScrollListener)
-    rootView.addRecyclerListener(recyclerListener)
+    root.addOnScrollListener(onScrollListener)
+    root.addRecyclerListener(recyclerListener)
   }
 
   override fun onRemove() {
     super.onRemove()
-    rootView.removeRecyclerListener(recyclerListener)
-    rootView.removeOnScrollListener(onScrollListener)
+    root.removeRecyclerListener(recyclerListener)
+    root.removeOnScrollListener(onScrollListener)
   }
 
   override fun addContainer(container: Any) {
     super.addContainer(container)
     if (container is View) {
-      rootView.findContainingItemView(container)
+      root.findContainingItemView(container)
         ?.getContainers()
         ?.add(container)
     }
@@ -96,7 +96,7 @@ internal class RecyclerViewBucket(
   override fun removeContainer(container: Any) {
     super.removeContainer(container)
     if (container is View) {
-      rootView.findContainingItemView(container)
+      root.findContainingItemView(container)
         ?.fetchContainers()
         ?.remove(container)
     }

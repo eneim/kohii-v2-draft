@@ -66,8 +66,10 @@ class RebindPlayablesFragment : Fragment(R.layout.fragment_switch_playables) {
     }
 
     var binders = listOf(
-      engine.setUp(tag = VideoUrls.LOCAL_BBB_HEVC, data = VideoUrls.LOCAL_BBB_HEVC),
-      engine.setUp(tag = VideoUrls.SINTEL_HLS, data = VideoUrls.SINTEL_HLS)
+      engine.setUp(data = VideoUrls.LOCAL_BBB_HEVC)
+        .withTag(tag = VideoUrls.LOCAL_BBB_HEVC),
+      engine.setUp(data = VideoUrls.SINTEL_HLS)
+        .withTag(tag = VideoUrls.SINTEL_HLS),
     )
 
     val containers = listOf(binding.videoTop, binding.videoBottom)

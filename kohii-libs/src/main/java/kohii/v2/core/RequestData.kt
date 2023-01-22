@@ -19,6 +19,9 @@ package kohii.v2.core
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
+import kotlinx.parcelize.Parceler
+import kotlinx.parcelize.Parcelize
 
 /**
  * Definition of the data that can be used in Kohii's requests.
@@ -31,14 +34,16 @@ import androidx.media3.common.MediaItem
 interface RequestData : Parcelable {
 
   /**
-   * An idempotent method that builds a [MediaItem]. That is, even if this class is serialized to
+   * Builds a [MediaItem] from this request data. If this class is serialized to
    * [Parcel] and deserialized back, this method must returns the similar instance.
    */
   fun toMediaItem(): MediaItem
 
   /**
    * Returns `true` if this instance is compatible with `other`. This method is default to
-   * [equals]. Compatible [RequestData]s can share the same [PlayableState]. Client can provide
+   * [equals].
+   *
+   * Compatible [RequestData]s can share the same [PlayableState]. Client can provide
    * custom behavior to tell about the compatibility of two [RequestData]s.
    *
    * Implementation requirement: given [RequestData]s A and B, A.isCompatible(B) returns `true` if
@@ -58,4 +63,28 @@ internal fun List<RequestData>.isCompatible(other: List<RequestData>): Boolean {
     (size == 0 || (0 until size).all { index ->
       this[index].isCompatible(other[index])
     })
+}
+
+@Parcelize
+internal class MediaItemData(private val mediaItem: MediaItem) : RequestData {
+  override fun toMediaItem(): MediaItem = mediaItem
+
+  override fun isCompatible(other: RequestData): Boolean {
+    return (other is MediaItemData && mediaItem == other.mediaItem)
+  }
+
+  @UnstableApi
+  internal companion object : Parceler<MediaItemData> {
+    override fun create(parcel: Parcel): MediaItemData {
+      val bundle = requireNotNull(parcel.readBundle(MediaItem::class.java.classLoader))
+      return MediaItemData(MediaItem.CREATOR.fromBundle(bundle))
+    }
+
+    override fun MediaItemData.write(
+      parcel: Parcel,
+      flags: Int,
+    ) {
+      parcel.writeBundle(mediaItem.toBundle())
+    }
+  }
 }

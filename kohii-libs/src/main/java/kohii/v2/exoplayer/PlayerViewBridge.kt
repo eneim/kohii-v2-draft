@@ -274,8 +274,10 @@ internal class PlayerViewBridge(
         when {
           cause.cause is DecoderQueryException ->
             appContext.getString(R.string.error_querying_decoders)
+
           cause.secureDecoderRequired ->
             appContext.getString(R.string.error_no_secure_decoder, cause.mimeType)
+
           else -> appContext.getString(R.string.error_no_decoder, cause.mimeType)
         }
       } else {
@@ -325,7 +327,7 @@ internal class PlayerViewBridge(
   }
   //endregion
 
-  // Make sure the Player instance is available and set the MediaItems.
+  // Make sure the Player instance is available and set with the MediaItems.
   private fun initPlayer(): InternalExoPlayerWrapper {
     val player = internalPlayer ?: run {
       playerPrepared = false
@@ -370,8 +372,11 @@ internal class PlayerViewBridge(
     val player = initPlayer()
     internalPlayer = player
 
+    // FIXME: should call this check before initPlayer()?
     if (lastSeenPlayerState == Player.STATE_ENDED) return
-    if (player.playbackState == Player.STATE_IDLE) playerPrepared = false
+    if (player.playbackState == Player.STATE_IDLE) {
+      playerPrepared = false
+    }
 
     if (!playerPrepared) {
       player.prepare()
@@ -391,7 +396,7 @@ internal class PlayerViewBridge(
         .setAdErrorListener(componentsListeners)
         .setVideoAdPlayerCallback(componentsListeners)
         .build(),
-      adViewGroup = FrameLayout(appContext),
+      adViewGroup = FrameLayout(appContext), // This will not be recreated on config change.
     )
 
     requireNotNull(mediaSourceFactory) {
@@ -445,9 +450,14 @@ internal class PlayerViewBridge(
     private val adViewGroup: FrameLayout,
   ) : AdsLoader.Provider, AdViewProvider {
 
+    //region AdsLoader.Provider
     override fun getAdsLoader(adsConfiguration: AdsConfiguration): AdsLoader = adsLoader
+    //endregion
+
+    //region AdViewProvider
     override fun getAdViewGroup(): ViewGroup = adViewGroup
     override fun getAdOverlayInfos(): MutableList<AdOverlayInfo> = mutableListOf()
+    //endregion
 
     // Must be called before player.prepare()
     fun ready(player: Player) {

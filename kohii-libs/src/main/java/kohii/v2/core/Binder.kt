@@ -30,12 +30,12 @@ import kotlin.coroutines.cancellation.CancellationException
 /**
  * See [Engine.setUp].
  *
- * Instance of a [Binder] must not be reused across different [engine]. To reuse an existing
- * [Request] in another [Engine], use [Engine.setUp] with the [Request] parameter instead.
+ * Note: this class acts as the builder for the [BindRequest].
  */
 class Binder(
   val request: Request,
-  val engine: Engine,
+  @JvmSynthetic @PublishedApi
+  internal val engine: Engine,
   private val callback: Callback = EMPTY_CALLBACK,
 ) {
 
@@ -50,20 +50,8 @@ class Binder(
     callback = callback,
   )
 
-  /**
-   * Creates a new [Binder] with a [Callback].
-   */
-  fun withCallback(callback: Callback): Binder = Binder(
-    request = request,
-    engine = engine,
-    callback = callback,
-  )
-
-  /**
-   * Inline version of [withCallback].
-   */
   inline fun withCallback(
-    crossinline onFailure: (Throwable, Request) -> Unit = { _, _ -> },
+    crossinline onFailure: (Exception, Request) -> Unit = { _, _ -> },
     crossinline onCanceled: (CancellationException, Request) -> Unit = { _, _ -> },
     crossinline onSuccess: (Playback, Request) -> Unit = { _, _ -> },
   ): Binder = Binder(
@@ -71,7 +59,7 @@ class Binder(
     engine = engine,
     callback = object : Callback {
       override fun onFailure(
-        error: Throwable,
+        error: Exception,
         request: Request,
       ) = onFailure(error, request)
 
@@ -158,8 +146,9 @@ class Binder(
       )
 
       val isCompatibleData = existingPlayable?.data.orEmpty().isCompatible(request.data)
-      // The state that can be used to transfer to the new Playable for the same tag. If the
-      // requested data is not compatible with the one used the same tag, it will be (re)initialized.
+      // The state that can be used to transfer to the new Playable for the same tag.
+      // If the requested data is not compatible with the one used the same tag,
+      // it will be (re)initialized.
       val reusablePlayableState: PlayableState? = if (isCompatibleData) {
         existingPlayable?.currentState()
       } else {
@@ -176,26 +165,6 @@ class Binder(
     }
   }
 
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (javaClass != other?.javaClass) return false
-
-    other as Binder
-
-    if (engine != other.engine) return false
-    if (request != other.request) return false
-    if (callback != other.callback) return false
-
-    return true
-  }
-
-  override fun hashCode(): Int {
-    var result = engine.hashCode()
-    result = 31 * result + request.hashCode()
-    result = 31 * result + callback.hashCode()
-    return result
-  }
-
   interface Callback {
     fun onCanceled(
       reason: CancellationException,
@@ -203,7 +172,7 @@ class Binder(
     ) = Unit
 
     fun onFailure(
-      error: Throwable,
+      error: Exception,
       request: Request,
     ) = Unit
 

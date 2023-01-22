@@ -36,7 +36,7 @@ internal class StaticViewRendererPlayback(
   playable = playable,
   bucket = bucket,
   manager = manager,
-  viewContainer = container,
+  container = container,
   tag = tag,
   config = config,
 ) {
@@ -50,6 +50,4 @@ internal class StaticViewRendererPlayback(
     playable.onRendererDetached(container)
     super.onDeactivate()
   }
-
-  override fun detachRenderer() = Unit
 }

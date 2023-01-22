@@ -38,10 +38,8 @@ class VideosInRecyclerViewFragment : DemoItemFragment(layout.fragment_videos_in_
     val engine = ExoPlayerEngine()
     engine.useBucket(binding.videos)
 
-    val binder = engine.setUp(
-      tag = VIDEO_TAG,
-      data = VideoUrls.LOCAL_BBB_HEVC,
-    )
+    val binder = engine.setUp(data = VideoUrls.LOCAL_BBB_HEVC)
+      .withTag(tag = VIDEO_TAG)
 
     val adapter = SimpleItemsAdapter(binder = binder, identity = seed)
     binding.videos.adapter = adapter

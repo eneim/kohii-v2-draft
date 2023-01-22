@@ -32,9 +32,8 @@ interface Bridge<RENDERER : Any> {
 
   /**
    * Prepare the resource for a media. This method should:
-   * - Request for new Player instance if there is not a usable one.
-   * - Configure callbacks for the player implementation.
-   * - If there is non-trivial PlaybackInfo, update it to the SimpleExoPlayer.
+   * - Request for a Player instance.
+   * - Configure callbacks for the Player implementation.
    * - If client request to prepare MediaSource, then prepare it.
    *
    * This method must be called before [ready].
@@ -45,7 +44,7 @@ interface Bridge<RENDERER : Any> {
   fun prepare(loadSource: Boolean)
 
   /**
-   * Ensure the resource is ready to play. PlaybackDispatcher will require this for manual playback.
+   * Ensure the resource is ready to play.
    */
   fun ready()
 
