@@ -81,8 +81,10 @@ class MultiUrlsVideoInScrollViewFragment :
       mainUrl = "https://content.jwplatform.com/videos/Cl6EVHgQ-TkIjsDEe.mp4" // 1080p
     )
 
-    val previewBinder = engine.setUp(tag = requestTag, data = previewData)
-    val mainBinder = engine.setUp(tag = requestTag, data = mainData)
+    val previewBinder = engine.setUp(data = previewData)
+      .withTag(tag = requestTag)
+    val mainBinder = engine.setUp(data = mainData)
+      .withTag(tag = requestTag)
 
     // Opening the video in fullscreen using an Activity.
     //

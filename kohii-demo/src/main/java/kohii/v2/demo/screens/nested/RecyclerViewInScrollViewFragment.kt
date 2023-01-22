@@ -52,10 +52,8 @@ class RecyclerViewInScrollViewFragment :
       binding.secondCarousel
     )
 
-    val binder = engine.setUp(
-      tag = VideoInScrollViewFragment.VIDEO_TAG,
-      data = VideoUrls.LOCAL_BBB_HEVC,
-    )
+    val binder = engine.setUp(data = VideoUrls.LOCAL_BBB_HEVC)
+      .withTag(tag = VideoInScrollViewFragment.VIDEO_TAG)
 
     binding.firstCarousel.adapter = VideoPagerAdapter(
       binder = binder,

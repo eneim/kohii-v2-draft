@@ -54,10 +54,8 @@ class VideoInScrollViewFragment : Fragment(R.layout.fragment_video_in_scroll_vie
       clearFragmentResult(VIDEO_TAG)
     }
 
-    val binder = engine.setUp(
-      tag = VIDEO_TAG,
-      data = VideoUrls.SINTEL_HLS,
-    )
+    val binder = engine.setUp(data = VideoUrls.SINTEL_HLS)
+      .withTag(tag = VIDEO_TAG)
 
     val lazyPlayback = binder.bind(container = binding.videoContainer)
 
