@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import java.util.ArrayDeque
 
 /**
@@ -160,8 +161,9 @@ class Manager private constructor(
 
   @JvmSynthetic
   internal fun notifyPlaybackAdded(playback: Playback) {
-    val currentPlaybacks = playbacksFlow.value
-    playbacksFlow.value = currentPlaybacks + playback
+    playbacksFlow.update { current ->
+      current.plus(playback)
+    }
   }
 
   /**
