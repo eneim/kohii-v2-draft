@@ -19,7 +19,6 @@ package kohii.v2.exoplayer
 import android.content.Context
 import androidx.media3.common.MediaItem
 import androidx.media3.common.TrackSelectionParameters
-import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.ExoPlayer.Builder
 import androidx.media3.exoplayer.ExoPlayerWrapper
@@ -29,27 +28,26 @@ import kohii.v2.core.PlayerPool
 /**
  * A [PlayerPool] that manages instances of [ExoPlayer]s.
  */
-@UnstableApi
 class ExoPlayerPool(
   context: Context,
   private val builder: Builder.() -> Unit = {},
 ) : PlayerPool<ExoPlayer>() {
 
-  private val app: Context = context.applicationContext
+  private val appContext: Context = context.applicationContext
+  private val defaultTrackSelectionParameters: TrackSelectionParameters =
+    TrackSelectionParameters.getDefaults(appContext)
 
-  override fun ExoPlayer.accept(mediaData: Any): Boolean {
-    return mediaData is MediaItem ||
-      (mediaData is Collection<*> && mediaData.all { it is MediaItem })
-  }
+  override fun ExoPlayer.accept(mediaData: Any): Boolean =
+    mediaData is MediaItem || (mediaData is Iterable<*> && mediaData.all { it is MediaItem })
 
   override fun createPlayer(mediaData: Any): ExoPlayer =
-    ExoPlayerWrapper(Builder(app).apply(builder))
+    ExoPlayerWrapper(Builder(appContext).apply(builder))
 
   override fun resetPlayer(player: ExoPlayer) {
     player.stop()
     player.clearMediaItems()
     player.parameters = PlayerParameters.DEFAULT
-    player.trackSelectionParameters = TrackSelectionParameters.DEFAULT_WITHOUT_CONTEXT
+    player.trackSelectionParameters = defaultTrackSelectionParameters
   }
 
   override fun destroyPlayer(player: ExoPlayer) {
