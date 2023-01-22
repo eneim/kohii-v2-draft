@@ -27,12 +27,12 @@ interface RequestHandle {
   val isCompleted: Boolean
 
   /**
-   * Cancel the on-going request. This method only takes effect if the request is not completed.
+   * Cancels the on-going request. This method only takes effect if the request is not completed.
    */
   fun cancel()
 
   /**
-   * Await for the result of the on-going request.
+   * Awaits for the result of the on-going request.
    */
   suspend fun result(): Result<Playback>
 }
