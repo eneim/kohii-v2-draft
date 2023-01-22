@@ -57,7 +57,7 @@ class MixedVideosInRecyclerViewFragment : DemoItemFragment(layout.fragment_simpl
 
           requests += engine.setUp(data = VideoUrls.SINTEL_MPD)
             .withTag(tag = "$seed::${VideoUrls.SINTEL_MPD}::FIRST")
-            .withListener { playback, request ->
+            .withCallback { playback, request ->
               Log.i("Mixed", "Playback: $playback, Request: $request")
             }
             .bind(container = holder.firstVideo)
