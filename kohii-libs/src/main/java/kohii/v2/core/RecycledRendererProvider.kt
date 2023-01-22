@@ -21,7 +21,6 @@ import androidx.collection.forEach
 import androidx.core.util.Pools.Pool
 import androidx.core.util.Pools.SimplePool
 import androidx.lifecycle.LifecycleOwner
-import kohii.v2.internal.asString
 import kohii.v2.internal.debugOnly
 import kohii.v2.internal.getOrPut
 import kohii.v2.internal.hexCode
@@ -41,7 +40,7 @@ abstract class RecycledRendererProvider @JvmOverloads constructor(
     val rendererType: Int = getRendererType(playback.container, playback.playable.data)
     val pool = pools.get(rendererType)
     val result = pool?.acquire() ?: createRenderer(playback, rendererType)
-    "RendererProvider#${hexCode()} provides [RR=${result?.asString()}]".logInfo()
+    "$this provides $result".logInfo()
     return result
   }
 
@@ -49,7 +48,7 @@ abstract class RecycledRendererProvider @JvmOverloads constructor(
     playback: Playback,
     renderer: Any?,
   ) {
-    "RendererProvider#${hexCode()} releases [RR=${renderer?.asString()}]".logInfo()
+    "$this releases $renderer".logInfo()
     if (renderer == null) return
     recycleRenderer(renderer)
     val rendererType: Int = getRendererType(playback.container, playback.playable.data)
