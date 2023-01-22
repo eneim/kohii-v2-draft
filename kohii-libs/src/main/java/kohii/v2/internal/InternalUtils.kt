@@ -20,15 +20,18 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.os.Parcel
+import android.os.Parcelable
 import android.util.Log
 import android.view.View
 import androidx.annotation.MainThread
 import androidx.collection.SparseArrayCompat
+import androidx.core.os.ParcelCompat
 import androidx.core.util.Pools.Pool
 import androidx.media3.common.Player
 import androidx.media3.common.Tracks
 import kohii.v2.BuildConfig
 
+@JvmSynthetic
 internal fun checkMainThread() = check(Looper.myLooper() == Looper.getMainLooper()) {
   "Expected main thread, get: ${Looper.myLooper()?.thread}"
 }
@@ -71,22 +74,9 @@ internal fun String.logInfo(tag: String = "${BuildConfig.LIBRARY_PACKAGE_NAME}.l
   }
 }
 
+@Suppress("NOTHING_TO_INLINE")
 @JvmSynthetic
-internal fun String.logWarn(tag: String = "${BuildConfig.LIBRARY_PACKAGE_NAME}.log") {
-  if (BuildConfig.DEBUG) {
-    Log.w(tag, this)
-  }
-}
-
-@JvmSynthetic
-internal fun String.logError(tag: String = "${BuildConfig.LIBRARY_PACKAGE_NAME}.log") {
-  if (BuildConfig.DEBUG) {
-    Log.e(tag, this)
-  }
-}
-
-@JvmSynthetic
-internal fun String.logStackTrace(tag: String = "${BuildConfig.LIBRARY_PACKAGE_NAME}.log") {
+internal inline fun String.logStackTrace(tag: String = "${BuildConfig.LIBRARY_PACKAGE_NAME}.log") {
   if (BuildConfig.DEBUG) {
     Log.w(tag, Log.getStackTraceString(Throwable(this)))
   }
@@ -151,7 +141,7 @@ internal inline fun Player.doOnTracksChanged(
 })
 
 @JvmSynthetic
-inline fun <reified T : Any> Bundle.getParcelableCompat(key: String): T? {
+internal inline fun <reified T : Parcelable> Bundle.getParcelableCompat(key: String): T? {
   return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU /* 33 */) {
     getParcelable(key, T::class.java)
   } else {
@@ -160,24 +150,16 @@ inline fun <reified T : Any> Bundle.getParcelableCompat(key: String): T? {
   }
 }
 
-@JvmSynthetic @Suppress("DEPRECATION")
-internal inline fun <reified T : Any> Parcel.readArrayListCompat(classLoader: ClassLoader?): ArrayList<T>? {
-  return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU /* 33 */) {
-    readArrayList(classLoader, T::class.java)
-  } else {
-    readArrayList(classLoader).orEmpty().filterIsInstanceTo(arrayListOf())
-  }
+@JvmSynthetic
+internal inline fun <reified T : Any> Parcel.readArrayListCompat(): ArrayList<T>? {
+  val clazz = T::class.java
+  return ParcelCompat.readArrayList(this, clazz.classLoader, clazz)
 }
 
 @JvmSynthetic
-internal inline fun <reified T : Any> Parcel.readParcelableCompat(): T? {
+internal inline fun <reified T : Parcelable> Parcel.readParcelableCompat(): T? {
   val clazz = T::class.java
-  return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU /* 33 */) {
-    readParcelable(clazz.classLoader, clazz)
-  } else {
-    @Suppress("DEPRECATION")
-    readParcelable(clazz.classLoader)
-  }
+  return ParcelCompat.readParcelable(this, clazz.classLoader, clazz)
 }
 
 @JvmSynthetic

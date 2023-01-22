@@ -23,7 +23,7 @@ import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-class Request(
+class Request internal constructor(
   val data: List<RequestData>,
   val tag: String? = null,
 ) : Parcelable {
@@ -67,7 +67,7 @@ class Request(
 
     override fun create(parcel: Parcel): Request = Request(
       tag = parcel.readString(),
-      data = parcel.readArrayListCompat(RequestData::class.java.classLoader) ?: emptyList(),
+      data = parcel.readArrayListCompat() ?: emptyList(),
     )
   }
 }

@@ -30,12 +30,18 @@ internal class HomeDispatcher(private val home: Home) : Handler(Looper.getMainLo
   fun dispatchDestroyPlayable(
     playable: Playable,
     delayMillis: Long = DEFAULT_DELAY,
-  ) = sendMessageDelayed(
-    /* msg = */ obtainMessage(/* what = */ MSG_DESTROY_PLAYABLE, /* obj = */ playable),
-    /* delayMillis = */ delayMillis
-  )
+  ) {
+    "Will destroy: $playable".logStackTrace()
+    sendMessageDelayed(
+      /* msg = */ obtainMessage(/* what = */ MSG_DESTROY_PLAYABLE, /* obj = */ playable),
+      /* delayMillis = */ delayMillis
+    )
+  }
 
-  fun cancelPlayableDestroy(playable: Playable) = removeMessages(MSG_DESTROY_PLAYABLE, playable)
+  fun cancelPlayableDestroy(playable: Playable) {
+    "Stop destroy: $playable".logStackTrace()
+    removeMessages(MSG_DESTROY_PLAYABLE, playable)
+  }
 
   override fun handleMessage(msg: Message) {
     when (msg.what) {
@@ -44,11 +50,11 @@ internal class HomeDispatcher(private val home: Home) : Handler(Looper.getMainLo
   }
 
   private fun performDestroyPlayable(playable: Playable) {
-    "Home[${home.hexCode()}] destroys [PB=$playable]".logStackTrace()
     playable.trySavePlayableState()
     playable.onPause()
     playable.onRelease()
     playable.onDestroy()
     home.playables.remove(playable)
+    "$playable is destroyed.".logInfo()
   }
 }

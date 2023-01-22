@@ -18,8 +18,6 @@ package kohii.v2.core
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.media3.common.MediaItem
-import androidx.media3.common.util.UnstableApi
 
 /**
  * [Engine] instance should have the same lifecycle as the [Manager] instance.
@@ -30,9 +28,12 @@ import androidx.media3.common.util.UnstableApi
  * @see [Engine.setUp]
  */
 class Engine constructor(
-  internal val rendererType: Class<*>,
   val manager: Manager,
+  @get:JvmSynthetic
+  internal val rendererType: Class<*>,
+  @get:JvmSynthetic
   internal val playableCreator: PlayableCreator,
+  @get:JvmSynthetic
   internal val rendererProvider: RendererProvider,
 ) : DefaultLifecycleObserver {
 
@@ -51,59 +52,35 @@ class Engine constructor(
     playableCreator.onDetached()
   }
 
-  @JvmSynthetic
-  internal fun setUpInternal(
-    tag: String? = null,
-    data: List<RequestData>,
-  ): Binder = Binder(
-    request = Request(data, tag),
+  private fun setUpInternal(data: List<RequestData>): Binder = Binder(
+    request = Request(data),
     engine = this,
   )
 
   /**
    * Creates a [Binder] for an array of [RequestData]s.
    */
-  @JvmOverloads
-  fun setUp(
-    tag: String? = null,
-    data: Array<RequestData>,
-  ): Binder = setUpInternal(tag, data.toList())
+  fun setUp(data: Array<RequestData>): Binder = setUpInternal(data = data.toList())
 
   /**
    * Creates a [Binder] for a single [RequestData].
    */
-  @JvmOverloads
-  fun setUp(
-    tag: String? = null,
-    data: RequestData,
-  ): Binder = setUpInternal(tag = tag, data = arrayListOf(data))
+  fun setUp(data: RequestData): Binder = setUpInternal(data = arrayListOf(data))
 
   /**
    * Creates a [Binder] for an array of [String]s.
    */
-  @JvmOverloads
-  fun setUp(
-    tag: String? = null,
-    data: Array<String>,
-  ): Binder = setUpInternal(tag = tag, data = data.map(::MediaUri))
+  fun setUp(data: Array<String>): Binder = setUpInternal(data = data.map(::MediaUri))
 
   /**
    * Creates a [Binder] for a list of [String]s.
    */
-  @JvmOverloads
-  fun setUp(
-    tag: String? = null,
-    data: Iterable<String>,
-  ): Binder = setUpInternal(tag = tag, data = data.map(::MediaUri))
+  fun setUp(data: Iterable<String>): Binder = setUpInternal(data = data.map(::MediaUri))
 
   /**
    * Creates a [Binder] for a single [String].
    */
-  @JvmOverloads
-  fun setUp(
-    tag: String? = null,
-    data: String,
-  ): Binder = setUpInternal(tag = tag, data = arrayListOf(MediaUri(data)))
+  fun setUp(data: String): Binder = setUpInternal(data = arrayListOf(MediaUri(data)))
 
   /**
    * Creates a new [Binder] using an existing [Request].
@@ -112,7 +89,7 @@ class Engine constructor(
    * Video in fullscreen, or in a different Window, the original [Request] can be parceled, passed
    * to the new Window and set up there using this method.
    */
-  fun setUp(request: Request): Binder = setUpInternal(tag = request.tag, data = request.data)
+  fun setUp(request: Request): Binder = setUpInternal(data = request.data).withTag(request.tag)
 
   /**
    * Registers the [root] as a [Bucket] of the [manager].
@@ -136,20 +113,10 @@ class Engine constructor(
       playableCreator: PlayableCreator,
       rendererProvider: RendererProvider,
     ): Engine = Engine(
-      rendererType = T::class.java,
       manager = manager,
+      rendererType = T::class.java,
       playableCreator = playableCreator,
       rendererProvider = rendererProvider,
     )
   }
 }
-
-@UnstableApi
-@JvmOverloads
-fun Engine.setUp(
-  tag: String? = null,
-  data: Iterable<MediaItem>,
-): Binder = setUpInternal(
-  tag = tag,
-  data = data.map(::MediaItemData)
-)
